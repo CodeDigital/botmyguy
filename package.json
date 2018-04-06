@@ -1,0 +1,26 @@
+{
+  "name": "botmyguy",
+  "version": "1.0.0",
+  "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron  ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeDigital/botmyguy.git"
+  },
+  "author": "Xavier Travers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CodeDigital/botmyguy/issues"
+  },
+  "homepage": "https://github.com/CodeDigital/botmyguy#readme",
+  "dependencies": {
+    "irc": "^0.5.2"
+  },
+  "devDependencies": {
+    "electron": "^1.8.4"
+  }
+}
