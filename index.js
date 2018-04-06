@@ -1,6 +1,7 @@
 // TODO: Add basic Front end.
 // TODO: Write Logic for base app.
 
+require('dotenv').config();
 
 //Twitch Authentication Module. Gets user information and stuff.
 
