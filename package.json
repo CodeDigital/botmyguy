@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/CodeDigital/botmyguy#readme",
   "dependencies": {
-    "irc": "^0.5.2"
+    "irc": "^0.5.2",
+    "jsonwebtoken": "^8.2.1",
+    "request": "^2.85.0"
   },
   "devDependencies": {
     "electron": "^1.8.4"

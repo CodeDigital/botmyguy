@@ -1,7 +1,7 @@
 //Twitch Authentication Module. Gets user information and stuff.
 
-//used for REST requests!
-var request = require("request");
+//Basic Declarations. jwt (for idtoken validation), Client ID (obvious) and... TODO: Finish the ID functions.
+var jwt = require('jsonwebtoken');
 const clientID = 'yblspem7dabcfdv0nk918jaq8a70yb';
 
 //Generates a nonce value (for security purposes).
@@ -29,14 +29,13 @@ function generateNonce() {
     nonce = nonce + '' + next;
   }
 
-  console.log('nonce used: ' + nonce);
   return nonce;
 }
 
 
 //Gets both the idtoken and the accesstoken for the bot.
 function getTokens() {
-  var tokens = {};
+  var bot_Info = {};
   //Generate the Nonce.
   var nonce = generateNonce();
 
@@ -47,18 +46,35 @@ function getTokens() {
   //Check Window for new URL
   contents = twitch_token_window.webContents;
   contents.on('did-get-redirect-request', function(event,oldURL,newURL,isMainFrame,httpResponseCode,requestMethod,referrer,headers) {
-    twitch_token_window.close();
-    console.log(newURL);
+
+    //Finds Access Token
     var accTokenStart = newURL.indexOf('#access_token=') + 14;
     var accTokenEnd = newURL.indexOf('&', accTokenStart);
     var accessToken = newURL.substring(accTokenStart,accTokenEnd);
-    tokens.accessToken = accessToken;
+    bot_Info.accessToken = accessToken;
+
+    //Finds ID Token
     var idTokenStart = newURL.indexOf('&id_token=') + 10;
     var idTokenEnd = newURL.indexOf('&', idTokenStart);
     var idToken = newURL.substring(idTokenStart,idTokenEnd);
-    tokens.idToken = idToken;
+    bot_Info.idToken = idToken;
 
-    return tokens;
+    //Decode the IDToken for security.
+    var decoded = jwt.decode(idToken, {complete: true});
+
+    //Set Bot's nick.
+    bot_Info.nick = decoded.payload.preferred_username.toLowerCase();
+
+    //Compares Nonce and ISS to verify accesstoken.
+    if(decoded.payload.nonce == nonce && decoded.payload.iss == 'https://id.twitch.tv/oauth2'){
+      console.log('Nonce and Sender Valid! bot_Info Validated!');
+      twitch_token_window.close();
+
+      //Get the Bot's User ID.
+      bot_Info.userID = getBotID(bot_Info.accessToken);
+
+      return bot_Info;
+    }
   });
 }
 
