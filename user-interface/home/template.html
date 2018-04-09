@@ -34,30 +34,37 @@
           <ul class="list-group list-group-flush bg-transparent" style="font-size:120%;">
 
             <p class="font-weight-bold pl-3">Abilities</p>
-            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #190019; border-color:#180018;" id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)">
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #190019; border-color:#180018;" id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
               <i class="d-inline ion-monitor"></i><p class="ml-3 d-inline">Dashboard</p></a>
-            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)">
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
               <i class="d-inline ion-alert px-1"></i><p class="ml-3 d-inline">Commands</p></a>
-            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)">
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+              <i class="d-inline ion-ios-timer"></i><p class="ml-3 d-inline">Timed Messages</p></a>
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
               <i class="d-inline ion-ios-game-controller-a"></i><p class="ml-3 d-inline">Stream Games</p></a>
-            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)">
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
               <i class="d-inline ion-gear-b"></i><p class="ml-3 d-inline">Settings</p></a>
+            <a href="#" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+              <i class="d-inline ion-help-buoy"></i><p class="ml-3 d-inline">Help</p></a>
             <br>
             <p><small style="font-size:55%;" class="pl-3">Copyright (c) 2018 Copyright Holder All Rights Reserved.</small></p>
           </div>
 
-        <div class="col-md-10" style="background-color: #470047;">
-          <h1 class="display-4">Welcome to Bot MyGuy, User</h1>
+        <div class="col-md-10" style="background-color: #470047;" id="app-display">
+          <br>
+          <h1 class="display-4">Welcome, USER</h1>
           <p class="lead">Currently This is empty, but looks at that menu. Ooooh...</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-          <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </div>
       </div>
 
     </div>
 
-    <script src="titlebar.js"></script>
+    <script src="../titlebar.js"></script>
+    <script src="../home.js"></script>
     <script type="text/javascript">
+      var activeElement = document.getElementById('active');
+      console.log(activeElement);
+
       function menuHover(x) {
         x.style.backgroundColor = '#100010';
         x.style.borderColor = '#180018';
@@ -72,6 +79,13 @@
           x.style.backgroundColor = '#210021';
         }
         //x.style.borderRadius = '0rem';
+      }
+
+      function menuClicked(x) {
+        if(x.innerHTML){
+
+        }
+
       }
     </script>
 
