@@ -1,27 +1,26 @@
 //App JS File meant to simplify main.js communication with electron!
 
 //Declaration of Electron Things...
-const {BrowserWindow, Menu, ipcMain} = require('electron');
+const {BrowserWindow, ipcMain} = require('electron');
+const url = require('url');
+const path = require('path');
 let mainWindow;
 
 module.exports.mainWindow = function() {
   //Create The Main Window
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
-    frame: false
+    frame: false,
+    width: 1280,
+    height: 720
   });
 
   //Load HTML File into window.
   mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'dashboard.html'),
+      pathname: path.join(__dirname, 'home/dashboard.html'),
       protocol: 'file:',
       slashes: true
   }));
-
-  //Quit Everything when Window Closed.
-  mainWindow.on('closed',function() {
-      app.quit();
-  });
 
   return mainWindow;
 
