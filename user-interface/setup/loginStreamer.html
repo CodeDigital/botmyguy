@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Bot MyGuy | Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/ionicons.css">
+    <style>
+      body{height:100%;}
+    </style>
+  </head>
+
+  <body>
+
+    <div class="container-fluid text-white h-100">
+
+      <!-- Header of Page... -->
+      <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
+        <div class="col-md-2" style="background-color: #210021;text-align:center;">
+          <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
+        </div>
+        <div class="col" style="background-color: #210021;">
+          <i class="float-right d-inline ion-close-round p-0 py-1 mx-2" id="close-btn" style="-webkit-app-region: no-drag;"></i>
+          <i class="float-right d-inline ion-plus-round p-0 py-1 mx-2" id="max-btn" style="-webkit-app-region: no-drag;"></i>
+          <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
+          <br><br>
+          <h1 class="display-4 text-center">Twitch For The Streamer!</h1>
+          <p>So, you're excited by the chat bot, have accepted the Legal Documents and want to start using it for your own streams.</p>
+          <p>We need to do a few more things before the bot is ready to join your chat! First, we'll need to know what channel to join. For that, we'll need you to login through Twitch and well get only the information we'll need to move on and nothing more.</p>
+          <div class="alert alert-warning" role="alert">
+            <i class="d-inline ion-alert-circled pr-2"></i>
+            Be Careful! This is not the account that the bot will be chatting with. Log in with the account on which you'll stream!
+          </div>
+          <p>Go ahead and press the button to Login With Twitch, then the next step will unlock.</p>
+          <button type="button" class="btn btn-lg btn-block text-white" style="background-color:#6441A4;"><i class="d-inline ion-social-twitch-outline pr-2"></i>Log In With Twitch</button>
+        </div>
+      </div>
+
+      <div class="row fixed-bottom">
+        <div class="col" style="background-color: #210021;">
+          <a type="button" href="" class="btn btn-success btn-lg btn-block mx-auto disabled" aria-disabled="true" id="nextBtn">Next Step</a>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; background-color: #470047;"></div>
+          </div>
+          <h6 class="mb-0 mr-2 d-inline-block float-right">Setup Process</h6>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="../titlebar.js"></script>
+    <script src="menu.js"></script>
+
+    <script type="text/javascript">
+      const {ipcRenderer} = require('electron');
+      ipcRenderer.on('streamerauth:done', function(e, item) {
+        if(item.success){
+          var nextBtn = document.getElementById('nextBtn');
+          nextBtn.className = "btn btn-success btn-lg btn-block mx-auto";
+          nextBtn.setAttribute('aria-disabled', false);
+        }
+      });
+
+      ipcRenderer.on('streamerauth:failure', function() {
+
+      });
+
+    </script>
+
+  </body>
+</html>

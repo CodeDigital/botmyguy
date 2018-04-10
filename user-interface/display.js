@@ -4,7 +4,7 @@
 const {BrowserWindow, ipcMain} = require('electron');
 const url = require('url');
 const path = require('path');
-let mainWindow;
+let mainWindow, errorWindow, loadWindow, setupWindow;
 
 module.exports.mainWindow = function() {
   //Create The Main Window
@@ -23,7 +23,6 @@ module.exports.mainWindow = function() {
   }));
 
   return mainWindow;
-
 }
 
 module.exports.errorWindow = function(title, message) {
@@ -61,4 +60,48 @@ module.exports.errorWindow = function(title, message) {
 		});
 
     return errorWindow;
+}
+
+module.exports.loadingWindow = function() {
+  //Create The Main Window
+  loadWindow = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 200,
+    height: 200,
+    title: 'An Error Occured!'
+  });
+
+  //Load HTML File into window.
+  loadWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'home/loading.html'),
+      protocol: 'file:',
+      slashes: true
+  }));
+
+  return loadWindow;
+
+}
+
+module.exports.setup = function() {
+  //Create The Main Window
+  setupWindow = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 800,
+    height: 600,
+    title: 'Welcome to Bot My Guy'
+  });
+
+  //Load HTML File into window.
+  setupWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'setup/welcome.html'),
+      protocol: 'file:',
+      slashes: true
+  }));
+
+  return setupWindow;
+
 }

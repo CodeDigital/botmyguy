@@ -31,7 +31,7 @@
       </div>
 
       <div class="row">
-        <div class="col-md-2 text-truncate" id="navigationHeight" style="background-color: #210021;min-width: 320px;max-width:320px; height:100vh;">
+        <div class="col-md-2 text-truncate" style="background-color: #210021;min-width: 320px;max-width:320px; height:100vh;">
           <br>
           <div class="dropdown-divider" style="border-color:#180018;"></div>
           <br>
@@ -55,9 +55,9 @@
             <div class="dropdown-divider fixed-bottom mb-1" style="border-color:#180018;"></div>
           </div>
 
-        <div class="col" id="mainHeight" style="background-color: #470047; height:100vh;" id="app-display">
+        <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
           <br><br>
-          <h1 class="display-4">Welcome, USER</h1>
+          <h1 class="display-4" id="welcomeText">Welcome, USER</h1>
           <p class="lead">Currently This is empty, but looks at that menu. Ooooh...</p>
         </div>
       </div>
@@ -67,29 +67,23 @@
           <h6 class="mb-0 mr-2 d-inline-block float-right">Test Version</h6>
         </div>
       </div>
-
     </div>
 
     <script src="../titlebar.js"></script>
-    <script src="../home.js"></script>
+    <script src="menu.js"></script>
+
     <script type="text/javascript">
-      var activeElement = document.getElementById('active');
-      activeElement.style.backgroundColor = '#190019';
-      console.log(activeElement);
 
-      function menuHover(x) {
-        x.style.backgroundColor = '#100010';
-        x.style.borderColor = '#180018';
-      }
-
-      function menuNormal(x) {
-        x.style.borderColor = '#180018';
-        if(x == document.getElementById('active')){
-          x.style.backgroundColor = '#190019';
-        }else{
-          x.style.backgroundColor = '#210021';
-        }
-      }
+      const {ipcRenderer} = require('electron');
+      const fs = require('fs');
+      let settings;
+      fs.readFile('database/settings.json', function(err, data) {
+        settings = JSON.parse(data);
+        var userWelcome = document.getElementById('welcomeText');
+        var wText = userWelcome.innerHTML;
+        wText = wText.substring(0,9) + settings.user;
+        userWelcome.innerHTML = wText;
+      });
 
     </script>
 
