@@ -70,7 +70,7 @@ module.exports.loadingWindow = function() {
     resizable: false,
     width: 200,
     height: 200,
-    title: 'An Error Occured!'
+    title: 'Loading In!'
   });
 
   //Load HTML File into window.
@@ -92,7 +92,7 @@ module.exports.setup = function() {
     resizable: false,
     width: 800,
     height: 600,
-    title: 'Welcome to Bot My Guy'
+    title: 'Welcome to Bot My Guy!'
   });
 
   //Load HTML File into window.
@@ -101,6 +101,8 @@ module.exports.setup = function() {
       protocol: 'file:',
       slashes: true
   }));
+
+  setupWindow.webContents.openDevTools()
 
   return setupWindow;
 

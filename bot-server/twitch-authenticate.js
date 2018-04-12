@@ -1,7 +1,11 @@
 //Twitch Authentication Module. Gets user information and stuff.
 
 //Basic Declarations. jwt (for idtoken validation), Client ID (obvious) and... TODO: Finish the ID functions.
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const request = require('request');
+//const { BrowserWindow } = require('electron');
+const {remote} = require('electron');
+console.log(remote);
 const clientID = 'yblspem7dabcfdv0nk918jaq8a70yb';
 
 //Generates a nonce value (for security purposes).
@@ -34,14 +38,27 @@ function generateNonce() {
 
 
 //Gets both the idtoken and the accesstoken for the bot.
-function getTokens() {
-  var bot_Info = {};
+function getTokens(callback) {
+  var token_Info = {};
   //Generate the Nonce.
   var nonce = generateNonce();
+  let twitch_token_window;
 
   //Create Auth Window.
-  let twitch_token_window = new BrowserWindow({});
-  twitch_token_window.loadURL('https://id.twitch.tv/oauth2/authorize?client_id=yblspem7dabcfdv0nk918jaq8a70yb&redirect_uri=http%3A%2F%2Flocalhost&response_type=token%20id_token&scope=openid%20user%3Aedit&nonce=' + nonce);
+  twitch_token_window = new remote.BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 800,
+    height: 600,
+    title: 'Welcome to Bot My Guy!'
+  });
+  twitch_token_window.loadURL('https://id.twitch.tv/oauth2/authorize?' + 
+  'client_id=' + clientID + 
+  '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +
+  '&response_type=' + 'token%20id_token' + 
+  '&scope=openid%20user%3Aedit%20bits%3Aread%20user%3Aread%3Aemail' + 
+  '&nonce=' + nonce);
 
   //Check Window for new URL
   contents = twitch_token_window.webContents;
@@ -51,19 +68,16 @@ function getTokens() {
     var accTokenStart = newURL.indexOf('#access_token=') + 14;
     var accTokenEnd = newURL.indexOf('&', accTokenStart);
     var accessToken = newURL.substring(accTokenStart,accTokenEnd);
-    bot_Info.accessToken = accessToken;
+    token_Info.accessToken = accessToken;
 
     //Finds ID Token
     var idTokenStart = newURL.indexOf('&id_token=') + 10;
     var idTokenEnd = newURL.indexOf('&', idTokenStart);
     var idToken = newURL.substring(idTokenStart,idTokenEnd);
-    bot_Info.idToken = idToken;
+    token_Info.idToken = idToken;
 
     //Decode the IDToken for security.
     var decoded = jwt.decode(idToken, {complete: true});
-
-    //Set Bot's nick.
-    bot_Info.nick = decoded.payload.preferred_username.toLowerCase();
 
     //Compares Nonce and ISS to verify accesstoken.
     if(decoded.payload.nonce == nonce && decoded.payload.iss == 'https://id.twitch.tv/oauth2'){
@@ -71,22 +85,34 @@ function getTokens() {
       twitch_token_window.close();
 
       //Get the Bot's User ID.
-      bot_Info.userID = getBotID(bot_Info.accessToken);
-
-      return bot_Info;
+      getTwitchID(token_Info.accessToken, function(e){
+        token_Info.user = e;
+        console.log(token_Info);
+        callback(token_Info);
+      });
+    }else{
+      console.log('Wrong Auth Received :O');
     }
   });
 }
 
-//generates the ID for the bot (to listen to whispers only)
-function getBotID(token) {
-  // TODO: Write getBotID.
-
-}
 
 //Generates the ID of a user given an oauth 2.0 token and... (to listen to bits, hosts, subscriptions and follows)
-function getUserID(token) {
+function getTwitchID(token, callback) {
   // TODO: Write getUserID.
+  var options = {
+    method: 'GET',
+    url: 'https://api.twitch.tv/helix/users',
+    headers: { authorization: ('Bearer ' + token) }
+  };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    //return body.data;
+    var data = JSON.parse(body);
+    console.log(data);
+    callback(data.data);
+  });
 
 }
 
@@ -98,5 +124,4 @@ function getRandomIntInclusive(min, max) {
 }
 
 module.exports.getTokens = getTokens;
-module.exports.getBotID = getBotID;
-module.exports.getBotID = getUserID;
+module.exports.getTwitchID = getTwitchID;

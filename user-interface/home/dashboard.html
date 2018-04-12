@@ -76,12 +76,12 @@
 
       const {ipcRenderer} = require('electron');
       const fs = require('fs');
-      let settings;
-      fs.readFile('database/settings.json', function(err, data) {
-        settings = JSON.parse(data);
+      const db = require('./database/database.js');
+
+      db.getSettings(function(){
         var userWelcome = document.getElementById('welcomeText');
         var wText = userWelcome.innerHTML;
-        wText = wText.substring(0,9) + settings.user;
+        wText = wText.substring(0, 9) + settings.user;
         userWelcome.innerHTML = wText;
       });
 
