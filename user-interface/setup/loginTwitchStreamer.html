@@ -47,7 +47,7 @@
 
       <div class="row fixed-bottom">
         <div class="col" style="background-color: #210021;">
-          <a type="button" href="" class="btn btn-success btn-lg btn-block mx-auto disabled" aria-disabled="true" id="nextBtn">Next Step</a>
+          <a type="button" href="loginTwitchBot.html" class="btn btn-success btn-lg btn-block mx-auto disabled" aria-disabled="true" id="nextBtn">Next Step</a>
           <div class="progress">
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; background-color: #470047;"></div>
           </div>
@@ -65,7 +65,7 @@
 
       function twitchLogin(x){
         console.log('this working?');
-        twitchauth.getTokens(function(result){
+        twitchauth.getInfo(function(result){
           var streamer = result;
           console.log(streamer);
           ipcRenderer.send('streamerauth:done', streamer);

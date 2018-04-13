@@ -90,7 +90,7 @@ module.exports.setup = function() {
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     resizable: false,
-    width: 800,
+    width: 1200,
     height: 600,
     title: 'Welcome to Bot My Guy!'
   });

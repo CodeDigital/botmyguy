@@ -1,4 +1,6 @@
 {
   "firstTime": true,
-  "user": ""
+  "user": "",
+  "streamer_id": null,
+  "bot_id": null
 }

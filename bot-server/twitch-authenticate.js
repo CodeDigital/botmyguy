@@ -4,9 +4,10 @@
 const jwt = require('jsonwebtoken');
 const request = require('request');
 //const { BrowserWindow } = require('electron');
-const {remote} = require('electron');
+const {remote, session} = require('electron');
 console.log(remote);
 const clientID = 'yblspem7dabcfdv0nk918jaq8a70yb';
+let twitch_auth_window;
 
 //Generates a nonce value (for security purposes).
 function generateNonce() {
@@ -38,62 +39,69 @@ function generateNonce() {
 
 
 //Gets both the idtoken and the accesstoken for the bot.
-function getTokens(callback) {
-  var token_Info = {};
-  //Generate the Nonce.
-  var nonce = generateNonce();
-  let twitch_token_window;
+function getInfo(callback) {
+    var token_Info = {};
+    //Generate the Nonce.
+    var nonce = generateNonce();
+    let twitch_auth_window;
 
-  //Create Auth Window.
-  twitch_token_window = new remote.BrowserWindow({
-    titleBarStyle: 'customButtonsOnHover',
-    frame: false,
-    resizable: false,
-    width: 800,
-    height: 600,
-    title: 'Welcome to Bot My Guy!'
+    //Create Auth Window.
+    twitch_auth_window = new remote.BrowserWindow({
+      titleBarStyle: 'customButtonsOnHover',
+      frame: false,
+      resizable: false,
+      width: 500,
+      height: 600,
+      title: 'Welcome to Bot My Guy!'
+    });
+  twitch_auth_window.webContents.openDevTools()
+
+
+  twitch_auth_window.webContents.session.clearStorageData(function() {
+    console.log('Electron password auth cache cleared');
+
+    twitch_auth_window.loadURL('https://id.twitch.tv/oauth2/authorize?' +
+      'client_id=' + clientID +
+      '&redirect_uri=' + 'http%3A%2F%2Flocalhos' +
+      '&response_type=' + 'token%20id_token' +
+      '&scope=openid%20user%3Aedit%20bits%3Aread%20user%3Aread%3Aemail' +
+      '&nonce=' + nonce);
   });
-  twitch_token_window.loadURL('https://id.twitch.tv/oauth2/authorize?' + 
-  'client_id=' + clientID + 
-  '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +
-  '&response_type=' + 'token%20id_token' + 
-  '&scope=openid%20user%3Aedit%20bits%3Aread%20user%3Aread%3Aemail' + 
-  '&nonce=' + nonce);
 
-  //Check Window for new URL
-  contents = twitch_token_window.webContents;
-  contents.on('did-get-redirect-request', function(event,oldURL,newURL,isMainFrame,httpResponseCode,requestMethod,referrer,headers) {
+    //Check Window for new URL
+    contents = twitch_auth_window.webContents;
+    contents.on('did-get-redirect-request', function (event, oldURL, newURL, isMainFrame, httpResponseCode, requestMethod, referrer, headers) {
 
-    //Finds Access Token
-    var accTokenStart = newURL.indexOf('#access_token=') + 14;
-    var accTokenEnd = newURL.indexOf('&', accTokenStart);
-    var accessToken = newURL.substring(accTokenStart,accTokenEnd);
-    token_Info.accessToken = accessToken;
+      //Finds Access Token
+      var accTokenStart = newURL.indexOf('#access_token=') + 14;
+      var accTokenEnd = newURL.indexOf('&', accTokenStart);
+      var accessToken = newURL.substring(accTokenStart, accTokenEnd);
+      token_Info.accessToken = accessToken;
 
-    //Finds ID Token
-    var idTokenStart = newURL.indexOf('&id_token=') + 10;
-    var idTokenEnd = newURL.indexOf('&', idTokenStart);
-    var idToken = newURL.substring(idTokenStart,idTokenEnd);
-    token_Info.idToken = idToken;
+      //Finds ID Token
+      var idTokenStart = newURL.indexOf('&id_token=') + 10;
+      var idTokenEnd = newURL.indexOf('&', idTokenStart);
+      var idToken = newURL.substring(idTokenStart, idTokenEnd);
+      token_Info.idToken = idToken;
 
-    //Decode the IDToken for security.
-    var decoded = jwt.decode(idToken, {complete: true});
+      //Decode the IDToken for security.
+      var decoded = jwt.decode(idToken, { complete: true });
 
-    //Compares Nonce and ISS to verify accesstoken.
-    if(decoded.payload.nonce == nonce && decoded.payload.iss == 'https://id.twitch.tv/oauth2'){
-      console.log('Nonce and Sender Valid! bot_Info Validated!');
-      twitch_token_window.close();
+      //Compares Nonce and ISS to verify accesstoken.
+      if (decoded.payload.nonce == nonce && decoded.payload.iss == 'https://id.twitch.tv/oauth2') {
+        console.log('Nonce and Sender Valid! bot_Info Validated!');
+        //twitch_auth_window.close();
 
-      //Get the Bot's User ID.
-      getTwitchID(token_Info.accessToken, function(e){
-        token_Info.user = e;
-        console.log(token_Info);
-        callback(token_Info);
-      });
-    }else{
-      console.log('Wrong Auth Received :O');
-    }
-  });
+        //Get the Bot's User ID.
+        getTwitchID(token_Info.accessToken, function (e) {
+          token_Info.user = e;
+          console.log(token_Info);
+          callback(token_Info);
+        });
+      } else {
+        console.log('Wrong Auth Received :O');
+      }
+    });
 }
 
 
@@ -123,5 +131,4 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
 }
 
-module.exports.getTokens = getTokens;
-module.exports.getTwitchID = getTwitchID;
+module.exports.getInfo = getInfo;
