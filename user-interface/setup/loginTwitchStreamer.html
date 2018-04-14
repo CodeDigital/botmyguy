@@ -63,7 +63,7 @@
       const {ipcRenderer} = require('electron');
       const twitchauth = require('../../bot-server/twitch-authenticate.js');
 
-      function twitchLogin(x){
+      function twitchLogin(){
         console.log('this working?');
         twitchauth.getInfo(function(result){
           var streamer = result;
@@ -75,8 +75,6 @@
           nextBtn.setAttribute('aria-disabled', false);
         });
       }
-
-
     </script>
 
   </body>

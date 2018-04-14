@@ -26,8 +26,21 @@ app.on('ready', function() {
   });
 });
 
-ipcMain.on('streamerauth:done', function(e, item) {
+ipcMain.on('streamerauth:done', function (e, item) {
+  db.getSettings(function(sets){
+    var settings = sets;
+    settings.streamer_id = item.user.id;
+    settings.user = item.user.display_name;
+    db.setSettings(settings);
+  });
+});
 
+ipcMain.on('botauth:done', function (e, item) {
+  db.getSettings(function (sets) {
+    var settings = sets;
+    settings.bot_id = item.user.id;
+    db.setSettings(settings);
+  });
 });
 
 ipcMain.on('auth:connected', function(e, item) {

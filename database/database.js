@@ -26,5 +26,5 @@ module.exports.getSettings = function (callback) {
 
 module.exports.setSettings = function(settings){
     var settingsBuffer = JSON.stringify(settings);
-    fs.writeFileSync('database/settings.json', settinsBuffer);
+    fs.writeFileSync('database/settings.json', settingsBuffer);
 };
