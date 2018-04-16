@@ -130,7 +130,6 @@ function getInfo(callback) {
 
 //Generates the ID of a user given an oauth 2.0 token and... (to listen to bits, hosts, subscriptions and follows)
 function getTwitchID(token, callback) {
-  // TODO: Write getUserID.
   var options = {
     method: 'GET',
     url: 'https://api.twitch.tv/helix/users',
