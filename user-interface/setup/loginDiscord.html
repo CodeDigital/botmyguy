@@ -40,7 +40,7 @@
             <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
                 <br>
                 <br>
-                <h1 class="display-4 text-center">Streamlabs!</h1>
+                <h1 class="display-4 text-center">Discord!</h1>
                 <p>Alright! Now that we've logged into Twitch, we can move onto Streamlabs. By pressing the button below you will be taken to the StreamLabs login page to allow the bot to see donations you've received and other things!</p>
                 <div class="alert alert-warning" role="alert">
                     <i class="d-inline ion-alert-circled pr-2"></i>
@@ -55,9 +55,10 @@
 
         <div class="row fixed-bottom">
             <div class="col" style="background-color: #210021;">
-                <a type="button" href="loginDiscord.html" class="d-inline btn btn-primary btn-lg btn-block mx-auto">Skip Step</a>
+                <a type="button" href="" class="d-inline btn btn-primary btn-lg btn-block mx-auto" 
+                    id="nextBtn" onclick="dashboard()">Skip Step</a>
                 <a type="button" href="" class="d-inline btn btn-success btn-lg btn-block mx-auto disabled" aria-disabled="true"
-                    id="nextBtn">Next Step</a>
+                    id="nextBtn" onclick="dashboard()">Next Step</a>
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0"
                         aria-valuemax="100" style="width: 10%; background-color: #470047;"></div>
@@ -72,19 +73,10 @@
 
     <script type="text/javascript">
         const { ipcRenderer } = require('electron');
-        const twitchauth = require('../../bot-server/twitch-authenticate.js');
 
-        function twitchLogin() {
-            console.log('this working?');
-            twitchauth.getInfo(function (result) {
-                var bot = result;
-                console.log(bot);
-                ipcRenderer.send('botauth:done', bot);
-
-                var nextBtn = document.getElementById('nextBtn');
-                nextBtn.className = "btn btn-success btn-lg btn-block mx-auto";
-                nextBtn.setAttribute('aria-disabled', false);
-            });
+        function dashboard() {
+            console.log('Starting up Dashboard.');
+            ipcRenderer.send('setup:complete', true);
         }
     </script>
 

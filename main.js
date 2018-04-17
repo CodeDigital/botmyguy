@@ -3,6 +3,7 @@ app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
 const twitchauth = require('./bot-server/twitch-authenticate.js');
 const db = require('./database/database.js');
+const ck = require('./database/cookies.js');
 
 //Windows
 let mainWindow;
@@ -40,19 +41,23 @@ ipcMain.on('botauth:done', function (e, item) {
     var settings = sets;
     settings.bot_id = item.user.id;
     db.setSettings(settings);
+    ck.setCookie('twitchBotInfo', item, function(cookie){
+      //console.log(cookie);
+
+      ck.getCookie('twitchBotInfo', function(response){
+        console.log(response);
+      });
+    });
   });
 });
 
-ipcMain.on('auth:connected', function(e, item) {
-  settings.firstTime = false;
-  settings.user = item.user;
-  db.setSettings(settings);
+ipcMain.on('setup:complete', function (e, item) {
   console.log('connected');
   //Create the mainwindow
   mainWindow = disp.mainWindow();
 
   //Quit Everything when Window Closed.
-  mainWindow.on('closed',function() {
-      app.quit();
+  mainWindow.on('closed', function () {
+    app.quit();
   });
 });
