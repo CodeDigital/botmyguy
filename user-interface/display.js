@@ -21,6 +21,7 @@ module.exports.mainWindow = function() {
       protocol: 'file:',
       slashes: true
   }));
+  mainWindow.webContents.openDevTools();
 
   return mainWindow;
 }

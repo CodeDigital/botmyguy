@@ -20,7 +20,7 @@ function generateNonce() {
   var nonceLength = 64;
   console.log('length - ' + nonceLength);
 
-  for (var i = 0; i < nonceLength; i++) {
+  while (nonce.length < nonceLength) {
     var isNumber = (Math.random() >= 0.5);
     if(isNumber){
       next = getRandomIntInclusive(0,9);
@@ -40,7 +40,7 @@ function generateNonce() {
 
 
 //Gets both the idtoken and the accesstoken for the bot.
-function getInfo(callback) {
+module.exports.getInfo = function(callback) {
     var token_Info = {};
     //Generate the Nonce.
     var nonce = generateNonce();
@@ -152,5 +152,3 @@ function getRandomIntInclusive(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
 }
-
-module.exports.getInfo = getInfo;

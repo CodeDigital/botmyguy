@@ -1,0 +1,8 @@
+[
+    {
+        "command":"!test",
+        "response":"Hello World!",
+        "type":"chat",
+        "api": ["twitchChat","twitchWhisper","discord"]
+    }
+]

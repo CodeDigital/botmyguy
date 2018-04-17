@@ -4,6 +4,7 @@ const disp = require('./user-interface/display.js');
 const twitchauth = require('./bot-server/twitch-authenticate.js');
 const db = require('./database/database.js');
 const ck = require('./database/cookies.js');
+let setupComplete = false;
 
 //Windows
 let mainWindow;
@@ -16,16 +17,16 @@ app.on('ready', function() {
     //if this is the first time, then just load, otherwise, setup process!
     if (settings.firstTime) {
       setup = disp.setup();
-
-      //Quit Everything when Window Closed.
-      setup.on('closed', function () {
-        app.quit();
-      });
     } else {
       loadingWindow = disp.loadingWindow();
     }
   });
 });
+
+app.on('window-all-closed', function(){
+  app.quit();
+});
+
 
 ipcMain.on('streamerauth:done', function (e, item) {
   db.getSettings(function(sets){
@@ -53,8 +54,11 @@ ipcMain.on('botauth:done', function (e, item) {
 
 ipcMain.on('setup:complete', function (e, item) {
   console.log('connected');
+
   //Create the mainwindow
   mainWindow = disp.mainWindow();
+
+  setup.close();
 
   //Quit Everything when Window Closed.
   mainWindow.on('closed', function () {
