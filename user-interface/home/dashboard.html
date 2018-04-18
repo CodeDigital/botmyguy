@@ -78,7 +78,7 @@
       const fs = require('fs');
       const db = require('../../database/database.js');
 
-      db.getSettings(function(){
+      db.getSettings(function(settings){
         var userWelcome = document.getElementById('welcomeText');
         var wText = userWelcome.innerHTML;
         wText = wText.substring(0, 9) + settings.user;
