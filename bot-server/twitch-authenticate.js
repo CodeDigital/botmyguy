@@ -61,12 +61,6 @@ module.exports.getInfo = function(callback) {
     });
   twitch_auth_window.webContents.openDevTools();
 
-  // ESLint will warn about any use of eval(), even this one
-  // eslint-disable-next-line
-  twitch_auth_window.eval = global.eval = function () {
-    throw new Error(`Sorry, this app does not support window.eval().`)
-  }
-
   twitch_auth_window.webContents.session.clearStorageData(function() {
     console.log('Electron password auth cache cleared');
 

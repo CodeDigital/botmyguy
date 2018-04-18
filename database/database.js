@@ -1,11 +1,10 @@
 const fs = require('fs');
-const path = require('path');
 
-module.exports.getSettingsSync = function() {
+module.exports.getSettingsSync = function () {
     //settings from JSON
     var settings;
 
-    var settingBuffer = fs.readFileSync(path.join(__dirname, 'settings.json'));
+    var settingBuffer = fs.readFileSync('database/settings.json');
     settings = JSON.parse(settingBuffer);
 
     return settings;
@@ -16,23 +15,52 @@ module.exports.getSettings = function (callback) {
     let settings;
 
     var settingsBuffer;
-    fs.readFile(path.join(__dirname, 'settings.json'), function(err, data){
-        if (err) throw err;
-        settingsBuffer = data;
-        settings = JSON.parse(settingsBuffer);
+    fs.readFile('database/settings.json', function (err, data) {
+        if (data) {
+            settingsBuffer = data;
+            settings = JSON.parse(settingsBuffer);
 
-        callback(settings);
+            callback(settings);
+        } else {
+            fs.readFile('database/defaultSettings.json', function(err, data){
+                if (err){
+
+                }else{
+                    var createStream = fs.createWriteStream("database/settings.json");
+                    createStream.end();
+
+                    settingsBuffer = data;
+                    var newSettings = JSON.parse(settingsBuffer);
+                    setSettings(newSettings);
+
+                    callback(newSettings);
+                }
+            });
+        }
     });
 }
 
-module.exports.setSettings = function(settings){
+module.exports.setSettings = function (settings) {
     var settingsBuffer = JSON.stringify(settings);
-    fs.writeFileSync(path.join(__dirname, 'settings.json'), settingsBuffer);
-    console.log(path.join(__dirname, 'settings.json'));
+
+    if (fs.existsSync('database.settings.json')){
+        fs.writeFileSync('database/settings.json', settingsBuffer);
+    } else {
+        fs.readFile('database/defaultSettings.json', function (err, data) {
+            if (err) {
+
+            } else {
+                var createStream = fs.createWriteStream("database/settings.json");
+                createStream.end();
+
+                fs.writeFileSync('database/settings.json', settingsBuffer);
+            }
+        });
+    }
 };
 
 module.exports.newCommand = function (command, response, type, api) {
-    fs.readFile(path.join(__dirname, 'commandsTemplate.json'), function(err, data){
+    fs.readFile('database/commandsTemplate.json', function (err, data) {
         if (err) throw err;
 
         let newCommand = JSON.parse(data);
@@ -41,23 +69,23 @@ module.exports.newCommand = function (command, response, type, api) {
         newCommand.type = type;
         newCommand.api = api;
 
-        fs.readFile(path.join(__dirname, 'commandsTemplate.json'), function(err, data){
+        fs.readFile('database/commandsTemplate.json', function (err, data) {
             if (err) throw err;
 
             var commands = JSON.parse(data);
             let replaced = false;
-            commands.forEach(function(commObj, commIndex){
-                if(commObj.command == command || commObj.response == response || commObj.type == type || commObj.api == api){
+            commands.forEach(function (commObj, commIndex) {
+                if (commObj.command == command || commObj.response == response || commObj.type == type || commObj.api == api) {
                     commands[commIndex] = newCommand;
                     replaced = true;
                 }
             });
-            if(!replaced){
+            if (!replaced) {
                 commands.push(newCommand);
             }
 
             var commandsBuffer = JSON.stringify(commands);
-            fs.writeFileSync(path.join(__dirname, 'commands.json'), commands);
+            fs.writeFileSync('database/commands.json', commands);
         });
     });
 };
@@ -67,21 +95,21 @@ module.exports.checkCommand = function (command, callback) {
     let commands;
 
     var commandsBuffer;
-    fs.readFile(path.join(__dirname, 'commands.json'), function (err, data) {
+    fs.readFile('database/commands.json', function (err, data) {
         if (err) throw err;
 
         commandsBuffer = data;
         commands = JSON.parse(commandsBuffer);
         var found = false;
 
-        commands.forEach(function(command){
-            if(commObj.command.includes(command)){
+        commands.forEach(function (command) {
+            if (commObj.command.includes(command)) {
                 found = true;
                 callback(commObj);
             }
         });
 
-        if(!found){
+        if (!found) {
             callback(undefined);
         }
     });
