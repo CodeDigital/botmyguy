@@ -64,6 +64,7 @@ module.exports.getInfo = function(callback) {
   twitch_auth_window.webContents.session.clearStorageData(function() {
     console.log('Electron password auth cache cleared');
 
+    //TODO: add chat_login	scope \/
     twitch_auth_window.loadURL('https://id.twitch.tv/oauth2/authorize?' +
       'client_id=' + clientID +
       '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +
@@ -78,6 +79,7 @@ module.exports.getInfo = function(callback) {
 
       if (newURL.includes('#access_token=') & newURL.includes('&id_token=')){
         //Finds Access Token
+        console.log(newURL);
         var accTokenStart = newURL.indexOf('#access_token=') + 14;
         var accTokenEnd = newURL.indexOf('&', accTokenStart);
         var accessToken = newURL.substring(accTokenStart, accTokenEnd);
@@ -110,7 +112,7 @@ module.exports.getInfo = function(callback) {
             getTwitchID(token_Info.accessToken, function (e) {
               token_Info.user = e[0];
               console.log(token_Info);
-              twitch_auth_window.close();
+              //twitch_auth_window.close();
               callback(token_Info);
             });
           } else {

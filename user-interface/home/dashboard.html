@@ -39,17 +39,17 @@
 
             <p class="font-weight-bold pl-3">Abilities</p>
             <a href="dashboard.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-monitor"></i><p class="ml-3 d-inline">Dashboard</p></a>
+              <i class="d-inline-block ion-monitor" style="width:7%;"></i><p class="ml-3 d-inline">Dashboard</p></a>
             <a href="commands.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-alert px-1"></i><p class="ml-3 d-inline">Commands</p></a>
+              <i class="d-inline-block ion-alert text-center" style="width:7%;"></i><p class="ml-3 d-inline">Commands</p></a>
             <a href="timed-messages.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-ios-timer"></i><p class="ml-3 d-inline">Timed Messages</p></a>
+              <i class="d-inline-block ion-ios-timer" style="width:7%;"></i><p class="ml-3 d-inline">Timed Messages</p></a>
             <a href="stream-games.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-ios-game-controller-a"></i><p class="ml-3 d-inline">Stream Games</p></a>
+              <i class="d-inline-block ion-ios-game-controller-a" style="width:7%;"></i><p class="ml-3 d-inline">Stream Games</p></a>
             <a href="settings.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-gear-b"></i><p class="ml-3 d-inline">Settings</p></a>
+              <i class="d-inline-block ion-gear-b" style="width:7%;"></i><p class="ml-3 d-inline">Settings</p></a>
             <a href="help.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-help-buoy"></i><p class="ml-3 d-inline">Help</p></a>
+              <i class="d-inline-block ion-help-buoy" style="width:7%;"></i><p class="ml-3 d-inline">Help</p></a>
             <br>
             <p><small style="font-size:55%;bottom:0;" class="text-center">Copyright (c) 2018 Copyright Holder All Rights Reserved.</small></p>
             <div class="dropdown-divider fixed-bottom mb-1" style="border-color:#180018;"></div>
@@ -57,6 +57,11 @@
 
         <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
           <br><br>
+          <button type="button" class="btn btn-lg btn-success float-right text-white d-inline" id="cButton" onclick="connect()">
+            <i class="d-inline ion-power pr-2"></i>Connect</button>
+          <button type="button" class="btn btn-lg btn-danger float-right text-white d-none" id="dcButton" onclick="disconnect()">
+            <i class="d-inline ion-power pr-2" style="display: none;"></i>Disconnect</button>
+
           <h1 class="display-4" id="welcomeText">Welcome, USER</h1>
           <p class="lead">Currently This is empty, but looks at that menu. Ooooh...</p>
         </div>
@@ -83,6 +88,30 @@
         var wText = userWelcome.innerHTML;
         wText = wText.substring(0, 9) + settings.user;
         userWelcome.innerHTML = wText;
+      });
+
+      function connect() {
+        ipcRenderer.send('connect');
+      }
+
+      ipcRenderer.on('connect:success', function(e){
+        var connectButton = document.getElementById('cButton');
+        var disconnectButton = document.getElementById('dcButton');
+
+        connectButton.className = "btn btn-lg btn-success float-right text-white d-none";
+        disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-inline";
+      });
+
+      function disconnect() {
+        ipcRenderer.send('disconnect');
+      }
+
+      ipcRenderer.on('disconnect:success', function (e) {
+        var connectButton = document.getElementById('cButton');
+        var disconnectButton = document.getElementById('dcButton');
+
+        connectButton.className = "btn btn-lg btn-success float-right text-white d-inline";
+        disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-none";
       });
 
     </script>

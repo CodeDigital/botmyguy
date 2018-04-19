@@ -4,6 +4,7 @@ const disp = require('./user-interface/display.js');
 const twitchauth = require('./bot-server/twitch-authenticate.js');
 const db = require('./database/database.js');
 const ck = require('./database/cookies.js');
+const tw = require('./bot-server/twitch.js');
 let setupComplete = false;
 
 //Windows
@@ -64,4 +65,14 @@ ipcMain.on('setup:complete', function (e, item) {
   mainWindow.on('closed', function () {
     app.quit();
   });
+});
+
+ipcMain.on('connect', function (e, item) {
+  tw.connect(function(){
+    e.sender.send("connect:success");
+  });
+});
+
+ipcMain.on('disconnect', function (e, item) {
+    e.sender.send("disconnect:success");
 });

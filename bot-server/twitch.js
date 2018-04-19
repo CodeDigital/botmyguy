@@ -14,6 +14,7 @@ var heartbeat;
 var userEnded = false;
 
 let ws;
+var whisperEvent;
 var wsSuccess = false;
 var wsRetryChecker;
 
@@ -27,16 +28,17 @@ const pong = {
     "type": "PONG"
 };
 
-module.exports.connect = function(){
+module.exports.connect = function(callback){
 
     ck.getCookie('twitchBotInfo', function (cookie) {
         db.getSettings(function(settings){
-            var bot_id = settings.bot_id;
-            var user_id = settings.streamer_id;
-            var token = cookie.accessToken;
-            var authToken = ("oauth:" + token);
-
-            startWS();
+            bot_id = settings.bot_id;
+            whisperEvent = "whispers." + bot_id;
+            user_id = settings.streamer_id;
+            token = cookie.accessToken;
+            authToken = ("oauth:" + token);
+            console.log("botID - " + bot_id);
+            startWS(callback);
         });
     });
 }
@@ -45,31 +47,32 @@ module.exports.disconnect = function(){
 
 }
 
-function startWS(){
+function startWS(callback){
     userEnded = false;
     wsSuccess = false;
+    console.log("token - " + token);
 
     ws = new websocket('wss://pubsub-edge.twitch.tv');
 
     ws.addEventListener('open', function () {
         startPinging();
-        confirmConnection('ws');
+        confirmConnection('ws', callback);
+        var whisperTopic = "whispers." + bot_id;
+        ws.send(JSON.stringify({
+            "type": "LISTEN",
+            "data": {
+                "topics": [("whispers." + bot_id)],
+                "auth_token": token
+            }
+        }));
     });
-
-    ws.send(JSON.stringify({
-        "type": "LISTEN",
-        "data": {
-            "topics": [("whispers." + bot_id)],
-            "auth_token": token
-        }
-    }));
 
     ws.addEventListener('close', function(code, reason){
         console.log('WS Closed Because: ' + reason + ' | Code: ' + code.data);
         clearTimeout(wsRetryChecker);
 
         if (!userEnded) {
-            startWS();
+            startWS(callback);
         } else {
             successfulConnection = false;
         }
@@ -78,11 +81,13 @@ function startWS(){
     ws.addEventListener('error', function (e) {
         console.log(e);
         clearInterval(heartbeat);
-        clearTimeout(retryErrorOver);
-        startWS();
+        clearTimeout(wsRetryChecker);
+        startWS(callback);
     });
 
     ws.addEventListener('message', function (event) {
+        console.log('Got a mesage - ');
+        console.log(event);
         if (event != undefined) {
             if (event.data != undefined) {
                 var edata = JSON.parse(event.data);
@@ -90,6 +95,7 @@ function startWS(){
                     if (edata.data != undefined) {
                         if (edata.data.topic = whisperEvent) {
                             var datas = JSON.parse(edata.data.message);
+                            console.log('Got A Whisper!');
                             if (datas.data != undefined) {
                                 var message = JSON.parse(datas.data);
                                 var body = message.body;
@@ -101,9 +107,11 @@ function startWS(){
                             console.log('This is something else...')
                         }
                     }
-                } else if (edata.type = 'RECONNECT' && wsSuccess) {
+                } else if (edata.type = 'RECONNECT') {
+                    console.log('Reconnecting to WS. Reason - ');
+                    console.log(edata);
                     clearInterval(heartbeat);
-                    clearTimeout(retryErrorOver);
+                    clearTimeout(wsRetryChecker);
                     startWS();
                 }
             }
@@ -120,7 +128,7 @@ function gotChat(){
 }
 
 function gotWhisper(from, body) {
-
+    console.log(from + " - " + body);
 }
 
 function gotFollow() {
@@ -149,9 +157,11 @@ function startPinging() {
     }, (60 * 1000));
 }
 
-function confirmConnection(type){
+function confirmConnection(type, callback){
     wsRetryChecker = setTimeout(function () {
         console.log('Established Stable Connection To ' + type);
+        callback;
+
         if(type == 'ws'){
             wsSuccess = true;
         }else{

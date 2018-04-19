@@ -21,7 +21,8 @@
     "dotenv": "^5.0.1",
     "irc": "^0.5.2",
     "jsonwebtoken": "^8.2.1",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "ws": "^5.1.1"
   },
   "devDependencies": {
     "electron": "^1.8.4"
