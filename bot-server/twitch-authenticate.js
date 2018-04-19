@@ -37,7 +37,7 @@ function generateNonce() {
 
   return nonce;
 }
-
+module.exports.generateNonce = generateNonce;
 
 //Gets both the idtoken and the accesstoken for the bot.
 module.exports.getInfo = function(callback) {
@@ -69,7 +69,7 @@ module.exports.getInfo = function(callback) {
       'client_id=' + clientID +
       '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +
       '&response_type=' + 'token%20id_token' +
-      '&scope=openid%20user%3Aedit%20bits%3Aread%20user%3Aread%3Aemail' +
+      '&scope=openid%20user%3Aedit%20bits%3Aread%20user%3Aread%3Aemail%20chat_login' +
       '&nonce=' + nonce);
   });
 
@@ -78,6 +78,7 @@ module.exports.getInfo = function(callback) {
     contents.on('did-get-redirect-request', function (event, oldURL, newURL, isMainFrame, httpResponseCode, requestMethod, referrer, headers) {
 
       if (newURL.includes('#access_token=') & newURL.includes('&id_token=')){
+        twitch_auth_window.close();
         //Finds Access Token
         console.log(newURL);
         var accTokenStart = newURL.indexOf('#access_token=') + 14;

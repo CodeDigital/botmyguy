@@ -40,7 +40,7 @@ module.exports.getSettings = function (callback) {
     });
 }
 
-module.exports.setSettings = function (settings) {
+function setSettings(settings) {
     var settingsBuffer = JSON.stringify(settings);
 
     if (fs.existsSync('database.settings.json')){
@@ -58,6 +58,8 @@ module.exports.setSettings = function (settings) {
         });
     }
 };
+
+module.exports.setSettings = setSettings;
 
 module.exports.newCommand = function (command, response, type, api) {
     fs.readFile('database/commandsTemplate.json', function (err, data) {
