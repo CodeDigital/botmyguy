@@ -41,9 +41,9 @@ module.exports.connect = function(callback){
             bot_id = settings.bot_id;
             whisperEvent = "whispers." + bot_id;
             user_id = settings.streamer_id;
-            bot_token = cookie.accessToken;
-            bot_authToken = ("oauth:" + token);
-            //nonce = ta.generateNonce();
+            token = cookie.accessToken;
+            authToken = ("oauth:" + token);
+            nonce = ta.generateNonce();
             console.log("botID - " + bot_id);
             startWS(callback);
         });
@@ -64,7 +64,7 @@ function startWS(callback){
         ws.send(JSON.stringify(
             {
                 "type": "LISTEN",
-                //"nonce": nonce,
+                "nonce": nonce,
                 "data": {
                     "topics": [whisperEvent],
                     "auth_token": token
@@ -77,8 +77,14 @@ function startWS(callback){
         }, (60 * 1000));
     });
 
-    ws.on('message', function(message) {
-        console.log(JSON.parse(message));
+    ws.on('message', function(e) {
+        if(e){
+            var event = JSON.parse(e);
+            console.log(event);
+            if((event.nonce + "") == nonce){
+                console.log('Message From TWITCH!');
+            }
+        }
     });
 }
 
