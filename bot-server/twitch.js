@@ -80,9 +80,31 @@ function startWS(callback){
     ws.on('message', function(e) {
         if(e){
             var event = JSON.parse(e);
-            console.log(event);
-            if((event.nonce + "") == nonce){
-                console.log('Message From TWITCH!');
+            //console.log(event);
+            if((event.nonce + "") == nonce && event.type == 'RESPONSE'){
+                console.log('Response From TWITCH!');
+            }
+
+            if(event.type + '' == 'MESSAGE'){
+                console.log('Message from TWITCH!');
+                switch (event.data.topic + '') {
+                    case whisperEvent:
+                        //console.log('Whisper Received!');
+                        var parsed = JSON.parse(event.data.message);
+                        var message = JSON.parse(parsed.data);
+                        console.log(message.tags.color);
+
+                        if(message.nonce == nonce){
+                            console.log('Whisper Received from TWITCH!');
+
+                            console.log(message.tags.display_name + ": " + message.body);
+                        }
+
+                        break;
+                
+                    default:
+                        break;
+                }
             }
         }
     });
