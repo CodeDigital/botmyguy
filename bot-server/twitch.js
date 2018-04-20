@@ -93,12 +93,12 @@ function startWS(callback){
                         var parsed = JSON.parse(event.data.message);
                         var message = JSON.parse(parsed.data);
                         console.log(message.tags.color);
+                        console.log(message.nonce);
+                        console.log('Whisper Received from TWITCH!');
 
-                        if(message.nonce == nonce){
-                            console.log('Whisper Received from TWITCH!');
+                        console.log("Whisper from " + message.tags.display_name + ": " + message.body);
 
-                            console.log(message.tags.display_name + ": " + message.body);
-                        }
+                        gotWhisper(message.tags.login, message.body);
 
                         break;
                 
@@ -111,7 +111,7 @@ function startWS(callback){
 }
 
 function startIRC(){
-    
+    ircClient = new irc.Client('irc.chat.twitch.tv');
 }
 
 function gotChat(){
@@ -119,7 +119,12 @@ function gotChat(){
 }
 
 function gotWhisper(from, body) {
-    console.log(from + " - " + body);
+    db.checkCommand(body,function(commandObject){
+        if(commandObject){
+            console.log('An Command Was Called');
+            console.log(commandObject.response);
+        }
+    });
 }
 
 function gotFollow() {

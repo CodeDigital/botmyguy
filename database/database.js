@@ -104,8 +104,8 @@ module.exports.checkCommand = function (command, callback) {
         commands = JSON.parse(commandsBuffer);
         var found = false;
 
-        commands.forEach(function (command) {
-            if (commObj.command.includes(command)) {
+        commands.forEach(function (commObj) {
+            if (command.includes(commObj.command)) {
                 found = true;
                 callback(commObj);
             }
@@ -114,5 +114,18 @@ module.exports.checkCommand = function (command, callback) {
         if (!found) {
             callback(undefined);
         }
+    });
+}
+
+module.exports.getCommands = function (callback) {
+    //commands from JSON
+    let commands;
+
+    var commandsBuffer;
+    fs.readFile('database/commands.json', function (err, data) {
+        commandsBuffer = data;
+        commands = JSON.parse(commandsBuffer);
+
+        callback(commands);
     });
 }
