@@ -116,9 +116,21 @@
       console.log(x);
     }
 
+    function edit(x){ 
+      db.removeCommand(x, function (success) {
+        if(success){
+          reloadCommands();
+        }
+      });
+    }
+
     function reloadCommands(){
       db.getCommands(function (commands) {
         var btnList = document.getElementById('commandList');
+        
+        while(btnList.firstChild){
+          btnList.removeChild(btnList.firstChild);
+        }
         
         commands.forEach(function(commObj) {
           var newBTN = '<button type="button" class="btn btn-lg btn-primary float-right text-white d-inline-block mx-3" style="width:7%;" onclick="edit()"><i class="ion-edit"></i></button></div >';

@@ -129,3 +129,22 @@ module.exports.getCommands = function (callback) {
         callback(commands);
     });
 }
+
+module.exports.removeCommand = function (command, callback) {
+    //commands from JSON
+    let commands;
+
+    var commandsBuffer;
+    fs.readFile('database/commands.json', function (err, data) {
+        commandsBuffer = data;
+        commands = JSON.parse(commandsBuffer);
+
+        commands.forEach(function(commObj, index) {
+            if(commObj.command == command){
+                commands.splice(index, 1);
+                callback(true);
+            }
+        });
+        callback(false);
+    });
+}

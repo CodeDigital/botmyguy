@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Bot MyGuy | Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/ionicons.css">
+    <style>
+        body {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid text-white h-100">
+
+        <!-- Header of Page... -->
+        <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
+            <div class="col-md-4" style="background-color: #210021;text-align:center;">
+                <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
+            </div>
+            <div class="col" style="background-color: #210021;">
+                <i class="float-right d-inline ion-close-round p-0 py-1 mx-2 mr-3" id="close-btn" style="-webkit-app-region: no-drag;"></i>
+                <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
+                <br>
+                <br>
+                <form>
+                    <h1 class="display-4 text-center">Add or Edit a Command!</h1>
+                    <div class="form-group">
+                        <label for="chatCommand" class="h4">Command In Chat</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">!</div>
+                            </div>
+                            <input class="form-control form-control-lg" type="text" name="command" id="chatCommand" placeholder="command" aria-describedby="commandHelpBlock">
+                        </div>
+                        <small id="commandHelpBlock" class="form-text text-white">
+                            This is the command that people will type in chat to activate a response.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chatResponse" class="h4">Bot Response</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-lg" type="text" name="command" id="chatCommand" placeholder="Hello there, FROM!" aria-describedby="commandHelpBlock">
+                        </div>
+                        <small id="commandHelpBlock" class="form-text text-white">
+                            This is the response from the bot to the person who called the command. Use FROM to add the username of the person who called the command.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="cancel" class="btn btn-secondary btn-lg">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row fixed-bottom">
+            <div class="col" style="background-color: #210021;">
+                <h6 class="mb-0 mr-2 d-inline-block float-right">New/Edit Command</h6>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../titlebar.js"></script>
+
+    <script type="text/javascript">
+        const { ipcRenderer } = require('electron');
+        const twitchauth = require('../../bot-server/twitch-authenticate.js');
+
+        function twitchLogin() {
+            console.log('this working?');
+            twitchauth.getInfo(function (result) {
+                var streamer = result;
+                console.log(streamer);
+                ipcRenderer.send('streamerauth:done', streamer);
+
+                var nextBtn = document.getElementById('nextBtn');
+                nextBtn.className = "btn btn-success btn-lg btn-block mx-auto";
+                nextBtn.setAttribute('aria-disabled', false);
+            });
+        }
+    </script>
+
+</body>
+
+</html>
