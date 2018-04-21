@@ -12,6 +12,7 @@ let mainWindow;
 let loadingWindow;
 let setup;
 let errorWindow;
+let commandWindow;
 
 app.on('ready', function() {
   db.getSettings(function(settings){
@@ -75,4 +76,22 @@ ipcMain.on('connect', function (e, item) {
 
 ipcMain.on('disconnect', function (e, item) {
     e.sender.send("disconnect:success");
+});
+
+ipcMain.on('commandedit:cancel', function(e, item) {
+  commandWindow.close();
+});
+
+ipcMain.on('commandedit:edit', function(e, item) {
+  db.newCommand(item);
+  commandWindow.close();
+  mainWindow.webContents.send('reload:command');
+});
+
+ipcMain.on('command:edit', function(e, item) {
+  commandWindow = disp.editCommand();
+
+  if(item){
+    commandWindow.webContents.send('commandedit:editing', item);
+  }
 });

@@ -4,7 +4,7 @@
 const {BrowserWindow, ipcMain} = require('electron');
 const url = require('url');
 const path = require('path');
-let mainWindow, errorWindow, loadWindow, setupWindow;
+let mainWindow, errorWindow, loadWindow, setupWindow, commandWindow;
 
 module.exports.mainWindow = function() {
   //Create The Main Window
@@ -12,7 +12,9 @@ module.exports.mainWindow = function() {
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     width: 1280,
-    height: 720
+    height: 720,
+    minHeight: 450,
+    minWidth: 800
   });
 
   //Load HTML File into window.
@@ -106,5 +108,29 @@ module.exports.setup = function() {
   setupWindow.webContents.openDevTools()
 
   return setupWindow;
+
+}
+
+module.exports.editCommand = function () {
+  //Create The Main Window
+  commandWindow = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 1200,
+    height: 600,
+    title: 'Edit A Command!'
+  });
+
+  //Load HTML File into window.
+  commandWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'home/commands/new-command.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+  commandWindow.webContents.openDevTools()
+
+  return commandWindow;
 
 }

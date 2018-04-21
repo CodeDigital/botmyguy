@@ -13,7 +13,7 @@
         crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/ionicons.css">
+    <link rel="stylesheet" href="../../css/ionicons.css">
     <style>
         body {
             height: 100%;
@@ -42,6 +42,12 @@
                 <br>
                 <form>
                     <h1 class="display-4 text-center">Add or Edit a Command!</h1>
+                    <div class="alert alert-warning alert-dismissible fade d-none" role="alert" id="retryAlert">
+                        <strong>Woah, There!</strong> You should check in on some of those fields below. None of them can be empty!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                     <div class="form-group">
                         <label for="chatCommand" class="h4">Command In Chat</label>
                         <div class="input-group">
@@ -58,7 +64,7 @@
                     <div class="form-group">
                         <label for="chatResponse" class="h4">Bot Response</label>
                         <div class="input-group">
-                            <input class="form-control form-control-lg" type="text" name="command" id="chatCommand" placeholder="Hello there, FROM!" aria-describedby="commandHelpBlock">
+                            <input class="form-control form-control-lg" type="text" name="command" id="chatResponse" placeholder="Hello there, FROM!" aria-describedby="commandHelpBlock">
                         </div>
                         <small id="commandHelpBlock" class="form-text text-white">
                             This is the response from the bot to the person who called the command. Use FROM to add the username of the person who called the command.
@@ -66,8 +72,44 @@
                     </div>
 
                     <div class="form-group">
-                        <button type="cancel" class="btn btn-secondary btn-lg">Cancel</button>
-                        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        <label for="chatResponse" class="h4">Bot Response</label>
+                        <div class="input-group">
+                            <textarea class="form-control form-control-lg" type="text" name="command" id="chatDescription" placeholder="Say hello to somebody"
+                                aria-describedby="commandHelpBlock"></textarea>
+                        </div>
+                        <small id="commandHelpBlock" class="form-text text-white">
+                            Explain what this command can do?
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apiType" class="h4">Bot Response</label>
+                        <br>
+                        <div class="btn-group btn-group-lg w-100" id="apiType" aria-describedby="apiHelpBlock">
+                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #6441A4;width:calc(100% / 3);"
+                             onclick="apiTypeClicked('twitchchat');" onmouseover="typeHover(this, 'twitchchat');" onmouseout="typeMouseOff(this, 'twitchchat');">
+                                <i class="ion-social-twitch"></i>
+                                Twitch Chat
+                            </button>
+                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #6441A4;width:calc(100% / 3);"
+                             onclick="apiTypeClicked('twitchwhisper');" onmouseover="typeHover(this, 'twitchwhisper');" onmouseout="typeMouseOff(this, 'twitchwhisper');">
+                                <i class="ion-social-twitch-outline"></i>
+                                Twitch Whisper
+                            </button>
+                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #2C2F33;width:calc(100% / 3);"
+                             onclick="apiTypeClicked('discord');" onmouseover="typeHover(this, 'discord');" onmouseout="typeMouseOff(this, 'discord');">
+                                <img src="../../css/Discord-Logo-White.svg" style="margin-top:-3px;width:26px;">
+                                Discord Chat
+                            </button>
+                        </div>
+                        <small id="apiHelpBlock" class="form-text text-white">
+                            Where can this command be detected?
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="cancel();">Cancel</button>
+                        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addCommand();">Submit</button>
                     </div>
                 </form>
             </div>
@@ -81,24 +123,145 @@
 
     </div>
 
-    <script src="../titlebar.js"></script>
+    <script src="../../titlebar.js"></script>
 
     <script type="text/javascript">
         const { ipcRenderer } = require('electron');
-        const twitchauth = require('../../bot-server/twitch-authenticate.js');
+        const db = require('../../../database/database.js');
+        var newCommand;
+        db.getCommandTemplate(function(commandTemplate){
+            newCommand = commandTemplate;
+        });
 
-        function twitchLogin() {
-            console.log('this working?');
-            twitchauth.getInfo(function (result) {
-                var streamer = result;
-                console.log(streamer);
-                ipcRenderer.send('streamerauth:done', streamer);
+        var twitchWhisperActive = false;
+        var twitchChatActive = false;
+        var discordActive = false;
 
-                var nextBtn = document.getElementById('nextBtn');
-                nextBtn.className = "btn btn-success btn-lg btn-block mx-auto";
-                nextBtn.setAttribute('aria-disabled', false);
-            });
+        function typeHover(x, type) {
+                        switch (type) {
+                case "twitchchat":
+                        x.style.backgroundColor = "#533093";
+                    break;
+
+                case "twitchwhisper":
+                        x.style.backgroundColor = "#533093";
+                    break;
+
+                case "discord":
+                        x.style.backgroundColor = "#1B1E22";
+                    break;
+
+                default:
+                    break;
+            }
         }
+
+        function typeMouseOff(x, type) {
+            switch (type) {
+                case "twitchchat":
+                    if(!twitchChatActive){
+                        x.style.backgroundColor = "#6441A4";
+                    }
+                    break;
+
+                case "twitchwhisper":
+                    if (!twitchWhisperActive) {
+                        x.style.backgroundColor = "#6441A4";
+                    }
+                    break;
+
+                case "discord":
+                    if (!discordActive) {
+                        x.style.backgroundColor = "#2C2F33";
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        function apiTypeClicked(type){
+            console.log('API Type CLICKED!');
+
+            switch(type){
+                case "twitchchat":
+                    if(!twitchChatActive){
+                        twitchChatActive = true;
+                    }else{
+                        twitchChatActive = false;
+                    }                
+                break;
+
+                case "twitchwhisper":
+                    if (!twitchWhisperActive) {
+                        twitchWhisperActive = true;
+                    } else {
+                        twitchWhisperActive = false;
+                    }  
+                break;
+
+                case "discord":
+                    if (!discordActive) {
+                        discordActive = true;
+                    } else {
+                        discordActive = false;
+                    }  
+                break;
+
+            }
+        }
+
+        function cancel(){
+            ipcRenderer.send('commandedit:cancel');
+        }
+
+        function addCommand(){
+            var command = document.getElementById('chatCommand');
+            var response = document.getElementById('chatResponse');
+            var description = document.getElementById('chatDescription');
+            console.log('Submitted');
+            if(command.value != '' && response.value != '' && description.value != '' && (twitchChatActive || twitchWhisperActive || discordActive)) {
+                var commandObject;
+                console.log(command.value);
+                db.getCommandTemplate(function (commandTemplate) {
+                    commandObject = commandTemplate;
+                    commandObject.command = command.value;
+                    commandObject.response = response.value;
+                    commandObject.description = response.value;
+                    var apis = commandObject.api;
+                    if(twitchChatActive){
+                        apis.push("twitchChat");
+                    }
+                    if(twitchWhisperActive){
+                        apis.push("twitchWhisper");
+                    }
+                    if(discordActive){
+                        apis.push("discord");
+                    }
+                    console.log(apis);
+                    commandObject.api = apis;
+
+                    ipcRenderer.send('commandedit:edit', commandObject);
+                });
+            }else{
+                var retryAlert = document.getElementById('retryAlert');
+                retryAlert.className = "alert alert-warning alert-dismissible fade d-block show";
+            }
+        }
+
+        ipcRenderer.on('commandedit:editing', function(e, item) {
+            var commandText = document.getElementById('chatCommand');
+            var responseText = document.getElementById('chatResponse');
+            var descriptionText = document.getElementById('chatDescription');
+            
+            db.checkCommand(item, function(commandObject) {
+                var itemCommand = commandObject.command;
+                commandText.value = itemCommand.substring(1);
+                responseText.value = commandObject.response;
+                descriptionText.value = commandObject.description;             
+            });
+        });
     </script>
 
 </body>

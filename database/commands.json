@@ -1,9 +1,1 @@
-[
-    {
-        "command":"!test",
-        "response":"It works!",
-        "description": "Just a test command!",
-        "type":"chat",
-        "api": ["twitchChat","twitchWhisper","discord"]
-    }
-]
+[{"command":"!test","response":"FROM, this is a test response","description":"Well this is just a test.","api":["twitchChat","twitchWhisper","discord"]}]

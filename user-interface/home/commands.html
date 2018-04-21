@@ -113,10 +113,19 @@
     const db = require('../../database/database.js');
 
     function edit(x){
+      console.log("Edit button");
       console.log(x);
+      ipcRenderer.send('command:edit', x);
     }
 
-    function edit(x){ 
+    function add() {
+        console.log("Add button");
+        ipcRenderer.send('command:edit', undefined);
+    }
+
+    function remove(x){ 
+      console.log("remove Button");
+      console.log(x);
       db.removeCommand(x, function (success) {
         if(success){
           reloadCommands();
@@ -127,11 +136,7 @@
     function reloadCommands(){
       db.getCommands(function (commands) {
         var btnList = document.getElementById('commandList');
-        
-        while(btnList.firstChild){
-          btnList.removeChild(btnList.firstChild);
-        }
-        
+
         commands.forEach(function(commObj) {
           var newBTN = '<button type="button" class="btn btn-lg btn-primary float-right text-white d-inline-block mx-3" style="width:7%;" onclick="edit()"><i class="ion-edit"></i></button></div >';
           var listItem = document.createElement('DIV');
@@ -143,15 +148,15 @@
           var subH5 = document.createElement('H5');
           subH5.className = "d-inline-block text-left h-100 border-right text-truncate my-2 mr-2 pr-2";
           subH5.style.width = "10%";
-          subH5.style.minWidth = "200px";
+          subH5.style.minWidth = "80px";
           subH5.innerHTML = commObj.command;
           
           subDiv.appendChild(subH5);
 
           var subP = document.createElement('P');
           subP.className = "d-inline-block h-100 text-truncate my-2";
-          subP.style.width = "54%";
-          subP.style.minWidth = "400px";
+          subP.style.width = "calc(90% - 350px)";
+          subP.style.minWidth = "150px";
           subP.innerHTML = commObj.description;
 
           subDiv.appendChild(subP);
@@ -161,7 +166,7 @@
           var removeButton = document.createElement('BUTTON');
           removeButton.setAttribute("type", "button");
           removeButton.className = "btn btn-lg btn-danger float-right text-white d-inline-block";
-          removeButton.style.width = "7%";
+          removeButton.style.width = "55px";
           removeButton.setAttribute("onclick", "remove('" + commObj.command + "');");
 
           var removeIcon = document.createElement('I');
@@ -173,7 +178,7 @@
           var editButton = document.createElement('BUTTON');
           editButton.setAttribute("type", "button");
           editButton.className = "btn btn-lg btn-primary float-right text-white d-inline-block mx-3";
-          editButton.style.width = "7%";
+          editButton.style.width = "55px";
           editButton.setAttribute("onclick", "edit('" + commObj.command + "');");
 
           var editIcon = document.createElement('I');
@@ -188,6 +193,11 @@
         console.log(commands);
       });
     }
+    
+    ipcRenderer.on("reload:command", function(e) {
+      console.log('test');
+      location.reload();
+    });
 
     reloadCommands();
 

@@ -61,23 +61,24 @@ function setSettings(settings) {
 
 module.exports.setSettings = setSettings;
 
-module.exports.newCommand = function (command, response, type, api) {
-    fs.readFile('database/commandsTemplate.json', function (err, data) {
+module.exports.newCommand = function (commandObject) {
+    fs.readFile('database/commandTemplate.json', function (err, data) {
         if (err) throw err;
 
         let newCommand = JSON.parse(data);
-        newCommand.command = command;
-        newCommand.response = response;
-        newCommand.type = type;
-        newCommand.api = api;
+        newCommand.command = commandObject.command;
+        newCommand.response = commandObject.response;
+        newCommand.description = commandObject.description;
+        newCommand.api = commandObject.api;
 
-        fs.readFile('database/commandsTemplate.json', function (err, data) {
+        fs.readFile('database/commands.json', function (err, data) {
             if (err) throw err;
 
             var commands = JSON.parse(data);
+            console.log(commands);
             let replaced = false;
             commands.forEach(function (commObj, commIndex) {
-                if (commObj.command == command || commObj.response == response || commObj.type == type || commObj.api == api) {
+                if (commObj.command == newCommand.command || commObj.response == newCommand.response || commObj.api == newCommand.api) {
                     commands[commIndex] = newCommand;
                     replaced = true;
                 }
@@ -87,7 +88,7 @@ module.exports.newCommand = function (command, response, type, api) {
             }
 
             var commandsBuffer = JSON.stringify(commands);
-            fs.writeFileSync('database/commands.json', commands);
+            fs.writeFileSync('database/commands.json', commandsBuffer);
         });
     });
 };
@@ -130,18 +131,34 @@ module.exports.getCommands = function (callback) {
     });
 }
 
-module.exports.removeCommand = function (command, callback) {
+module.exports.getCommandTemplate = function (callback) {
     //commands from JSON
     let commands;
 
     var commandsBuffer;
-    fs.readFile('database/commands.json', function (err, data) {
+    fs.readFile('database/commandTemplate.json', function (err, data) {
         commandsBuffer = data;
         commands = JSON.parse(commandsBuffer);
 
+        callback(commands);
+    });
+}
+
+module.exports.removeCommand = function (command, callback) {
+    //commands from JSON
+    let commands;
+    console.log(command);
+    var commandsBuffer;
+    fs.readFile('database/commands.json', function (err, data) {
+        commandsBuffer = data;
+        commands = JSON.parse(commandsBuffer);
+        console.log(commands);
         commands.forEach(function(commObj, index) {
             if(commObj.command == command){
+                console.log('Removed!');
                 commands.splice(index, 1);
+                commandsBuffer = JSON.stringify(commands);
+                fs.writeFileSync('database/commands.json', commandsBuffer);
                 callback(true);
             }
         });
