@@ -226,7 +226,7 @@
                 console.log(command.value);
                 db.getCommandTemplate(function (commandTemplate) {
                     commandObject = commandTemplate;
-                    commandObject.command = command.value;
+                    commandObject.command = "!" + command.value;
                     commandObject.response = response.value;
                     commandObject.description = response.value;
                     var apis = commandObject.api;
@@ -255,6 +255,8 @@
             var responseText = document.getElementById('chatResponse');
             var descriptionText = document.getElementById('chatDescription');
             
+            console.log("received " + item);
+
             db.checkCommand(item, function(commandObject) {
                 var itemCommand = commandObject.command;
                 commandText.value = itemCommand.substring(1);

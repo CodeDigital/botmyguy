@@ -70,12 +70,12 @@ ipcMain.on('setup:complete', function (e, item) {
 
 ipcMain.on('connect', function (e, item) {
   tw.connect(function(){
-    e.sender.send("connect:success");
+    mainWindow.webContents.send("connect:success");
   });
 });
 
 ipcMain.on('disconnect', function (e, item) {
-    e.sender.send("disconnect:success");
+    mainWindow.webContents.send("disconnect:success");
 });
 
 ipcMain.on('commandedit:cancel', function(e, item) {
@@ -92,6 +92,9 @@ ipcMain.on('command:edit', function(e, item) {
   commandWindow = disp.editCommand();
 
   if(item){
-    commandWindow.webContents.send('commandedit:editing', item);
+
+    setTimeout(function() {
+      commandWindow.webContents.send('commandedit:editing', item);
+    }, 3000);
   }
 });

@@ -128,7 +128,7 @@
       console.log(x);
       db.removeCommand(x, function (success) {
         if(success){
-          reloadCommands();
+          location.reload();
         }
       });
     }

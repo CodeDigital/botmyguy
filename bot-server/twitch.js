@@ -52,7 +52,7 @@ module.exports.connect = function(callback){
 
 module.exports.disconnect = function(){
 
-}
+}-
 
 function startWS(callback){
     ws = new WebSocket('wss://pubsub-edge.twitch.tv');
