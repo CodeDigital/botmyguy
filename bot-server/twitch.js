@@ -32,6 +32,61 @@ const pong = {
     "type": "PONG"
 };
 
+function startWS(callback) {
+    ws = new WebSocket('wss://pubsub-edge.twitch.tv');
+
+    ws.on('open', function () {
+
+        console.log('WS Connection Open!');
+
+        ws.send(JSON.stringify(
+            {
+                "type": "LISTEN",
+                "nonce": nonce,
+                "data": {
+                    "topics": [whisperEvent],
+                    "auth_token": token
+                }
+            }
+        ));
+
+        heartbeat = setInterval(function () {
+            ws.send(JSON.stringify(ping));
+        }, (60 * 1000));
+    });
+
+    ws.on('message', function (e) {
+        if (e) {
+            var event = JSON.parse(e);
+            //console.log(event);
+            if ((event.nonce + "") == nonce && event.type == 'RESPONSE') {
+                console.log('Response From TWITCH!');
+            }
+
+            if (event.type + '' == 'MESSAGE') {
+                console.log('Message from TWITCH!');
+                switch (event.data.topic + '') {
+                    case whisperEvent:
+                        //console.log('Whisper Received!');
+                        var parsed = JSON.parse(event.data.message);
+                        var message = JSON.parse(parsed.data);
+                        console.log(message.tags.color);
+                        console.log(message.nonce);
+                        console.log('Whisper Received from TWITCH!');
+
+                        console.log("Whisper from " + message.tags.display_name + ": " + message.body);
+
+                        gotWhisper(message.tags.login, message.body);
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+    });
+}
 
     //TODO: Fix this!
 module.exports.connect = function(callback){
@@ -48,67 +103,11 @@ module.exports.connect = function(callback){
             startWS(callback);
         });
     });
-}
+};
 
 module.exports.disconnect = function(){
 
-}-
-
-function startWS(callback){
-    ws = new WebSocket('wss://pubsub-edge.twitch.tv');
-
-    ws.on('open', function() {
-
-        console.log('WS Connection Open!');
-
-        ws.send(JSON.stringify(
-            {
-                "type": "LISTEN",
-                "nonce": nonce,
-                "data": {
-                    "topics": [whisperEvent],
-                    "auth_token": token
-                }
-            }
-        ));
-
-        heartbeat = setInterval(function() {
-            ws.send(JSON.stringify(ping));
-        }, (60 * 1000));
-    });
-
-    ws.on('message', function(e) {
-        if(e){
-            var event = JSON.parse(e);
-            //console.log(event);
-            if((event.nonce + "") == nonce && event.type == 'RESPONSE'){
-                console.log('Response From TWITCH!');
-            }
-
-            if(event.type + '' == 'MESSAGE'){
-                console.log('Message from TWITCH!');
-                switch (event.data.topic + '') {
-                    case whisperEvent:
-                        //console.log('Whisper Received!');
-                        var parsed = JSON.parse(event.data.message);
-                        var message = JSON.parse(parsed.data);
-                        console.log(message.tags.color);
-                        console.log(message.nonce);
-                        console.log('Whisper Received from TWITCH!');
-
-                        console.log("Whisper from " + message.tags.display_name + ": " + message.body);
-
-                        gotWhisper(message.tags.login, message.body);
-
-                        break;
-                
-                    default:
-                        break;
-                }
-            }
-        }
-    });
-}
+};
 
 function startIRC(){
     ircClient = new irc.Client('irc.chat.twitch.tv');

@@ -228,7 +228,7 @@
                     commandObject = commandTemplate;
                     commandObject.command = "!" + command.value;
                     commandObject.response = response.value;
-                    commandObject.description = response.value;
+                    commandObject.description = description.value;
                     var apis = commandObject.api;
                     if(twitchChatActive){
                         apis.push("twitchChat");
