@@ -7,6 +7,9 @@ const ck = require('./database/cookies.js');
 const tw = require('./bot-server/twitch.js');
 let setupComplete = false;
 
+var editingCommands = false;
+var commandToEdit = null;
+
 //Windows
 let mainWindow;
 let loadingWindow;
@@ -78,6 +81,16 @@ ipcMain.on('disconnect', function (e, item) {
     mainWindow.webContents.send("disconnect:success");
 });
 
+ipcMain.on('newCommand:ready', function(e,item) {
+  if(editingCommands){
+
+    commandWindow.webContents.send('commandedit:editing', commandToEdit);
+    commandToEdit = null;
+    editingCommands = false;
+
+  }
+});
+
 ipcMain.on('commandedit:cancel', function(e, item) {
   commandWindow.close();
 });
@@ -93,8 +106,8 @@ ipcMain.on('command:edit', function(e, item) {
 
   if(item){
 
-    setTimeout(function() {
-      commandWindow.webContents.send('commandedit:editing', item);
-    }, 3000);
+    editingCommands = true;
+    commandToEdit = item;
+
   }
 });

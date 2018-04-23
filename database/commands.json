@@ -1,1 +1,1 @@
-[{"command":"!test","response":"ya mum gai","description":"ya mum gai","api":["twitchChat","twitchWhisper","discord"]}]
+[{"command":"!test","response":"Hello boss","description":"test response","api":["twitchChat","twitchWhisper","discord"]}]

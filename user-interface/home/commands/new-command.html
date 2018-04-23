@@ -37,7 +37,7 @@
         </div>
 
         <div class="row">
-            <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
+            <div class="col" style="background-color: #470047; height:100vh; overflow-y: auto;" id="app-display">
                 <br>
                 <br>
                 <form>
@@ -86,17 +86,17 @@
                         <label for="apiType" class="h4">Bot Response</label>
                         <br>
                         <div class="btn-group btn-group-lg w-100" id="apiType" aria-describedby="apiHelpBlock">
-                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #6441A4;width:calc(100% / 3);"
+                            <button type="button" class="btn btn-lg text-white border border-white" id="chatButton" style="background-color: #6441A4;width:calc(100% / 3);"
                              onclick="apiTypeClicked('twitchchat');" onmouseover="typeHover(this, 'twitchchat');" onmouseout="typeMouseOff(this, 'twitchchat');">
                                 <i class="ion-social-twitch"></i>
                                 Twitch Chat
                             </button>
-                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #6441A4;width:calc(100% / 3);"
+                            <button type="button" class="btn btn-lg text-white border border-white" id="whisperButton" style="background-color: #6441A4;width:calc(100% / 3);"
                              onclick="apiTypeClicked('twitchwhisper');" onmouseover="typeHover(this, 'twitchwhisper');" onmouseout="typeMouseOff(this, 'twitchwhisper');">
                                 <i class="ion-social-twitch-outline"></i>
                                 Twitch Whisper
                             </button>
-                            <button type="button" class="btn btn-lg text-white border border-white" style="background-color: #2C2F33;width:calc(100% / 3);"
+                            <button type="button" class="btn btn-lg text-white border border-white" id="discordButton" style="background-color: #2C2F33;width:calc(100% / 3);"
                              onclick="apiTypeClicked('discord');" onmouseover="typeHover(this, 'discord');" onmouseout="typeMouseOff(this, 'discord');">
                                 <img src="../../css/Discord-Logo-White.svg" style="margin-top:-3px;width:26px;">
                                 Discord Chat
@@ -112,6 +112,8 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addCommand();">Submit</button>
                     </div>
                 </form>
+                <br>
+                <br>
             </div>
         </div>
 
@@ -136,6 +138,10 @@
         var twitchWhisperActive = false;
         var twitchChatActive = false;
         var discordActive = false;
+
+        function whenLoaded(){
+            ipcRenderer.send("newCommand:ready");
+        }
 
         function typeHover(x, type) {
                         switch (type) {
@@ -254,6 +260,9 @@
             var commandText = document.getElementById('chatCommand');
             var responseText = document.getElementById('chatResponse');
             var descriptionText = document.getElementById('chatDescription');
+            var chatButton = document.getElementById('chatButton');
+            var whisperButton = document.getElementById('whisperButton');
+            var discordButton = document.getElementById('discordButton');
             
             console.log("received " + item);
 
@@ -261,9 +270,33 @@
                 var itemCommand = commandObject.command;
                 commandText.value = itemCommand.substring(1);
                 responseText.value = commandObject.response;
-                descriptionText.value = commandObject.description;             
+                descriptionText.value = commandObject.description;
+                var apiArray = commandObject.api;
+                apiArray.forEach(apiType => {
+                    switch(apiType){
+                        case 'twitchChat':
+                            twitchChatActive = true;
+                            chatButton.style.backgroundColor = "#533093";
+                        break;
+
+                        case 'twitchWhisper': 
+                            twitchWhisperActive = true;
+                            whisperButton.style.backgroundColor = "#533093";
+                        break;
+
+                        case 'discord':
+                            discordActive = true;
+                            discordButton.style.backgroundColor = "1B1E22";
+                        break;
+
+                        default: break;
+                    }
+                });
+                
             });
         });
+
+        whenLoaded();
     </script>
 
 </body>
