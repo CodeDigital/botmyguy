@@ -1,1 +1,1 @@
-[{"command":"!test","response":"Hello boss","description":"test response","api":["twitchChat","twitchWhisper","discord"]}]
+[{"command":"!test","response":"FROM, Hello boss","description":"test response","api":["twitchChat","twitchWhisper","discord"]},{"command":"!hello","response":"Hello there, FROM!","description":"Well this is simple.","api":["twitchChat","twitchWhisper","discord"]}]

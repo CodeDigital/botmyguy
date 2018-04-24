@@ -9,6 +9,7 @@ let setupComplete = false;
 
 var editingCommands = false;
 var commandToEdit = null;
+var botConnected;
 
 //Windows
 let mainWindow;
@@ -46,6 +47,7 @@ ipcMain.on('botauth:done', function (e, item) {
   db.getSettings(function (sets) {
     var settings = sets;
     settings.bot_id = item.user.id;
+    settings.bot_nick = item.user.login;
     db.setSettings(settings);
     ck.setCookie('twitchBotInfo', item, function(cookie){
       //console.log(cookie);
@@ -73,12 +75,16 @@ ipcMain.on('setup:complete', function (e, item) {
 
 ipcMain.on('connect', function (e, item) {
   tw.connect(function(){
+    botConnected = setInterval(function () {
+      mainWindow.webContents.send("connect:success");
+    }, 10);
     mainWindow.webContents.send("connect:success");
   });
 });
 
 ipcMain.on('disconnect', function (e, item) {
     mainWindow.webContents.send("disconnect:success");
+    clearInterval(botConnected);
 });
 
 ipcMain.on('newCommand:ready', function(e,item) {

@@ -1,6 +1,7 @@
 {
     "firstTime": true,
-    "bot_id": "none",
-    "streamer_id": "none",
-    "user": ""
+    "bot_id": "",
+    "streamer_id": "",
+    "user": "",
+    "bot_nick": ""
 }
