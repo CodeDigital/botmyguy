@@ -1,86 +1,158 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Bot MyGuy | Template</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/ionicons.css">
-  </head>
 
-  <body>
+<head>
+  <meta charset="utf-8">
+  <title>Bot MyGuy | Template</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../css/ionicons.css">
+  <style>
+    body {
+      height: 100%;
+    }
+  </style>
+</head>
 
-    <div class="container-fluid text-white">
+<body>
 
-      <!-- Header of Page... -->
-      <div class="row align-middle ">
-        <div class="col-md-12" style="background-color: #210021;">
-          <h6 class="mb-0 mt-2 ml-3 d-inline-block">Bot My Guy</h6>
-          <i class="float-right d-inline ion-close-round p-0 py-1 ml-2" id="close-btn"></i>
-          <i class="float-right d-inline ion-plus-round p-0 py-1 mx-2" id="max-btn"></i>
-          <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn"></i>
-        </div>
+  <div class="container-fluid text-white h-100">
+
+    <!-- Header of Page... -->
+    <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
+      <div class="col-md-2" style="background-color: #210021;text-align:center;">
+        <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
       </div>
-
-      <div class="row">
-        <div class="col-md-2" style="background-color: #210021;">
-          <div class="dropdown-divider" style="border-color:#180018;"></div>
-          <br>
-
-          <ul class="list-group list-group-flush bg-transparent" style="font-size:120%;">
-
-            <p class="font-weight-bold pl-3">Abilities</p>
-            <a href="dashboard.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-monitor"></i><p class="ml-3 d-inline">Dashboard</p></a>
-            <a href="commands.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-alert px-1"></i><p class="ml-3 d-inline">Commands</p></a>
-            <a href="timed-messages.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-ios-timer"></i><p class="ml-3 d-inline">Timed Messages</p></a>
-            <a href="stream-games.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-ios-game-controller-a"></i><p class="ml-3 d-inline">Stream Games</p></a>
-            <a href="settings.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-gear-b"></i><p class="ml-3 d-inline">Settings</p></a>
-            <a href="help.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-              <i class="d-inline ion-help-buoy"></i><p class="ml-3 d-inline">Help</p></a>
-            <br>
-            <p><small style="font-size:55%;" class="pl-3">Copyright (c) 2018 Copyright Holder All Rights Reserved.</small></p>
-          </div>
-
-        <div class="col-md-10" style="background-color: #470047;" id="app-display">
-          <br>
-          <h1 class="display-4">Welcome, USER</h1>
-          <p class="lead">Currently This is empty, but looks at that menu. Ooooh...</p>
-        </div>
+      <div class="col" style="background-color: #210021;">
+        <i class="float-right d-inline ion-close-round p-0 py-1 mx-2" id="close-btn" style="-webkit-app-region: no-drag;"></i>
+        <i class="float-right d-inline ion-plus-round p-0 py-1 mx-2" id="max-btn" style="-webkit-app-region: no-drag;"></i>
+        <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
       </div>
-
     </div>
 
-    <script src="../titlebar.js"></script>
-    <script src="../home.js"></script>
-    <script type="text/javascript">
-      var activeElement = document.getElementById('active');
-      activeElement.style.backgroundColor = '#190019';
-      console.log(activeElement);
+    <div class="row">
+      <div class="col-md-2 text-truncate" style="background-color: #210021;min-width: 320px;max-width:320px; height:100vh;">
+        <br>
+        <div class="dropdown-divider" style="border-color:#180018;"></div>
+        <br>
+        <ul class="list-group list-group-flush bg-transparent" style="font-size:120%;">
 
-      function menuHover(x) {
-        x.style.backgroundColor = '#100010';
-        x.style.borderColor = '#180018';
-        //x.style.borderRadius = '5rem';
-      }
+          <p class="font-weight-bold pl-3">Abilities</p>
+          <a href="dashboard.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-monitor" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Dashboard</p>
+          </a>
+          <a href="commands.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-alert text-center" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Commands</p>
+          </a>
+          <a href="timed-messages.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-ios-timer" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Timed Messages</p>
+          </a>
+          <a href="poll.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-pie-graph" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Polls</p>
+          </a>
+          <a href="stream-games.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-ios-game-controller-a" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Stream Games</p>
+          </a>
+          <a href="settings.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+             id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-gear-b" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Settings</p>
+          </a>
+          <a href="help.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
+            onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
+            <i class="d-inline-block ion-help-buoy" style="width:7%;"></i>
+            <p class="ml-3 d-inline">Help</p>
+          </a>
+          <br>
+          <p>
+            <small style="font-size:55%;bottom:0;" class="text-center">Copyright (c) 2018 Copyright Holder All Rights Reserved.</small>
+          </p>
+          <div class="dropdown-divider fixed-bottom mb-1" style="border-color:#180018;"></div>
+      </div>
 
-      function menuNormal(x) {
-        x.style.borderColor = '#180018';
-        if(x == document.getElementById('active')){
-          x.style.backgroundColor = '#190019';
-        }else{
-          x.style.backgroundColor = '#210021';
-        }
-        //x.style.borderRadius = '0rem';
-      }
-    </script>
+      <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
+        <br>
+        <br>
+        <button type="button" class="btn btn-lg btn-success float-right text-white d-inline" id="cButton" onclick="connect()">
+          <i class="d-inline ion-power pr-2"></i>Connect</button>
+        <button type="button" class="btn btn-lg btn-danger float-right text-white d-none" id="dcButton" onclick="disconnect()">
+          <i class="d-inline ion-power pr-2" style="display: none;"></i>Disconnect</button>
 
-  </body>
+        <h1 class="display-4" id="welcomeText">Settings</h1>
+        <p class="lead">Currently This is empty, but looks at that menu. Ooooh...</p>
+      </div>
+    </div>
+
+    <div class="row fixed-bottom">
+      <div class="col" style="background-color: #210021;">
+        <h6 class="mb-0 mr-2 d-inline-block float-right">Test Version</h6>
+      </div>
+    </div>
+  </div>
+
+  <script src="../titlebar.js"></script>
+  <script src="menu.js"></script>
+
+  <script type="text/javascript">
+
+    const { ipcRenderer } = require('electron');
+    const fs = require('fs');
+    const db = require('../../database/database.js');
+
+    db.getSettings(function (settings) {
+      var userWelcome = document.getElementById('welcomeText');
+      var wText = userWelcome.innerHTML;
+      wText = wText.substring(0, 9) + settings.user;
+      userWelcome.innerHTML = wText;
+    });
+
+    function connect() {
+      ipcRenderer.send('connect');
+    }
+
+    ipcRenderer.on('connect:success', function (e) {
+      var connectButton = document.getElementById('cButton');
+      var disconnectButton = document.getElementById('dcButton');
+
+      connectButton.className = "btn btn-lg btn-success float-right text-white d-none";
+      disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-inline";
+    });
+
+    function disconnect() {
+      ipcRenderer.send('disconnect');
+    }
+
+    ipcRenderer.on('disconnect:success', function (e) {
+      var connectButton = document.getElementById('cButton');
+      var disconnectButton = document.getElementById('dcButton');
+
+      connectButton.className = "btn btn-lg btn-success float-right text-white d-inline";
+      disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-none";
+    });
+
+    ipcRenderer.on('twitch:gotchat', function (e, item) {
+
+    });
+
+  </script>
+
+</body>
+
 </html>
