@@ -128,6 +128,9 @@ function startIRC(callback){
         showErrors: false
     });
 
+    //ircClient.send('CAP REQ', 'twitch.tv/membership twitch.tv/tags twitch.tv/commands');
+
+
     ircClient.addListener('error', function(e) {
         //TODO: Add Error Window Thingy.
 
@@ -140,13 +143,28 @@ function startIRC(callback){
         console.log("------------------");
     });
 
+    ircClient.addListener('raw', function (message) {
+        console.log("Got Raw MESSAGE");
+        console.log(message);
+        //var msgObj = JSON.parse(message);
+        // var msgArgs = msgObj.args[1];
+        // var msgIndex = msgArgs.indexOf(':') + 1;
+        // var msg = msgArgs.substring(msgArgs.indexOf(':') + 1);
+        // var sender = msgObjs.args;
+
+        // if(msg.includes('PRIVMSG ' + userChannel + " :")){
+        //     gotChat()
+        // }
+    })
+
     ircClient.addListener('message', function (from, message) {
         console.log('pm: ' + from + ' - ' + message);
     });
 
     ircClient.addListener(('message' + userChannel), function (from, text, messageObject) {
+        console.log('got a message!');
         gotChat(from, text, messageObject);
-        console.log(from + ' => ' + userChannel + ': ');
+        console.log(from + ' => ' + userChannel + ': ' + text);
         console.log(messageObject);
     });
 
@@ -163,14 +181,21 @@ function startIRC(callback){
     });
 
     ircClient.send('PASS', authToken);
+    //ircClient.send('CAP REQ', 'twitch.tv/tags');
 
     ircClient.join((userChannel), function () {
         console.log('Connected to ' + userChannel);
+
         chatTalk('/color hotpink');
         chatAction('Hello Everybody! I\'m here to help. Type !help for commands.');
-        ircClient.send('CAP', 'REQ', ':twitch.tv/commands');
-        chatTalk('/host ' + userChannel);
+        
+        //chatTalk('/host ' + userChannel);
+        //ircClient.send('JOIN', userChannel);
+
         callback();
+
+        //ircClient.send('CAP REQ', 'twitch.tv/tags');
+
     });
 }
 
