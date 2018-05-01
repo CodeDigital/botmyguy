@@ -1,4 +1,4 @@
-const irc = require('irc');
+const irc = require('irc-upd');
 const WebSocket = require('ws');
 const disp = require('../user-interface/display.js');
 const db = require('../database/database.js');
@@ -105,6 +105,7 @@ module.exports.connect = function(callback){
             botNick = settings.bot_nick;
             userChannel = settings.user;
             userChannel = "#" + userChannel.toLowerCase();
+            //userChannel = userChannel.toLowerCase();
             nonce = ta.generateNonce();
             console.log("botID - " + bot_id);
             startWS(callback);
@@ -122,93 +123,57 @@ function startIRC(callback){
     console.log('Starting IRC');
 
     ircClient = new irc.Client('irc.chat.twitch.tv', botNick, {
-        autoConnect: true,
+        password: authToken,
+        debug: false,
+        showErrors: true,
+        channels: [userChannel],
+        autoConnect: false,
         autoRejoin: true,
-        userName: botNick,
         retryCount: 10,
         retryDelay: 2000,
-        debug: true,
-        showErrors: true
+        stripColors: false,
+        millisecondsOfSilenceBeforePingSent: 15 * 1000,
+        millisecondsBeforePingTimeout: 8 * 1000,
     });
 
-    //ircClient.send('CAP REQ', 'twitch.tv/membership twitch.tv/tags twitch.tv/commands');
+    ircClient.on('error', function(e){
+        console.log(e);
+    })
 
+    ircClient.on(('message' + userChannel), function(nick, text, message) {
+        console.log('Message ' + userChannel);
+        console.log(nick);
+        console.log(text);
+        console.log(message);
 
-    ircClient.addListener('error', function(e) {
-        //TODO: Add Error Window Thingy.
-
-        console.log('Error: ' + e.prefix + " | " + e.nick + " | " + e.user + " | " + e.host + " | " + e.server + " | " + e.rawCommand + " | " + e.command + " | " + e.args);
     });
 
-    ircClient.addListener('registered', function(message) {
-        console.log("Registered !");
-        console.log(message.args);
-        console.log("------------------");
+    ircClient.on(('message'), function (nick, to, text, message) {
+        console.log('Message Event.');
+        console.log(nick);
+        console.log(text);
+        console.log(message);
+
     });
 
-    // ircClient.addListener('raw', function (message) {
-    //     console.log("Got Raw MESSAGE");
-    //     console.log(message.args);
-    //     if(message){
-    //         //var msgObj = JSON.parse(message);
-    //         var msgObj = message;
-    //         console.log(msgObj);
+    ircClient.on(('raw'), function (message) {
+        console.log('Got Raw');
+        console.log(message);
 
-    //         if(msgObj.args){
-    //             var msgArgs = msgObj.args;
-    //             var msgArgOne = msgArgs[0];
-    //             var msgIndex = msgArgOne.indexOf(':') + 1;
-    //             var msg = msgArgOne.substring(msgIndex);
-
-    //             var chatColor = msgArgOne.substring(msgArgOne.indexOf('color:'),msgArgOne.indexOf(';', msgArgOne.indexOf('color:')));
-
-    //             if(msg.includes('PRIVMSG ' + userChannel + " :")){
-    //                 //gotChat();
-    //             }
-    //         }
-    //     }
-    // });
-
-    ircClient.addListener('message', function (from, message) {
-        console.log('pm: ' + from + ' - ' + message);
     });
 
-    ircClient.addListener(('message' + userChannel), function (from, text, messageObject) {
-        console.log('got a message!');
-        gotChat(from, text, messageObject);
-        console.log(from + ' => ' + userChannel + ': ' + text);
-        console.log(messageObject);
+    ircClient.connect(10, function(){
+        console.log('Connected to IRC!');
     });
 
-    ircClient.addListener('motd', function (motd) {
-        console.log(motd);
-    });
-
-    ircClient.addListener('ping', function (server) {
-        console.log('You\'ve been pinged!');
-    });
-
-    ircClient.connect(10, function () {
-        console.log('IRC Connected!');
-    });
-
-    ircClient.send('PASS', authToken);
-    //ircClient.send('NICK', botNick);
-    //ircClient.send('CAP REQ', 'twitch.tv/tags');
+    ircClient.send('CAP REQ', 'twitch.tv/tags');
+    //ircClient.send('CAP REQ', 'twitch.tv/commands');
 
     ircClient.join(userChannel, function () {
-        console.log('Connected to ' + userChannel);
-
-        chatTalk('/color hotpink');
-        chatAction('Hello Everybody! I\'m here to help. Type !help for commands.');
-
-        //chatTalk('/host ' + userChannel);
-        //ircClient.send('JOIN', userChannel);
-
+        console.log('Joined ' + userChannel);
+        chatTalk('/color HotPink');
+        chatAction('Hello everybody! Type !help to get some help with my commands.');
         callback();
-
-        //ircClient.send('CAP REQ', 'twitch.tv/tags');
-
     });
 }
 
