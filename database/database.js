@@ -16,7 +16,7 @@ module.exports.getSettings = function (callback) {
 
     var settingsBuffer;
     fs.readFile('database/settings.json', function (err, data) {
-        if (data) {
+        if (!(data == "")) {
             settingsBuffer = data;
             settings = JSON.parse(settingsBuffer);
 

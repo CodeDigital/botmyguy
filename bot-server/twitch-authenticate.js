@@ -134,11 +134,9 @@ module.exports.getInfoNoReset = function (callback) {
 
   //Create Auth Window.
   twitch_auth_window = new remote.BrowserWindow({
-    titleBarStyle: 'customButtonsOnHover',
-    frame: false,
     resizable: false,
     width: 500,
-    height: 700,
+    height: 650,
     title: 'Welcome to Bot My Guy!',
     webPreferences: {
       nodeIntegration: false,

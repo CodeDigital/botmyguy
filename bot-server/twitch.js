@@ -59,6 +59,7 @@ function startWS(callback) {
     });
 
     ws.on('message', function (e) {
+        console.log(e);
         if (e) {
             var event = JSON.parse(e);
             //console.log(event);
@@ -111,21 +112,23 @@ module.exports.connect = function(callback){
     });
 };
 
-module.exports.disconnect = function(){
-
+module.exports.disconnect = function(callback){
+    ircClient.disconnect();
+    ws.terminate();
 };
 
 function startIRC(callback){
 
+    console.log('Starting IRC');
+
     ircClient = new irc.Client('irc.chat.twitch.tv', botNick, {
-        autoConnect: false,
+        autoConnect: true,
         autoRejoin: true,
-        channels: [userChannel],
         userName: botNick,
         retryCount: 10,
         retryDelay: 2000,
-        debug: false,
-        showErrors: false
+        debug: true,
+        showErrors: true
     });
 
     //ircClient.send('CAP REQ', 'twitch.tv/membership twitch.tv/tags twitch.tv/commands');
@@ -143,19 +146,28 @@ function startIRC(callback){
         console.log("------------------");
     });
 
-    ircClient.addListener('raw', function (message) {
-        console.log("Got Raw MESSAGE");
-        console.log(message);
-        //var msgObj = JSON.parse(message);
-        // var msgArgs = msgObj.args[1];
-        // var msgIndex = msgArgs.indexOf(':') + 1;
-        // var msg = msgArgs.substring(msgArgs.indexOf(':') + 1);
-        // var sender = msgObjs.args;
+    // ircClient.addListener('raw', function (message) {
+    //     console.log("Got Raw MESSAGE");
+    //     console.log(message.args);
+    //     if(message){
+    //         //var msgObj = JSON.parse(message);
+    //         var msgObj = message;
+    //         console.log(msgObj);
 
-        // if(msg.includes('PRIVMSG ' + userChannel + " :")){
-        //     gotChat()
-        // }
-    })
+    //         if(msgObj.args){
+    //             var msgArgs = msgObj.args;
+    //             var msgArgOne = msgArgs[0];
+    //             var msgIndex = msgArgOne.indexOf(':') + 1;
+    //             var msg = msgArgOne.substring(msgIndex);
+
+    //             var chatColor = msgArgOne.substring(msgArgOne.indexOf('color:'),msgArgOne.indexOf(';', msgArgOne.indexOf('color:')));
+
+    //             if(msg.includes('PRIVMSG ' + userChannel + " :")){
+    //                 //gotChat();
+    //             }
+    //         }
+    //     }
+    // });
 
     ircClient.addListener('message', function (from, message) {
         console.log('pm: ' + from + ' - ' + message);
@@ -181,14 +193,15 @@ function startIRC(callback){
     });
 
     ircClient.send('PASS', authToken);
+    //ircClient.send('NICK', botNick);
     //ircClient.send('CAP REQ', 'twitch.tv/tags');
 
-    ircClient.join((userChannel), function () {
+    ircClient.join(userChannel, function () {
         console.log('Connected to ' + userChannel);
 
         chatTalk('/color hotpink');
         chatAction('Hello Everybody! I\'m here to help. Type !help for commands.');
-        
+
         //chatTalk('/host ' + userChannel);
         //ircClient.send('JOIN', userChannel);
 
