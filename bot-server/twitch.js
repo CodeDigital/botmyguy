@@ -92,7 +92,6 @@ function startWS(callback) {
     });
 }
 
-    //TODO: Fix this!
 module.exports.connect = function(callback){
 
     ck.getCookie('twitchBotInfo', function (cookie) {
@@ -160,6 +159,25 @@ function startIRC(callback){
         console.log('Got Raw');
         console.log(message);
 
+        var msgArguments = message.args;
+        fullBody = msgArguments[0];
+
+        if(fullBody.includes('PRIVMSG')){
+            var userIndex = fullBody.indexOf(((userChannel) + ' :')) + ((userChannel) + ' :').length;
+            var body = fullBody.substring(userIndex);
+            var fullCommand = message.command;
+            var colorStartIndex = fullCommand.indexOf('color=') + 'color='.length;
+            var colorEndIndex = fullCommand.indexOf(';', colorStartIndex);
+            var userColor = fullCommand.substring(colorStartIndex, colorEndIndex);
+            var fromStartIndex = fullCommand.indexOf('display-name=') + 'display-name'.length;
+            var fromEndIndex = fullCommand.indexOf(';');
+            var from = fullCommand.substring(fromStartIndex,fromEndIndex);
+            from = from.toLowerCase();
+            console.log(userColor);
+            console.log(from);
+
+        }
+
     });
 
     ircClient.connect(10, function(){
@@ -177,10 +195,11 @@ function startIRC(callback){
     });
 }
 
-function gotChat(from, message, messageObject){
+function gotChat(from, message, userColor){
     console.log(messageObject);
+    
 
-    db.checkCommand(message, function (commandObject) {
+    db.checkCommand(message, 'twitchChat', function (commandObject) {
         if (commandObject) {
             console.log('An Command Was Called');
             console.log(commandObject.response);
@@ -191,7 +210,7 @@ function gotChat(from, message, messageObject){
 }
 
 function gotWhisper(from, body) {
-    db.checkCommand(body,function(commandObject){
+    db.checkCommand(body, 'twitchWhisper', function(commandObject){
         if(commandObject){
             console.log('An Command Was Called');
             console.log(commandObject.response);
@@ -234,6 +253,6 @@ function whisper(to, message){
 }
 
 function commandReplaceFrom(response, from){
-    var respond = response.replace("FROM", ("@" + from));
+    var respond = response.replace("FROM", ("@" + from.toLowerCase()));
     return respond;
 }
