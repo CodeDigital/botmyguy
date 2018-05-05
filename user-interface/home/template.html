@@ -15,25 +15,115 @@
 
 </head>
 
-<body>
+<body class=" pink darken-4 white-text">
+
+  <nav style="height: 65px;">
+    <div class="nav-wrapper pink darken-2" style="height: 65px;">
+      <div class="valign-wrapper left">
+        <a href="#" data-target="slide-out" data-activates="slide-out" class="sidenav-trigger show-on-large">
+          <i class="large material-icons" style="font-size: 40px;">menu</i>
+        </a>
+      </div>
+      <div class="valign-wrapper left">
+        <h3 class="brand-logo">Bot My Guy</h3>
+      </div>
+
+      <ul class="right">
+        <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="close-btn">
+          <i class="large material-icons">remove</i>
+        </li>
+        <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="max-btn">
+          <i class="large material-icons">crop_free</i>
+        </li>
+        <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="close-btn">
+          <i class="large material-icons">close</i>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Menu -->
+
+    <ul id="slide-out" class="sidenav blue darken-3">
+      <li class="white-text center-align">
+        <br>
+        <!-- <img src="../assets/img/logo-white.png" style="width: 60%; margin-bottom: -45px;margin-top: -20px;" alt=""> -->
+
+        <div class="container"><h4>Welcome, USER</h4></div></li>
+      <li class="center-align">
+        <button class="btn btn-large green pulse hoverable" onclick="connect();" id="cButton">
+          <i class="large material-icons left" id="connectIcon">power</i>
+            <div class="preloader-wrapper small active hide" id="loadingCircle" style="margin-left: -15px; margin-right: 10px; margin-top: 10px;">
+              <div class="spinner-layer">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          Connect</button>
+        <button class="btn btn-large red waves-effect right hide" onclick="disconnect();" id="dcButton">
+          <i class="large material-icons left">eject</i> Disconnect</button>
+      </li>
+      <br>
+      <li class="indigo darken-2">
+        <a href="dashboard.html" class="white-text"><i class="material-icons white-text">dashboard</i> Dashboard</a>
+      </li>
+      <li>
+        <a href="commands.html" class="white-text">
+          <i class="material-icons white-text">announcement</i> Commands</a>
+      </li>
+      <li>
+        <a href="poll.html" class="white-text">
+          <i class="material-icons white-text">pie_chart</i> Polls</a>
+      </li>
+      <li>
+        <a href="timed-messages.html" class="white-text">
+          <i class="material-icons white-text">timer</i> Timed Events</a>
+      </li>
+      <li class="white-text">
+        <ul class="collapsible collapsible-accordion" style="margin-top: 0px;">
+          <li>
+            <a class="collapsible-header white-text">
+              <i class="material-icons white-text" style="margin-left: 16px;">videogame_asset</i>
+              <p style="display: inline;">Stream Games</p>
+              <i class="material-icons white-text right" style="display: block; margin-right: 10px;">arrow_drop_down</i>
+            </a>
+            <div class="collapsible-body indigo darken-3">
+              <ul>
+                <li>
+                  <a href="#" class="white-text"><i class="material-icons white-text">pets</i> Werewolves</a>
+                </li>
+                <li>
+                  <a href="#" class="white-text"><i class="material-icons white-text">people</i> Community</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <br>
+      <div class="center-align">
+        <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
+          <i class="material-icons white-text">settings</i>
+        </a>
+        <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
+          <i class="material-icons white-text">help_outline</i>
+        </a>
+        <a href="https://github.com/CodeDigital/botmyguy" target="_blank" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
+          <i class="material-icons white-text">code</i>
+        </a>
+      </div>
+    </ul>
 
   <div class="container">
 
-    <button class="btn btn-large green waves-effect pulse right" onclick="connect();"><i class="large material-icons left" id="connectIcon">power</i>
-    <div class="preloader-wrapper small active left hide" id="loadingCircle" style="margin-right: 30px;">
-      <div class="spinner-layer">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
-      </div>
-    </div> Connect</button>
-    <button class="btn btn-large red waves-effect right hide" onclick="disconnect();"><i class="large material-icons left">eject</i> Disconnect</button>
+    <h1>Dashboard</h1>
 
   </div>
 
@@ -45,6 +135,8 @@
   <script src="menu.js"></script>
 
   <script type="text/javascript">
+
+    var isConnecting = false;
 
     const { ipcRenderer } = require('electron');
     const fs = require('fs');
@@ -58,20 +150,24 @@
     });
 
     function connect() {
-      var connectIcon = document.getElementById('connectIcon');
-      var loadingCircle = document.getElementById('loadingCircle');
+      if(!isConnecting){
+        var connectIcon = document.getElementById('connectIcon');
+        var loadingCircle = document.getElementById('loadingCircle');
 
-      loadingCircle.className = "preloader-wrapper large active left";
-      connectIcon.style = "display:none;"
-      ipcRenderer.send('connect');
+        loadingCircle.className = "preloader-wrapper small active left";
+        connectIcon.style = "display:none;"
+        ipcRenderer.send('connect');
+        isConnecting = true;
+      }
     }
 
     ipcRenderer.on('connect:success', function (e) {
       var connectButton = document.getElementById('cButton');
       var disconnectButton = document.getElementById('dcButton');
 
-      connectButton.className = "btn btn-lg btn-success float-right text-white d-none";
-      disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-inline";
+      connectButton.className = "btn btn-large green waves-effect right hide"; 
+      disconnectButton.className = "btn btn-large red waves-effect right";
+      isConnecting = false;
     });
 
     function disconnect() {
@@ -82,8 +178,8 @@
       var connectButton = document.getElementById('cButton');
       var disconnectButton = document.getElementById('dcButton');
 
-      connectButton.className = "btn btn-lg btn-success float-right text-white d-inline";
-      disconnectButton.className = "btn btn-lg btn-danger float-right text-white d-none";
+      connectButton.className = "btn btn-large green waves-effect right";
+      disconnectButton.className = "btn btn-large red waves-effect right hide";
     });
 
   </script>
