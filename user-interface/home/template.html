@@ -54,7 +54,7 @@
         <button class="btn btn-large green pulse hoverable" onclick="connect();" id="cButton">
           <i class="large material-icons left" id="connectIcon">power</i>
             <div class="preloader-wrapper small active hide" id="loadingCircle" style="margin-left: -15px; margin-right: 10px; margin-top: 10px;">
-              <div class="spinner-layer">
+              <div class="spinner-layer spinner-red-only">
                 <div class="circle-clipper left">
                   <div class="circle"></div>
                 </div>
@@ -135,7 +135,7 @@
     <div class="row" style="overflow-y: hidden;margin-top: 0px;">
       <div class="col s6" style="padding-right: -100px;">
         <h2 style="margin-left: 10px;margin-bottom: -5px;">Chat</h2>
-        <ul class="collection grey darken-4" style="width: 48vw;height: calc(100vh - 263px);overflow-y:auto; ">
+        <ul class="collection grey darken-4" style="width: 49vw;height: calc(100vh - 263px);overflow-y:auto; ">
           <li class="collection-item avatar pink darken-3">
             <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
                         <!-- <h6 class="title">Test User</h6> -->
@@ -205,56 +205,6 @@
 
   <script src="../titlebar.js"></script>
   <script src="menu.js"></script>
-
-  <script type="text/javascript">
-
-    var isConnecting = false;
-
-    const { ipcRenderer } = require('electron');
-    const fs = require('fs');
-    const db = require('../../database/database.js');
-
-    db.getSettings(function (settings) {
-      var userWelcome = document.getElementById('welcomeText');
-      var wText = userWelcome.innerHTML;
-      wText = wText.substring(0, 9) + settings.user;
-      userWelcome.innerHTML = wText;
-    });
-
-    function connect() {
-      if(!isConnecting){
-        var connectIcon = document.getElementById('connectIcon');
-        var loadingCircle = document.getElementById('loadingCircle');
-
-        loadingCircle.className = "preloader-wrapper small active left";
-        connectIcon.style = "display:none;"
-        ipcRenderer.send('connect');
-        isConnecting = true;
-      }
-    }
-
-    ipcRenderer.on('connect:success', function (e) {
-      var connectButton = document.getElementById('cButton');
-      var disconnectButton = document.getElementById('dcButton');
-
-      connectButton.className = "btn btn-large green waves-effect right hide"; 
-      disconnectButton.className = "btn btn-large red waves-effect right";
-      isConnecting = false;
-    });
-
-    function disconnect() {
-      ipcRenderer.send('disconnect');
-    }
-
-    ipcRenderer.on('disconnect:success', function (e) {
-      var connectButton = document.getElementById('cButton');
-      var disconnectButton = document.getElementById('dcButton');
-
-      connectButton.className = "btn btn-large green waves-effect right";
-      disconnectButton.className = "btn btn-large red waves-effect right hide";
-    });
-
-  </script>
 
 </body>
 
