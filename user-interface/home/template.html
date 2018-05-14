@@ -4,18 +4,19 @@
 <head>
   <meta charset="utf-8">
   <title>Bot MyGuy | Template</title>
-    <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!--Import materialize.css-->
-    <link type="text/css" rel="stylesheet" href="../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection" />
-    
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
+  />
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 </head>
 
-<body class=" blue-grey darken-4 white-text" style="overflow: hidden;">
+<body class=" blue-grey darken-4 white-text" style="overflow-y: hidden;">
 
   <nav style="height: 65px;">
     <div class="nav-wrapper pink darken-2" style="height: 65px;">
@@ -44,158 +45,205 @@
 
   <!-- Menu -->
 
-    <ul id="slide-out" class="sidenav blue darken-2">
-      <li class="white-text center-align">
-        <br>
-        <!-- <img src="../assets/img/logo-white.png" style="width: 60%; margin-bottom: -45px;margin-top: -20px;" alt=""> -->
+  <ul id="slide-out" class="sidenav blue darken-2">
+    <li class="white-text center-align">
+      <br>
+      <!-- <img src="../assets/img/logo-white.png" style="width: 60%; margin-bottom: -45px;margin-top: -20px;" alt=""> -->
 
-        <div class="container"><h4>Welcome, USER</h4></div></li>
-      <li class="center-align">
-        <button class="btn btn-large green pulse hoverable" onclick="connect();" id="cButton">
-          <i class="large material-icons left" id="connectIcon">power</i>
-            <div class="preloader-wrapper small active hide" id="loadingCircle" style="margin-left: -15px; margin-right: 10px; margin-top: 10px;">
-              <div class="spinner-layer spinner-red-only">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
-              </div>
-            </div>
-          Connect</button>
-        <button class="btn btn-large red waves-effect right hide" onclick="disconnect();" id="dcButton">
-          <i class="large material-icons left">eject</i> Disconnect</button>
-      </li>
-      <br>
-      <li class="blue darken-4">
-        <a href="dashboard.html" class="white-text"><i class="material-icons white-text">dashboard</i> Dashboard</a>
-      </li>
-      <li>
-        <a href="commands.html" class="white-text">
-          <i class="material-icons white-text">announcement</i> Commands</a>
-      </li>
-      <li>
-        <a href="poll.html" class="white-text">
-          <i class="material-icons white-text">pie_chart</i> Polls</a>
-      </li>
-      <li>
-        <a href="timed-messages.html" class="white-text">
-          <i class="material-icons white-text">timer</i> Timed Events</a>
-      </li>
-      <li class="white-text">
-        <ul class="collapsible collapsible-accordion" style="margin-top: 0px;">
-          <li>
-            <a class="collapsible-header white-text">
-              <i class="material-icons white-text" style="margin-left: 16px;">videogame_asset</i>
-              <p style="display: inline;">Stream Games</p>
-              <i class="material-icons white-text right" style="display: block; margin-right: 10px;">arrow_drop_down</i>
-            </a>
-            <div class="collapsible-body indigo darken-3">
-              <ul>
-                <li>
-                  <a href="#" class="white-text">
-                    <i class="material-icons white-text">repeat</i> Game Cycle</a>
-                </li>
-                <li>
-                  <a href="#" class="white-text"><i class="material-icons white-text">pets</i> Werewolves</a>
-                </li>
-                <li>
-                  <a href="#" class="white-text"><i class="material-icons white-text">people</i> Community</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </li>
-      <br>
-      <div class="center-align">
-        <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
-          <i class="material-icons white-text">settings</i>
-        </a>
-        <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
-          <i class="material-icons white-text">help_outline</i>
-        </a>
-        <a href="https://github.com/CodeDigital/botmyguy" target="_blank" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
-          <i class="material-icons white-text">code</i>
-        </a>
+      <div class="container">
+        <h4>Welcome, USER</h4>
       </div>
-    </ul>
-
+    </li>
+    <li class="center-align">
+      <button class="btn btn-large green pulse hoverable" onclick="connect();" id="cButton">
+        <i class="large material-icons left" id="connectIcon">power</i>
+        <div class="preloader-wrapper small active hide" id="loadingCircle" style="margin-left: -15px; margin-right: 10px; margin-top: 10px;">
+          <div class="spinner-layer spinner-red-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+        Connect</button>
+      <button class="btn btn-large red waves-effect right hide" onclick="disconnect();" id="dcButton">
+        <i class="large material-icons left">eject</i> Disconnect</button>
+    </li>
+    <br>
+    <li class="blue darken-4">
+      <a href="dashboard.html" class="white-text">
+        <i class="material-icons white-text">dashboard</i> Dashboard</a>
+    </li>
+    <li>
+      <a href="commands.html" class="white-text">
+        <i class="material-icons white-text">announcement</i> Commands</a>
+    </li>
+    <li>
+      <a href="poll.html" class="white-text">
+        <i class="material-icons white-text">pie_chart</i> Polls</a>
+    </li>
+    <li>
+      <a href="timed-messages.html" class="white-text">
+        <i class="material-icons white-text">timer</i> Timed Events</a>
+    </li>
+    <li class="white-text">
+      <ul class="collapsible collapsible-accordion" style="margin-top: 0px;">
+        <li>
+          <a class="collapsible-header white-text">
+            <i class="material-icons white-text" style="margin-left: 16px;">videogame_asset</i>
+            <p style="display: inline;">Stream Games</p>
+            <i class="material-icons white-text right" style="display: block; margin-right: 10px;">arrow_drop_down</i>
+          </a>
+          <div class="collapsible-body indigo darken-3">
+            <ul>
+              <li>
+                <a href="#" class="white-text">
+                  <i class="material-icons white-text">repeat</i> Game Cycle</a>
+              </li>
+              <li>
+                <a href="#" class="white-text">
+                  <i class="material-icons white-text">pets</i> Werewolves</a>
+              </li>
+              <li>
+                <a href="#" class="white-text">
+                  <i class="material-icons white-text">people</i> Community</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </li>
+    <br>
     <div class="center-align">
-          <h1 style="margin-top: 0px;margin-bottom: -15px;">Dashboard</h1>
-          <h6>Watch as events unfold in your stream!</h6>
-          <div class="divider"></div>
+      <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
+        <i class="material-icons white-text">settings</i>
+      </a>
+      <a href="#" class="white-text btn-floating btn btn-large pink darken-2 waves-effect" style="margin: 0 10px;">
+        <i class="material-icons white-text">help_outline</i>
+      </a>
+      <a href="https://github.com/CodeDigital/botmyguy" target="_blank" class="white-text btn-floating btn btn-large pink darken-2 waves-effect"
+        style="margin: 0 10px;">
+        <i class="material-icons white-text">code</i>
+      </a>
+    </div>
+  </ul>
+
+  <div id="dashboard" class="hide">
+    <div class="center-align">
+      <h1 style="margin-top: 0px;margin-bottom: -15px;">Dashboard</h1>
+      <h6>Watch as events unfold in your stream!</h6>
+      <div class="divider"></div>
     </div>
 
-  <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
-    <div class="row" style="overflow-y: hidden;margin-top: 0px;">
-      <div class="col s7">
-        <!-- <h2 style="margin-left: 10px;margin-bottom: -5px;">Chat</h2> -->
-        <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(100vh - 170px);">
-        <li class="collection-header pink darken-4">
-          <h2 style="margin-left: 10px;display: inline;">Chat</h2>
-          <p class="white-text right" >What are your viewers saying in chat live?</p>
-        </li>
-          <li class="collection-item avatar pink darken-3">
-            <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-                        <!-- <h6 class="title">Test User</h6> -->
-            <span class="title" style="margin-top: 10px;display:block;"><b>Test User</b></span>
-            <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto tempore itaque mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente excepturi magnam ducimus!
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus consectetur qui quisquam. In, autem. Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente dolorum aliquam nobis assumenda.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur vitae non sed ipsum totam voluptate enim quidem explicabo. Qui dicta, exercitationem aperiam aliquid reiciendis repudiandae et minima quas reprehenderit voluptatem!
-            </p>
-            <i class="secondary-content white-text">1 Minute Ago</i>
-          </li>
-        </ul>
-      </div>
-      <div class="col s5">
-        <div class="row" style="margin-bottom: 0;">
-<ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (170px / 1.77));">
-  <li class="collection-header pink darken-4">
-    <h2 style="margin-left: 10px;display: inline;">Events</h2>
-    <p class="white-text right">What events in the stream are you missing?</p>
-  </li>
-  <li class="collection-item avatar pink darken-3">
-    <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-    <!-- <h6 class="title">Test User</h6> -->
-    <span class="title" style="margin-top: 10px;display:block;">
-      <b>Test User</b>
-    </span>
-    <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto tempore itaque
-      mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente excepturi magnam ducimus!
-      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus consectetur qui quisquam. In, autem.
-      Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente dolorum aliquam nobis assumenda. Lorem ipsum dolor
-      sit amet consectetur adipisicing elit. Consectetur vitae non sed ipsum totam voluptate enim quidem explicabo. Qui dicta,
-      exercitationem aperiam aliquid reiciendis repudiandae et minima quas reprehenderit voluptatem!
-    </p>
-    <i class="secondary-content white-text">1 Minute Ago</i>
-  </li>
-</ul>
+    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
+      <div class="row" style="overflow-y: hidden;margin-top: 0px;">
+        <div class="col s7">
+          <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(100vh - 170px);">
+            <li class="collection-header pink darken-4">
+              <h2 style="margin-left: 10px;display: inline;">Chat</h2>
+              <p class="white-text right">What are your viewers saying in chat live?</p>
+            </li>
+            <li class="collection-item avatar pink darken-3">
+              <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
+              <span class="title" style="margin-top: 10px;display:block;">
+                <b>Test User</b>
+              </span>
+              <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto tempore
+                itaque mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente excepturi
+                magnam ducimus! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus consectetur
+                qui quisquam. In, autem. Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente dolorum aliquam
+                nobis assumenda. Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur vitae non sed ipsum
+                totam voluptate enim quidem explicabo. Qui dicta, exercitationem aperiam aliquid reiciendis repudiandae et
+                minima quas reprehenderit voluptatem!
+              </p>
+              <i class="secondary-content white-text">1 Minute Ago</i>
+            </li>
+          </ul>
         </div>
-        <div class="row" style="margin-bottom: 0px;margin-top: 0;">
-<ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (170px / 1.77));">
-  <li class="collection-header pink darken-4">
-    <h2 style="margin-left: 10px;display: inline;">Game Events</h2>
-    <p class="white-text right">What's happening in your stream games?</p>
-  </li>
-  <li class="collection-item avatar pink darken-3">
-    <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-    <!-- <h6 class="title">Test User</h6> -->
-    <span class="title" style="margin-top: 10px;display:block;">
-      <b>Test User</b>
-    </span>
-    <p style="text-align: justify;">Test
-    <i class="secondary-content white-text">1 Minute Ago</i>
-  </li>
-</ul>
+        <div class="col s5">
+          <div class="row" style="margin-bottom: 0;">
+            <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (170px / 1.77));">
+              <li class="collection-header pink darken-4">
+                <h2 style="margin-left: 10px;display: inline;">Events</h2>
+                <p class="white-text right">What events in the stream are you missing?</p>
+              </li>
+              <li class="collection-item avatar pink darken-3">
+                <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
+                <span class="title" style="margin-top: 10px;display:block;">
+                  <b>Test User</b>
+                </span>
+                <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto
+                  tempore itaque mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente
+                  excepturi magnam ducimus! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus
+                  consectetur qui quisquam. In, autem. Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente
+                  dolorum aliquam nobis assumenda. Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur vitae
+                  non sed ipsum totam voluptate enim quidem explicabo. Qui dicta, exercitationem aperiam aliquid reiciendis
+                  repudiandae et minima quas reprehenderit voluptatem!
+                </p>
+                <i class="secondary-content white-text">1 Minute Ago</i>
+              </li>
+            </ul>
+          </div>
+          <div class="row" style="margin-bottom: 0px;margin-top: 0;">
+            <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (170px / 1.77));">
+              <li class="collection-header pink darken-4">
+                <h2 style="margin-left: 10px;display: inline;">Game Events</h2>
+                <p class="white-text right">What's happening in your stream games?</p>
+              </li>
+              <li class="collection-item avatar pink darken-3">
+                <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
+                <span class="title" style="margin-top: 10px;display:block;">
+                  <b>Test User</b>
+                </span>
+                <p style="text-align: justify;">Test
+                  <i class="secondary-content white-text">1 Minute Ago</i>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <div id="commands">
+    <div class="center-align">
+      <h1 style="margin-top: 0px;margin-bottom: -15px;">Commands</h1>
+      <h6>Let your viewers ask your bot the usual questions!</h6>
+      <!-- <div class="divider"></div> -->
+    </div>
+
+    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
+      <div class="row" style="overflow-y: hidden;margin-top: 0px;">
+        <div class="col s12">
+
+          <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(100vh - 170px);">
+            <li class="collection-item avatar pink darken-3">
+              <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
+              <span class="title" style="margin-top: 10px;display:block;">
+                <b>Test User</b>
+              </span>
+              <p style="text-align: justify;">Test</p>
+              <div class="secondary-content white-text">
+                <button class="btn-large _btn-floating blue" style="margin: 0px 10px;">
+                  <i class="material-icons large">edit</i>
+                </button>
+                <button class="btn-large _btn-floating hoverable waves-effect red" style="margin: 0px 10px;">
+                  <i class="material-icons large">delete</i>
+                </button>
+              </div>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 
   <!--JavaScript at end of body for optimized loading-->
