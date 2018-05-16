@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var instances = M.FloatingActionButton.init(elems, {});
 });
 
-const { shell } = require('electron')
+const { shell } = require('electron');
 
 function openGithub() {
   shell.openExternal('https://github.com/CodeDigital/botmyguy');
