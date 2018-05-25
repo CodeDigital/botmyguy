@@ -1,17 +1,39 @@
-document.addEventListener('DOMContentLoaded', function () {
-  var elems = document.querySelectorAll('.sidenav');
-  var instances = M.Sidenav.init(elems, {});
-});
+var $ = require("jquery");
 
 document.addEventListener('DOMContentLoaded', function () {
   var elems = document.querySelectorAll('.collapsible');
   var instances = M.Collapsible.init(elems, {});
-});
-
-document.addEventListener('DOMContentLoaded', function () {
   var elems = document.querySelectorAll('.fixed-action-btn');
   var instances = M.FloatingActionButton.init(elems, {});
+  var elems = document.querySelectorAll('.sidenav');
+  var instances = M.Sidenav.init(elems, {});
 });
+
+function changeTo(type){
+
+  var link;
+  var content;
+  var body = document.getElementById('main');
+
+  switch (type) {
+    case 'dashboard':
+        link = document.getElementById('dashboard');
+      break;
+  
+    default:
+      break;
+  }
+
+  content = link.import;
+  content = content.body;
+  console.log(content);
+  body.appendChild(content);
+
+  //$(".main").empty();
+  console.log($(".main"));
+  //$(".main").html = content;
+  console.log($(".main"));
+}
 
 const { shell } = require('electron');
 
@@ -64,6 +86,69 @@ ipcRenderer.on('disconnect:success', function (e) {
   connectButton.className = "btn btn-large green waves-effect right";
   disconnectButton.className = "btn btn-large red waves-effect right hide";
 });
+
+
+function commandEdit(x) {
+  console.log("Edit button");
+  console.log(x);
+  ipcRenderer.send('command:edit', x);
+}
+
+function commandAdd() {
+  console.log("Add button");
+  ipcRenderer.send('command:edit', undefined);
+}
+
+function commandRemove(x) {
+  console.log("remove Button");
+  console.log(x);
+  db.removeCommand(x, function (success) {
+    if (success) {
+      location.reload();
+    }
+  });
+}
+
+reloadCommands();
+
+function reloadCommands() {
+  db.getCommands(function (commands) {
+    var btnList = document.getElementById('commandList');
+    if(btnList){
+      commands.forEach(function (commObj) {
+
+        var newCommand = document.createElement('LI');
+        newCommand.className = 'collection-item avatar pink darken-3';
+        
+        var iconDiv = document.createElement('DIV');
+        iconDiv.style.marginLeft = '150px';
+        iconDiv.style.marginTop = '10px';
+
+        var title = document.createElement('SPAN');
+        title.style.marginTop = '10px';
+        title.style.display = 'block';
+
+        var boldedTitle = document.createElement('B');
+        boldedTitle.innerText = commObj.command;
+
+        var description = document.createElement('P');
+        description.style.textAlign = 'justify';
+        description.innerText = commObj.description;
+
+      });
+    }
+  });
+}
+
+  ipcRenderer.on("reload:command", function (e) {
+    console.log('test');
+  });
+
+// function includeHTML(divID) {
+//   $(function () {
+//     $("#content").load("test.html");
+//   });
+// }
 
 // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
 // var collapsibleElem = document.querySelector('.collapsible');

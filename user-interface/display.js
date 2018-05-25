@@ -100,7 +100,8 @@ module.exports.setup = function() {
 
   //Load HTML File into window.
   setupWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'setup/welcome.html'),
+      //pathname: path.join(__dirname, 'setup/welcome.html'),
+      pathname: path.join(__dirname, 'home/template.html'),
       protocol: 'file:',
       slashes: true
   }));

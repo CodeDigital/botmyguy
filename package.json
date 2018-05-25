@@ -20,6 +20,7 @@
   "dependencies": {
     "dotenv": "^5.0.1",
     "irc-upd": "^0.9.0",
+    "jquery": "^3.3.1",
     "jsonwebtoken": "^8.2.1",
     "materialize-css": "^1.0.0-rc.1",
     "request": "^2.85.0",
