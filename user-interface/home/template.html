@@ -14,7 +14,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-  <link rel="import" href="dashboard.html" id="dashboard">
+  <link rel="import" href="dashboard.html" id="dashboardLink">
+  <link rel="import" href="commands.html" id="commandsLink">
+
+  <style>
+
+    .hidden{
+      visibility: hidden;
+    }
+
+    .show{
+      visibility: visible;
+    }
+  
+  </style>
 
 </head>
 
@@ -59,7 +72,7 @@
       <img src="../assets/icons/Icon.svg" style="width: 90%; margin-bottom: -65px;margin-top: -20px;" alt="">
 
       <div class="container">
-        <h4>Welcome, USER</h4>
+        <h4 id="welcomeText">Welcome, USER</h4>
       </div>
     </li>
     <li class="center-align">
@@ -87,8 +100,8 @@
       <a class="white-text">
         <i class="material-icons white-text">dashboard</i> Dashboard</a>
     </li>
-    <li>
-      <a href="commands.html" class="white-text">
+    <li onclick="changeTo('commands');">
+      <a class="white-text">
         <i class="material-icons white-text">announcement</i> Commands</a>
     </li>
     <li>
@@ -225,54 +238,6 @@
       </div>
     </div>
   </div>
-
-  <div id="commands" class="hide">
-
-    <div class="center-align">
-      <h1 style="margin-top: 0px;margin-bottom: -15px;">Commands</h1>
-      <h6>Let your viewers ask your bot the usual questions!</h6>
-      <!-- <div class="divider"></div> -->
-    </div>
-
-    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
-      <div class="row" style="overflow-y: hidden;margin-top: 0px;">
-        <div class="col s12">
-
-          <ul id="commandList" class="collection with-header grey darken-4 sortable" style="overflow-y:auto; height: calc(100vh - 200px);">
-            <li class="collection-item avatar pink darken-3">
-              <span class="title" style="margin-top: 10px;display:block;">
-                <b>Test User</b>
-              </span>
-              <p style="text-align: justify;">Test</p>
-              <div class="secondary-content white-text right">
-                <div class="left" style="margin-right: 15px;">
-                  <img src="../assets/icons/twitchChat.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
-                  <img src="../assets/icons/twitchWhisper.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
-                  <img src="../assets/icons/discordChat.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
-                </div>
-                <button class="btn-large _btn-floating blue" style="margin: 0px 10px;">
-                  <i class="material-icons large">edit</i>
-                </button>
-                <button class="btn-large _btn-floating hoverable waves-effect red" style="margin: 0px 10px;">
-                  <i class="material-icons large">delete</i>
-                </button>
-              </div>
-            </li>
-            <br>
-            <li class="container center-align">
-                <button class="btn btn-large green center-align hoverable waves-effect" style="width: 500px;height:100px;padding: 0px 90px;">
-                  <div style="font-size: 30px;">
-                    <i class="large material-icons left" style="font-size: 50px;">add_circle</i>New Command
-                  </div>
-                </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
 
   <!--JavaScript at end of body for optimized loading-->
   <script type="text/javascript" src="../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
