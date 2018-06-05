@@ -33,10 +33,10 @@ function reloadCommands() {
     console.log('reloading commands');
     var btnList = document.getElementById('commandList');
     btnList.innerHTML = '';
-    console.log(btnList);
+    //console.log(btnList);
     datab.getCommands(function (commands) {
         commands.forEach(function (commObj) {
-            console.log(commObj);
+            //console.log(commObj);
             var newCommand = document.createElement('LI');
             newCommand.className = 'collection-item avatar pink darken-3';
 
@@ -99,12 +99,28 @@ function reloadCommands() {
             var editCommandButton = document.createElement('BUTTON');
             editCommandButton.className = 'btn-large _btn-floating hoverable waves-effect blue';
             editCommandButton.style.margin = "0px 10px";
-            editCommandButton.setAttribute('onclick', 'commandEdit(' + commObj.command + ')');
+            editCommandButton.onclick = function(){
+                commandEdit(commObj.command)
+            };
+
+            var editCommandIcon = document.createElement('I');
+            editCommandIcon.className = 'material-icons large';
+            editCommandIcon.innerText = 'edit';
+
+            editCommandButton.appendChild(editCommandIcon);
 
             var removeCommandButton = document.createElement('BUTTON');
             removeCommandButton.className = 'btn-large _btn-floating hoverable waves-effect red';
             removeCommandButton.style.margin = "0px 10px";
-            removeCommandButton.setAttribute('onclick', 'commandRemove(' + commObj.command + ')');
+            removeCommandButton.onclick = function() {
+                commandRemove(commObj.command);
+            }
+
+            var removeCommandIcon = document.createElement('I');
+            removeCommandIcon.className = 'material-icons large';
+            removeCommandIcon.innerText = 'delete';
+
+            removeCommandButton.appendChild(removeCommandIcon);
 
             rightDiv.appendChild(editCommandButton);
             rightDiv.appendChild(removeCommandButton);
@@ -143,10 +159,14 @@ function reloadCommands() {
         addDiv.innerHTML = addDiv.innerHTML + "Add Command";
 
         addButton.appendChild(addDiv);
+        addButton.onclick = function() {
+            commandAdd();
+        }
 
         addCommandButton.appendChild(addButton);
 
         btnList.appendChild(addCommandButton);
+        btnList.appendChild(document.createElement('BR'));
         //btnList.append(addCommandButton);
 
 

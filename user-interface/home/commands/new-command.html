@@ -1,303 +1,52 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html>
 
 <head>
     <meta charset="utf-8">
     <title>Bot MyGuy | Template</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../../css/ionicons.css">
-    <style>
-        body {
-            height: 100%;
-        }
-    </style>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
+    />
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
-<body>
+<body class=" blue-grey darken-4 white-text" style="overflow-y: hidden;">
 
-    <div class="container-fluid text-white h-100">
+    <nav style="height: 65px;">
+        <div class="nav-wrapper pink darken-2" style="height: 65px;">
+            <div class="valign-wrapper left" style="margin-left: 20px;">
+                <h3 class="brand-logo">Bot My Guy</h3>
+            </div>
 
-        <!-- Header of Page... -->
-        <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
-            <div class="col-md-4" style="background-color: #210021;text-align:center;">
-                <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
-            </div>
-            <div class="col" style="background-color: #210021;">
-                <i class="float-right d-inline ion-close-round p-0 py-1 mx-2 mr-3" id="close-btn" style="-webkit-app-region: no-drag;"></i>
-                <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
-            </div>
+            <ul class="right">
+                <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="min-btn">
+                    <i class="large material-icons">remove</i>
+                </li>
+                <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="max-btn">
+                    <i class="large material-icons">crop_free</i>
+                </li>
+                <li class="hoverable red" style="padding-left: 20px;padding-right: 20px;" id="close-btn">
+                    <i class="large material-icons">close</i>
+                </li>
+            </ul>
         </div>
+    </nav>
 
-        <div class="row">
-            <div class="col" style="background-color: #470047; height:100vh; overflow-y: auto;" id="app-display">
-                <br>
-                <br>
-                <form>
-                    <h1 class="display-4 text-center">Add or Edit a Command!</h1>
-                    <div class="alert alert-warning alert-dismissible fade d-none" role="alert" id="retryAlert">
-                        <strong>Woah, There!</strong> You should check in on some of those fields below. None of them can be empty!
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="form-group">
-                        <label for="chatCommand" class="h4">Command In Chat</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">!</div>
-                            </div>
-                            <input class="form-control form-control-lg" type="text" name="command" id="chatCommand" placeholder="command" aria-describedby="commandHelpBlock">
-                        </div>
-                        <small id="commandHelpBlock" class="form-text text-white">
-                            This is the command that people will type in chat to activate a response.
-                        </small>
-                    </div>
+    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
 
-                    <div class="form-group">
-                        <label for="chatResponse" class="h4">Bot Response</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-lg" type="text" name="command" id="chatResponse" placeholder="Hello there, FROM!" aria-describedby="commandHelpBlock">
-                        </div>
-                        <small id="commandHelpBlock" class="form-text text-white">
-                            This is the response from the bot to the person who called the command. Use FROM to add the username of the person who called the command.
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="chatResponse" class="h4">Bot Response</label>
-                        <div class="input-group">
-                            <textarea class="form-control form-control-lg" type="text" name="command" id="chatDescription" placeholder="Say hello to somebody"
-                                aria-describedby="commandHelpBlock"></textarea>
-                        </div>
-                        <small id="commandHelpBlock" class="form-text text-white">
-                            Explain what this command can do?
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="apiType" class="h4">Bot Response</label>
-                        <br>
-                        <div class="btn-group btn-group-lg w-100" id="apiType" aria-describedby="apiHelpBlock">
-                            <button type="button" class="btn btn-lg text-white border border-white" id="chatButton" style="background-color: #6441A4;width:calc(100% / 3);"
-                             onclick="apiTypeClicked('twitchchat');" onmouseover="typeHover(this, 'twitchchat');" onmouseout="typeMouseOff(this, 'twitchchat');">
-                                <i class="ion-social-twitch"></i>
-                                Twitch Chat
-                            </button>
-                            <button type="button" class="btn btn-lg text-white border border-white" id="whisperButton" style="background-color: #6441A4;width:calc(100% / 3);"
-                             onclick="apiTypeClicked('twitchwhisper');" onmouseover="typeHover(this, 'twitchwhisper');" onmouseout="typeMouseOff(this, 'twitchwhisper');">
-                                <i class="ion-social-twitch-outline"></i>
-                                Twitch Whisper
-                            </button>
-                            <button type="button" class="btn btn-lg text-white border border-white" id="discordButton" style="background-color: #2C2F33;width:calc(100% / 3);"
-                             onclick="apiTypeClicked('discord');" onmouseover="typeHover(this, 'discord');" onmouseout="typeMouseOff(this, 'discord');">
-                                <img src="../../css/Discord-Logo-White.svg" style="margin-top:-3px;width:26px;">
-                                Discord Chat
-                            </button>
-                        </div>
-                        <small id="apiHelpBlock" class="form-text text-white">
-                            Where can this command be detected?
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="cancel();">Cancel</button>
-                        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addCommand();">Submit</button>
-                    </div>
-                </form>
-                <br>
-                <br>
-            </div>
-        </div>
-
-        <div class="row fixed-bottom">
-            <div class="col" style="background-color: #210021;">
-                <h6 class="mb-0 mr-2 d-inline-block float-right">New/Edit Command</h6>
-            </div>
+        <div class="center-align">
+            <h1 style="margin-top: 0px;margin-bottom: -15px;">Edit Command</h1>
+            <h6>Change what the bot does!</h6>
         </div>
 
     </div>
 
-    <script src="../../titlebar.js"></script>
-
-    <script type="text/javascript">
-        const { ipcRenderer } = require('electron');
-        const db = require('../../../database/database.js');
-        var newCommand;
-        db.getCommandTemplate(function(commandTemplate){
-            newCommand = commandTemplate;
-        });
-
-        var twitchWhisperActive = false;
-        var twitchChatActive = false;
-        var discordActive = false;
-
-        function whenLoaded(){
-            ipcRenderer.send("newCommand:ready");
-        }
-
-        function typeHover(x, type) {
-                        switch (type) {
-                case "twitchchat":
-                        x.style.backgroundColor = "#533093";
-                    break;
-
-                case "twitchwhisper":
-                        x.style.backgroundColor = "#533093";
-                    break;
-
-                case "discord":
-                        x.style.backgroundColor = "#1B1E22";
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        function typeMouseOff(x, type) {
-            switch (type) {
-                case "twitchchat":
-                    if(!twitchChatActive){
-                        x.style.backgroundColor = "#6441A4";
-                    }
-                    break;
-
-                case "twitchwhisper":
-                    if (!twitchWhisperActive) {
-                        x.style.backgroundColor = "#6441A4";
-                    }
-                    break;
-
-                case "discord":
-                    if (!discordActive) {
-                        x.style.backgroundColor = "#2C2F33";
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        function apiTypeClicked(type){
-            console.log('API Type CLICKED!');
-
-            switch(type){
-                case "twitchchat":
-                    if(!twitchChatActive){
-                        twitchChatActive = true;
-                    }else{
-                        twitchChatActive = false;
-                    }                
-                break;
-
-                case "twitchwhisper":
-                    if (!twitchWhisperActive) {
-                        twitchWhisperActive = true;
-                    } else {
-                        twitchWhisperActive = false;
-                    }  
-                break;
-
-                case "discord":
-                    if (!discordActive) {
-                        discordActive = true;
-                    } else {
-                        discordActive = false;
-                    }  
-                break;
-
-            }
-        }
-
-        function cancel(){
-            ipcRenderer.send('commandedit:cancel');
-        }
-
-        function addCommand(){
-            var command = document.getElementById('chatCommand');
-            var response = document.getElementById('chatResponse');
-            var description = document.getElementById('chatDescription');
-            console.log('Submitted');
-            if(command.value != '' && response.value != '' && description.value != '' && (twitchChatActive || twitchWhisperActive || discordActive)) {
-                var commandObject;
-                console.log(command.value);
-                db.getCommandTemplate(function (commandTemplate) {
-                    commandObject = commandTemplate;
-                    commandObject.command = "!" + command.value;
-                    commandObject.response = response.value;
-                    commandObject.description = description.value;
-                    var apis = commandObject.api;
-                    if(twitchChatActive){
-                        apis.push("twitchChat");
-                    }
-                    if(twitchWhisperActive){
-                        apis.push("twitchWhisper");
-                    }
-                    if(discordActive){
-                        apis.push("discord");
-                    }
-                    console.log(apis);
-                    commandObject.api = apis;
-
-                    ipcRenderer.send('commandedit:edit', commandObject);
-                });
-            }else{
-                var retryAlert = document.getElementById('retryAlert');
-                retryAlert.className = "alert alert-warning alert-dismissible fade d-block show";
-            }
-        }
-
-        ipcRenderer.on('commandedit:editing', function(e, item) {
-            var commandText = document.getElementById('chatCommand');
-            var responseText = document.getElementById('chatResponse');
-            var descriptionText = document.getElementById('chatDescription');
-            var chatButton = document.getElementById('chatButton');
-            var whisperButton = document.getElementById('whisperButton');
-            var discordButton = document.getElementById('discordButton');
-            
-            console.log("received " + item);
-
-            db.checkCommand(item, function(commandObject) {
-                var itemCommand = commandObject.command;
-                commandText.value = itemCommand.substring(1);
-                responseText.value = commandObject.response;
-                descriptionText.value = commandObject.description;
-                var apiArray = commandObject.api;
-                apiArray.forEach(apiType => {
-                    switch(apiType){
-                        case 'twitchChat':
-                            twitchChatActive = true;
-                            chatButton.style.backgroundColor = "#533093";
-                        break;
-
-                        case 'twitchWhisper': 
-                            twitchWhisperActive = true;
-                            whisperButton.style.backgroundColor = "#533093";
-                        break;
-
-                        case 'discord':
-                            discordActive = true;
-                            discordButton.style.backgroundColor = "1B1E22";
-                        break;
-
-                        default: break;
-                    }
-                });
-                
-            });
-        });
-
-        whenLoaded();
-    </script>
+    <script src="new-command.js"></script>
 
 </body>
 
