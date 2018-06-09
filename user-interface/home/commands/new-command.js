@@ -20,13 +20,12 @@ function typeHover(x, type) {
         case "twitchchat":
             x.style.backgroundColor = "#533093";
             break;
-
         case "twitchwhisper":
             x.style.backgroundColor = "#533093";
             break;
 
         case "discord":
-            x.style.backgroundColor = "#1B1E22";
+            x.className = "btn btn-large";
             break;
 
         default:
@@ -104,7 +103,11 @@ function addCommand() {
         console.log(command.value);
         db.getCommandTemplate(function (commandTemplate) {
             commandObject = commandTemplate;
-            commandObject.command = "!" + command.value;
+            if (command.value[0] == "!") {
+                commandObject.command = command.value;
+            } else {
+                commandObject.command = "!" + command.value;
+            }
             commandObject.response = response.value;
             commandObject.description = description.value;
             var apis = commandObject.api;
@@ -124,7 +127,7 @@ function addCommand() {
         });
     } else {
         var retryAlert = document.getElementById('retryAlert');
-        retryAlert.className = "alert alert-warning alert-dismissible fade d-block show";
+        retryAlert.className = "col s12 red z-depth-3";
     }
 }
 
