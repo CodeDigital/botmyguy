@@ -1,1 +1,1 @@
-[{"command":"!yay","response":"yay","description":"yay","api":["twitchWhisper","twitchChat","twitchWhisper","discord"]}]
+[{"command":"!a","response":"a","description":"a","api":["twitchChat","twitchWhisper","discord"]}]

@@ -53,6 +53,7 @@ function reloadCommands() {
 
             var description = document.createElement('P');
             description.style.textAlign = 'justify';
+            description.style.marginLeft = '-50px';
             description.innerText = commObj.description;
             newCommand.appendChild(description);
 
@@ -70,6 +71,7 @@ function reloadCommands() {
                 var img = document.createElement('IMG');
                 img.className = 'btn btn-large btn-floating grey darken-4';
                 img.style.padding = '0px';
+                img.style.margin = '0 5px';
                 switch (api) {
                     case 'twitchChat':
                         img.setAttribute('src', '../assets/icons/twitchChat.svg');

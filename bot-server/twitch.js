@@ -201,21 +201,30 @@ function gotChat(from, message, userColor){
 
     db.checkCommand(message, 'twitchChat', function (commandObject) {
         if (commandObject) {
-            console.log('An Command Was Called');
-            console.log(commandObject.response);
-            var response = commandReplaceFrom(commandObject.response, from);
-            chatTalk(response);
+
+            commandObject.apiType.forEach( function (type) {
+                if(type == 'twitchChat'){
+                    console.log('An Command Was Called');
+                    console.log(commandObject.response);
+                    var response = commandReplaceFrom(commandObject.response, from);
+                    chatTalk(response);
+                }
+            })
         }
     });
 }
 
 function gotWhisper(from, body) {
-    db.checkCommand(body, 'twitchWhisper', function(commandObject){
+    db.checkCommand(body, function(commandObject){
         if(commandObject){
-            console.log('An Command Was Called');
-            console.log(commandObject.response);
-            var response = commandReplaceFrom(commandObject.response, from);
-            whisper(from, response);
+            commandObject.apiType.forEach(function(type) {
+                if (type == 'twitchWhisper') {
+                    console.log('An Command Was Called');
+                    console.log(commandObject.response);
+                    var response = commandReplaceFrom(commandObject.response, from);
+                    whisper(from, response);
+                }                
+            });
         }
     });
 }

@@ -93,7 +93,7 @@ module.exports.newCommand = function (commandObject) {
     });
 };
 
-module.exports.checkCommand = function (command, type, callback) {
+module.exports.checkCommand = function (command, callback) {
     //commands from JSON
     let commands;
 
@@ -107,13 +107,8 @@ module.exports.checkCommand = function (command, type, callback) {
 
         commands.forEach(function (commObj) {
             if (command.includes(commObj.command)) {
-                var api = commObj.api;
-                api.forEach(function(apiType) {
-                    if(apiType == type) {
                         found = true;
                         callback(commObj);
-                    }
-                });
             }
         });
 

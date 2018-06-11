@@ -1,6 +1,6 @@
 {
-    "command": "!lol",
-    "response": "test",
-    "description": "test",
-    "api": ["twitchWhisper"]
+    "command": "",
+    "response": "",
+    "description": "",
+    "api": []
 }

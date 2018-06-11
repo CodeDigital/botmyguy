@@ -2,7 +2,9 @@ const {
     ipcRenderer
 } = require('electron');
 const db = require('../../../database/database.js');
+
 var newCommand;
+
 db.getCommandTemplate(function (commandTemplate) {
     newCommand = commandTemplate;
 });
@@ -17,15 +19,28 @@ function whenLoaded() {
 
 function typeHover(x, type) {
     switch (type) {
-        case "twitchchat":
-            x.style.backgroundColor = "#533093";
+        case "twitchChat":
+            x.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+            var children = x.childNodes;
+            console.log(children);
+            var img = children[1];
+            img.className = "left"
             break;
-        case "twitchwhisper":
-            x.style.backgroundColor = "#533093";
+
+        case "twitchWhisper":
+            x.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+            var children = x.childNodes;
+            console.log(children);
+            var img = children[1];
+            img.className = "left"
             break;
 
         case "discord":
-            x.className = "btn btn-large";
+            x.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+            var children = x.childNodes;
+            console.log(children);
+            var img = children[1];
+            img.className = "left"
             break;
 
         default:
@@ -35,21 +50,33 @@ function typeHover(x, type) {
 
 function typeMouseOff(x, type) {
     switch (type) {
-        case "twitchchat":
+        case "twitchChat":
             if (!twitchChatActive) {
-                x.style.backgroundColor = "#6441A4";
+                x.className = "btn btn-large grey hoverable darken-3";
+                var children = x.childNodes;
+                console.log(children);
+                var img = children[1];
+                img.className = "left hide"
             }
             break;
 
-        case "twitchwhisper":
+        case "twitchWhisper":
             if (!twitchWhisperActive) {
-                x.style.backgroundColor = "#6441A4";
+                x.className = "btn btn-large grey hoverable darken-3";
+                var children = x.childNodes;
+                console.log(children);
+                var img = children[1];
+                img.className = "left hide"
             }
             break;
 
         case "discord":
             if (!discordActive) {
-                x.style.backgroundColor = "#2C2F33";
+                x.className = "btn btn-large grey hoverable darken-3";
+                var children = x.childNodes;
+                console.log(children);
+                var img = children[1];
+                img.className = "left hide"
             }
             break;
 
@@ -62,7 +89,7 @@ function apiTypeClicked(type) {
     console.log('API Type CLICKED!');
 
     switch (type) {
-        case "twitchchat":
+        case "twitchChat":
             if (!twitchChatActive) {
                 twitchChatActive = true;
             } else {
@@ -70,7 +97,7 @@ function apiTypeClicked(type) {
             }
             break;
 
-        case "twitchwhisper":
+        case "twitchWhisper":
             if (!twitchWhisperActive) {
                 twitchWhisperActive = true;
             } else {
