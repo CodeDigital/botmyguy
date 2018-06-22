@@ -1,56 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Bot MyGuy | Template</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/ionicons.css">
-    <style>
-      body{height:100%;}
-    </style>
-  </head>
+<html>
 
-  <body>
+<head>
+  <meta charset="utf-8" />
+</head>
 
-    <div class="container-fluid text-white h-100">
+<body>
+  <div class="center-align">
+    <h1 style="margin-top: 0px;margin-bottom: -5px;">Welcome to Bot My Guy!</h1>
+    <h6>You may have just kickstarted you streaming career.</h6>
+    <!-- <div class="divider"></div> -->
+  </div>
 
-      <!-- Header of Page... -->
-      <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
-        <div class="col-md-4" style="background-color: #210021;text-align:center;">
-          <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
-        </div>
-        <div class="col" style="background-color: #210021;">
-          <i class="float-right d-inline ion-close-round p-0 py-1 mx-2 mr-3" id="close-btn" style="-webkit-app-region: no-drag;"></i>
-          <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
-        </div>
+  <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
+    <div class="row" style="overflow-y: hidden;margin-top: 0px;">
+      <br>
+      <div class="col s12 center-align">
+        <i class="material-icons large left">build</i>
+        This page is still under construction, but you can use other parts of the bot. Click the button below to continue with the
+        setup process!
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 center-align">
+        <button onclick="changeTo('streamer');" class="btn btn-large green hoverable center-align" style="width: 50%;">next</button>
       </div>
 
-      <div class="row">
-        <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
-          <br><br>
-          <h1 class="display-4 text-center">Well hello there!</h1>
-          <p>I am Bot My Guy!</p>
-          <p>Click next to move on with the setup process!</p>
-        </div>
-      </div>
-
-      <div class="row fixed-bottom">
-        <div class="col" style="background-color: #210021;">
-          <a type="button" href="loginTwitchStreamer.html" class="btn btn-success btn-lg btn-block mx-auto">Next Step</a>
-          <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; background-color: #470047;"></div>
-          </div>
-          <h6 class="mb-0 mr-2 d-inline-block float-right">Setup Process</h6>
-        </div>
-      </div>
 
     </div>
+  </div>
+</body>
 
-    <script src="../titlebar.js"></script>
-
-  </body>
 </html>

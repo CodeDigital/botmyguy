@@ -5,14 +5,13 @@
   <meta charset="utf-8">
   <title>Bot MyGuy | Template</title>
   <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../../node_modules/material-icons/iconfont/material-icons.css">
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="../../node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
   />
 
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <link rel="import" href="dashboard.html" id="dashboardLink">
   <link rel="import" href="commands.html" id="commandsLink">
@@ -21,11 +20,11 @@
 
 <body class=" blue-grey darken-4 white-text" style="overflow-y: hidden;">
 
-  <nav style="height: 64px;">
+<nav style="height: 64px;-webkit-app-region: drag;">
     <div class="nav-wrapper pink darken-2" style="height: 64px;">
       <div class="valign-wrapper left">
-        <a href="#" data-target="slide-out" data-activates="slide-out" class="sidenav-trigger show-on-large">
-          <i class="large material-icons" style="font-size: 40px;">menu</i>
+<a data-target="slide-out" data-activates="slide-out" class="sidenav-trigger show-on-large hoverable" style="user-select: none;cursor: pointer; padding-left: 20px;padding-right: 20px;-webkit-app-region: no-drag;">
+          <i class="large material-icons left" style="font-size: 40px;">menu</i> Menu
         </a>
       </div>
       <!-- <div class="valign-wrapper left grey darken-4" style="margin-left: -10px;">
@@ -34,18 +33,21 @@
         <h3 class="brand-logo grey darken-4" style="margin-left: 90px;padding: 20px;padding-left: 10px;border-top-right-radius: 50px;border-bottom-right-radius: 50px;">Bot My Guy</h3>
       </div> -->
 
-      <div class="valign-wrapper left">
+      <div class="valign-wrapper center-align">
         <h3 class="brand-logo">Bot My Guy</h3>
       </div>
 
       <ul class="right">
-        <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="min-btn">
+<li class="hoverable" style="padding-left: 20px;padding-right: 20px;user-select: none;cursor: pointer;-webkit-app-region: no-drag;"
+  id="min-btn">
           <i class="large material-icons">remove</i>
         </li>
-        <li class="hoverable" style="padding-left: 20px;padding-right: 20px;" id="max-btn">
+<li class="hoverable" style="padding-left: 20px;padding-right: 20px;user-select: none;cursor: pointer;-webkit-app-region: no-drag;"
+  id="max-btn">
           <i class="large material-icons">crop_free</i>
         </li>
-        <li class="hoverable red" style="padding-left: 20px;padding-right: 20px;" id="close-btn">
+<li class="hoverable red" style="padding-left: 20px;padding-right: 20px;user-select: none;cursor: pointer;-webkit-app-region: no-drag;"
+  id="close-btn">
           <i class="large material-icons">close</i>
         </li>
       </ul>

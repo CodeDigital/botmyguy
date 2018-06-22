@@ -19,7 +19,7 @@ module.exports.mainWindow = function() {
 
   //Load HTML File into window.
   mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'home/dashboard.html'),
+      pathname: path.join(__dirname, 'home/home.html'),
       protocol: 'file:',
       slashes: true
   }));
@@ -100,8 +100,8 @@ module.exports.setup = function() {
 
   //Load HTML File into window.
   setupWindow.loadURL(url.format({
-      //pathname: path.join(__dirname, 'setup/welcome.html'),
-      pathname: path.join(__dirname, 'home/template.html'),
+      pathname: path.join(__dirname, 'setup/setup.html'),
+      // pathname: path.join(__dirname, 'h.html'),
       protocol: 'file:',
       slashes: true
   }));
