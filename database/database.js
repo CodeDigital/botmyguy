@@ -107,6 +107,7 @@ module.exports.checkCommand = function (command, callback) {
 
         commands.forEach(function (commObj) {
             if (command.includes(commObj.command)) {
+                console.log('haha');
                         found = true;
                         callback(commObj);
             }

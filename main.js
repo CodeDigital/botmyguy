@@ -63,17 +63,37 @@ ipcMain.on('botauth:done', function (e, item) {
 });
 
 ipcMain.on('setup:complete', function (e, item) {
-  console.log('connected');
+  console.log('all is setup!');
+  db.getSettings(function(sets) {
+
+    var settings = sets;
+    settings.firstTime = false;
+    db.setSettings(settings);
+
+      //Create the mainwindow
+      mainWindow = disp.mainWindow();
+
+      setup.close();
+
+        //Quit Everything when Window Closed.
+        mainWindow.on('closed', function () {
+          app.quit();
+        });
+  });
+});
+
+ipcMain.on('loading:complete', function (e, item) {
+  console.log('all loaded in!');
 
   //Create the mainwindow
   mainWindow = disp.mainWindow();
 
-  setup.close();
+  loadingWindow.close();
 
-  //Quit Everything when Window Closed.
-  mainWindow.on('closed', function () {
-    app.quit();
-  });
+    //Quit Everything when Window Closed.
+    mainWindow.on('closed', function () {
+      app.quit();
+    });
 });
 
 ipcMain.on('connect', function (e, item) {

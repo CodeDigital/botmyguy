@@ -37,13 +37,22 @@ function changeTo(type) {
     cNode.className = 'hide';
   });
 
+  var dashboardButton = document.getElementById('dashboardButton');
+  dashboardButton.className = '';
+  var commandsButton = document.getElementById('commandsButton');
+  commandsButton.className = '';
+
   var link = document.getElementById(type);
+  var linkButton = document.getElementById(type + 'Button');
+  linkButton.className = 'blue darken-4';
   link.className = '';
 
   //$(".main").empty();
   //$(".main").html = content;
   //console.log($(".main"));
 }
+
+changeTo('dashboard');
 
 function openGithub() {
   shell.openExternal('https://github.com/CodeDigital/botmyguy');
@@ -62,18 +71,19 @@ function connect() {
     var loadingCircle = document.getElementById('loadingCircle');
 
     loadingCircle.className = "preloader-wrapper small active left";
-    connectIcon.style = "display:none;"
+    connectIcon.style = "display:none;";
     ipcRenderer.send('connect');
     isConnecting = true;
   }
 }
 
 ipcRenderer.on('connect:success', function (e) {
+  console.log('connected hmm');
   var connectButton = document.getElementById('cButton');
   var disconnectButton = document.getElementById('dcButton');
 
-  connectButton.className = "btn btn-large green waves-effect right hide";
-  disconnectButton.className = "btn btn-large red waves-effect right";
+  connectButton.className = "btn btn-large green waves-effect hide";
+  disconnectButton.className = "btn btn-large red waves-effect";
   isConnecting = false;
 });
 
@@ -85,8 +95,14 @@ ipcRenderer.on('disconnect:success', function (e) {
   var connectButton = document.getElementById('cButton');
   var disconnectButton = document.getElementById('dcButton');
 
-  connectButton.className = "btn btn-large green waves-effect right";
-  disconnectButton.className = "btn btn-large red waves-effect right hide";
+        var connectIcon = document.getElementById('connectIcon');
+      var loadingCircle = document.getElementById('loadingCircle');
+
+      loadingCircle.className = "preloader-wrapper small active left hide";
+      connectIcon.style = "";
+
+  connectButton.className = "btn btn-large green waves-effect";
+  disconnectButton.className = "btn btn-large red waves-effect hide";
 });
 
 // function includeHTML(divID) {

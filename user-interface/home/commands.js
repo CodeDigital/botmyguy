@@ -1,6 +1,6 @@
-const datab = require('../../database/database.js');
+const dbCommands = require('../../database/database.js');
 
-const ipcRender = require('electron').ipcRenderer;
+const ipcCommandsRenderer = require('electron').ipcRenderer;
 
 //var $ = require("jquery");
 //var btnList = $('#commandList');
@@ -10,18 +10,18 @@ console.log(btnList);
 function commandEdit(x) {
     console.log("Edit button");
     console.log(x);
-    ipcRender.send('command:edit', x);
+    ipcCommandsRenderer.send('command:edit', x);
 }
 
 function commandAdd() {
     console.log("Add button");
-    ipcRender.send('command:edit', undefined);
+    ipcCommandsRenderer.send('command:edit', undefined);
 }
 
 function commandRemove(x) {
     console.log("remove Button");
     console.log(x);
-    datab.removeCommand(x, function (success) {
+    dbCommands.removeCommand(x, function (success) {
         if (success) {
             //location.reload();
             reloadCommands();
@@ -34,7 +34,7 @@ function reloadCommands() {
     var btnList = document.getElementById('commandList');
     btnList.innerHTML = '';
     //console.log(btnList);
-    datab.getCommands(function (commands) {
+    dbCommands.getCommands(function (commands) {
         commands.forEach(function (commObj) {
             //console.log(commObj);
             var newCommand = document.createElement('LI');
@@ -175,11 +175,18 @@ function reloadCommands() {
     });
 }
 
-setInterval(function(){
-reloadCommands();
-}, 2000)
-reloadCommands();
+// setInterval(function(){
+// reloadCommands();
+// }, 2000);
+//reloadCommands();
+setTimeout(function () {
+    reloadCommands();    
+}, 10000);
 
-ipcRender.on("reload:command", function (e) {
+ipcCommandsRenderer.on("reload:command", function (e) {
     console.log('test');
+    setTimeout(function(){
+        reloadCommands();
+    }, 1000);
+    //reloadCommands();
 });

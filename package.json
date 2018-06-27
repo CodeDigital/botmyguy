@@ -21,11 +21,13 @@
     "dotenv": "^5.0.1",
     "irc-upd": "^0.9.0",
     "jquery": "^3.3.1",
-    "jsonwebtoken": "^8.2.2",
+    "jsonwebtoken": "^8.3.0",
     "material-icons": "^0.2.3",
-    "materialize-css": "^1.0.0-rc.1",
+    "materialize-css": "^1.0.0-rc.2",
+    "p5": "^0.6.1",
     "request": "^2.87.0",
-    "ws": "^5.2.0"
+    "tmi.js": "^1.2.1",
+    "ws": "^5.2.1"
   },
   "devDependencies": {
     "electron": "^1.8.7"

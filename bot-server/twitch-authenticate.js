@@ -40,25 +40,29 @@ function generateNonce() {
 module.exports.generateNonce = generateNonce;
 
 //Gets both the idtoken and the accesstoken for the bot.
-module.exports.getInfo = function(callback) {
+module.exports.getInfo = function(callback, firstTime) {
     var token_Info = {};
     //Generate the Nonce.
     var nonce = generateNonce();
     let twitch_auth_window;
-
     //Create Auth Window.
     twitch_auth_window = new remote.BrowserWindow({
       resizable: false,
       width: 500,
       height: 700,
+      //show: false,
+      frame: false,
       title: 'Welcome to Bot My Guy!',
       webPreferences: {
         nodeIntegration: false
       }
     });
 
-  //twitch_auth_window.webContents.openDevTools();
+    // twitch_auth_window.once('ready-to-show', function() {
+    //   twitch_auth_window.show();
+    // });
 
+  //twitch_auth_window.webContents.openDevTools();
   twitch_auth_window.webContents.session.clearStorageData(function() {
     console.log('Electron password auth cache cleared');
 
@@ -134,6 +138,7 @@ module.exports.getInfoNoReset = function (callback) {
     resizable: false,
     width: 500,
     height: 650,
+    show: false,
     title: 'Welcome to Bot My Guy!',
     webPreferences: {
       nodeIntegration: false,

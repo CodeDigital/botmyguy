@@ -1,1 +1,1 @@
-[{"command":"!aa","response":"a FROM","description":"a big apple","api":["twitchChat","twitchWhisper","discord"]}]
+[{"command":"!hello","response":"Hey there, FROM!","description":"Simple Greeting","api":["twitchChat","twitchWhisper","discord"]}]

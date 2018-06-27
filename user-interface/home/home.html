@@ -16,6 +16,11 @@
   <link rel="import" href="dashboard.html" id="dashboardLink">
   <link rel="import" href="commands.html" id="commandsLink">
 
+  <!--JavaScript at end of body for optimized loading-->
+  <script type="text/javascript" src="../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
+
+  <script src="../titlebar.js"></script>
+
 </head>
 
 <body class=" blue-grey darken-4 white-text" style="overflow-y: hidden;">
@@ -82,15 +87,15 @@
           </div>
         </div>
         Connect</button>
-      <button class="btn btn-large red waves-effect right hide" onclick="disconnect();" id="dcButton">
+      <button class="btn btn-large red waves-effect hide" onclick="disconnect();" id="dcButton">
         <i class="large material-icons left">eject</i> Disconnect</button>
     </li>
     <br>
-    <li onclick="changeTo('dashboard');" class="blue darken-4">
+    <li onclick="changeTo('dashboard');" id="dashboardButton" class="blue darken-4">
       <a class="white-text">
         <i class="material-icons white-text">dashboard</i> Dashboard</a>
     </li>
-    <li onclick="changeTo('commands');">
+    <li onclick="changeTo('commands');reloadCommands();" id="commandsButton">
       <a class="white-text">
         <i class="material-icons white-text">announcement</i> Commands</a>
     </li>
@@ -152,88 +157,7 @@
 
   </div>
 
-  <div id="_dashboard" class="hide">
-    <div class="center-align">
-      <h1 style="margin-top: 0px;margin-bottom: -15px;">Dashboard</h1>
-      <h6>Watch as events unfold in your stream!</h6>
-      <!-- <div class="divider"></div> -->
-    </div>
-
-    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
-      <div class="row" style="overflow-y: hidden;margin-top: 0px;">
-        <div class="col s7">
-          <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(100vh - 200px);">
-            <li class="collection-header pink darken-4">
-              <h2 style="margin-left: 10px;display: inline;">Chat</h2>
-              <p class="white-text right">What are your viewers saying in chat live?</p>
-            </li>
-            <li class="collection-item avatar pink darken-3">
-              <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-              <span class="title" style="margin-top: 10px;display:block;">
-                <b>Test User</b>
-              </span>
-              <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto tempore
-                itaque mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente excepturi
-                magnam ducimus! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus consectetur
-                qui quisquam. In, autem. Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente dolorum aliquam
-                nobis assumenda. Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur vitae non sed ipsum
-                totam voluptate enim quidem explicabo. Qui dicta, exercitationem aperiam aliquid reiciendis repudiandae et
-                minima quas reprehenderit voluptatem!
-              </p>
-              <i class="secondary-content white-text">1 Minute Ago</i>
-            </li>
-          </ul>
-        </div>
-        <div class="col s5">
-          <div class="row" style="margin-bottom: 0;">
-            <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (200px / 1.80));">
-              <li class="collection-header pink darken-4">
-                <h2 style="margin-left: 10px;display: inline;">Events</h2>
-                <p class="white-text right">What events in the stream are you missing?</p>
-              </li>
-              <li class="collection-item avatar pink darken-3">
-                <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-                <span class="title" style="margin-top: 10px;display:block;">
-                  <b>Test User</b>
-                </span>
-                <p style="text-align: justify;">Test Text Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit nisi voluptate eum, architecto
-                  tempore itaque mollitia laborum placeat reprehenderit sunt quas, iusto dolore, quod id deleniti sapiente
-                  excepturi magnam ducimus! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae aliquid possimus
-                  consectetur qui quisquam. In, autem. Quod debitis eos, magnam quidem, voluptate aut dolores vel sapiente
-                  dolorum aliquam nobis assumenda. Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur vitae
-                  non sed ipsum totam voluptate enim quidem explicabo. Qui dicta, exercitationem aperiam aliquid reiciendis
-                  repudiandae et minima quas reprehenderit voluptatem!
-                </p>
-                <i class="secondary-content white-text">1 Minute Ago</i>
-              </li>
-            </ul>
-          </div>
-          <div class="row" style="margin-bottom: 0px;margin-top: 0;">
-            <ul class="collection with-header grey darken-4" style="overflow-y:auto; height: calc(50vh - (200px / 1.81));">
-              <li class="collection-header pink darken-4">
-                <h2 style="margin-left: 10px;display: inline;">Game Events</h2>
-                <p class="white-text right">What's happening in your stream games?</p>
-              </li>
-              <li class="collection-item avatar pink darken-3">
-                <img src="../assets/img/logo-white.png" alt="" class="circle grey darken-4" style="margin-top: 10px;">
-                <span class="title" style="margin-top: 10px;display:block;">
-                  <b>Test User</b>
-                </span>
-                <p style="text-align: justify;">Test
-                  <i class="secondary-content white-text">1 Minute Ago</i>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--JavaScript at end of body for optimized loading-->
-  <script type="text/javascript" src="../../node_modules/materialize-css/dist/js/materialize.min.js"></script>
-
-  <script src="../titlebar.js"></script>
-  <script src="menu.js"></script>
+<script src="menu.js"></script>
 
 </body>
 

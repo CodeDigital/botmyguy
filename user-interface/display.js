@@ -71,17 +71,19 @@ module.exports.loadingWindow = function() {
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     resizable: false,
-    width: 200,
-    height: 200,
+    width: 550,
+    height: 550,
     title: 'Loading In!'
   });
 
   //Load HTML File into window.
   loadWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'home/loading.html'),
+      pathname: path.join(__dirname, 'loading.html'),
       protocol: 'file:',
       slashes: true
   }));
+
+  //loadWindow.webContents.openDevTools();
 
   return loadWindow;
 
@@ -106,7 +108,7 @@ module.exports.setup = function() {
       slashes: true
   }));
 
-  setupWindow.webContents.openDevTools()
+  setupWindow.webContents.openDevTools();
 
   return setupWindow;
 

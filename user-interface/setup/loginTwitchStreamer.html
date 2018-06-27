@@ -6,86 +6,52 @@
 </head>
 
 
-  <body>
+<body>
 
-<div class="center-align">
-<h1 style="margin-top: 0px;margin-bottom: -5px;">Twitch For The Streamer!</h1>
-  <h6>Whose channel is being moderated?</h6>
-  <!-- <div class="divider"></div> -->
-</div>
-
-<div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
-  <div class="row" style="overflow-y: hidden;margin-top: 0px;">
-    <br>
-    <div class="col s12 center-align">
-      <i class="material-icons large left">build</i>
-      This page is still under construction, but you can use other parts of the bot. Click the button below to continue with the
-      setup process!
+  <div class="center-align">
+    <h1 style="margin-top: 0px;margin-bottom: -5px;">Twitch For The Streamer!</h1>
+    <h6>Whose channel is being moderated?</h6>
+    <div class="progress">
+      <div class="determinate pink darken-2" style="width: 25%"></div>
     </div>
+    <!-- <div class="divider"></div> -->
   </div>
-  <div class="row">
-<div class="col s12 center-align">
-  <button class="btn btn-large purple hoverable center-align valign-wrapper" onclick="twitchLogin()">
-    <img src="../assets/icons/Glitch_White_RGB.svg" class="left" style="height: 30px;"> Login with Twitch!
-  </button>
-</div>
-  </div>
-  <div class="row">
-    <div class="col s12 center-align">
-      <button onclick="changeTo('streamer');" class="btn btn-large green hoverable center-align" style="width: 50%;">next</button>
+
+  <div style="margin-top: -20px; margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
+    <div class="row" style="overflow-y: hidden;margin-top: 0px;margin-bottom: -5px;">
+      <br>
+      <div class="col s12 center-align">
+        <p>So, you're excited by the chat bot, have accepted the Legal Documents and want to start using it for your own streams.</p>
+        <p>We need to do a few more things before the bot is ready to join your chat! First, we'll need to know what channel
+          to join. For that, we'll need you to login through Twitch and well get only the information we'll need to move
+          on and nothing more.</p>
+      </div>
     </div>
 
+    <div class="row" style="margin-bottom: -5px;">
+      <div class="col s12 red z-depth-3">
+        <i class="material-icons large left" style="margin-top: auto;margin-bottom: auto;">warning</i>
+        <h5>Be Careful! This is not the account that the bot will be chatting with. Log in with the account on which you'll stream!</h5>
+      </div>
+    </div>
 
-  </div>
-</div>
-
-      <div class="row">
-        <div class="col" style="background-color: #470047; height:100vh;" id="app-display">
-          <br><br>
-          <h1 class="display-4 text-center">Twitch For The Streamer!</h1>
-          <p>So, you're excited by the chat bot, have accepted the Legal Documents and want to start using it for your own streams.</p>
-          <p>We need to do a few more things before the bot is ready to join your chat! First, we'll need to know what channel to join. For that, we'll need you to login through Twitch and well get only the information we'll need to move on and nothing more.</p>
-          <div class="alert alert-warning" role="alert">
-            <i class="d-inline ion-alert-circled pr-2"></i>
-            Be Careful! This is not the account that the bot will be chatting with. Log in with the account on which you'll stream!
-          </div>
-          <p>Go ahead and press the button to Login With Twitch, then the next step will unlock.</p>
-<button type="button" class="btn btn-lg btn-block text-white" style="background-color:#6441A4;" onclick="twitchLogin()">
-  <i class="d-inline ion-social-twitch-outline pr-2"></i>Log In With Twitch</button>
-        </div>
+    <div class="row">
+      <div class="col s12 center-align">
+        <button class="btn btn-large hoverable center-align valign-wrapper" style="background-color:#6441A4; width: 50%;user-select: none;cursor: pointer;"
+          onclick="twitchStreamerLogin()">
+          <img src="../assets/icons/Glitch_White_RGB.svg" class="left" style="height: 30px;margin-top: 10px; margin-right: 10px;"> Login with Twitch!
+        </button>
+        <br>
+        <br>
+        <b>Once you're authenticated with Twitch, you'll be able to move on to the next step in setting up your own Bot My Guy.</b>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 center-align">
+        <button onclick="changeTo('bot');" class="btn btn-large green center-align disabled" style="width: 50%;user-select: none;cursor: pointer;"
+          id="nextStreamBtn">Next</button>
       </div>
 
-      <div class="row fixed-bottom">
-        <div class="col" style="background-color: #210021;">
-          <a type="button" href="loginTwitchBot.html" class="btn btn-success btn-lg btn-block mx-auto disabled" aria-disabled="true" id="nextBtn">Next Step</a>
-          <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; background-color: #470047;"></div>
-          </div>
-          <h6 class="mb-0 mr-2 d-inline-block float-right">Setup Process</h6>
-        </div>
-      </div>
 
     </div>
-
-    <script src="../titlebar.js"></script>
-
-    <script type="text/javascript">
-      //const {ipcRenderer} = require('electron');
-      const twitchauth = require('../../bot-server/twitch-authenticate.js');
-
-      function twitchLogin(){
-        console.log('this working?');
-        twitchauth.getInfo(function(result){
-          var streamer = result;
-          console.log(streamer);
-          ipcRenderer.send('streamerauth:done', streamer);
-
-          var nextBtn = document.getElementById('nextBtn');
-          nextBtn.className = "btn btn-success btn-lg btn-block mx-auto";
-          nextBtn.setAttribute('aria-disabled', false);
-        });
-      }
-    </script>
-
-  </body>
-</html>
+  </div>

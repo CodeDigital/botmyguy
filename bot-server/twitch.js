@@ -1,4 +1,5 @@
 const irc = require('irc-upd');
+const tmi = require('tmi.js');
 const WebSocket = require('ws');
 const disp = require('../user-interface/display.js');
 const db = require('../database/database.js');
@@ -121,95 +122,129 @@ function startIRC(callback){
 
     console.log('Starting IRC');
 
-    ircClient = new irc.Client('irc.chat.twitch.tv', botNick, {
-        password: authToken,
-        debug: false,
-        showErrors: true,
-        channels: [userChannel],
-        autoConnect: false,
-        autoRejoin: true,
-        retryCount: 10,
-        retryDelay: 2000,
-        stripColors: false,
-        millisecondsOfSilenceBeforePingSent: 15 * 1000,
-        millisecondsBeforePingTimeout: 8 * 1000,
-    });
+    var options = {
+        options: {
+            debug: false
+        },
+        connection: {
+            reconnect: true
+        },
+        identity: {
+            username: botNick,
+            password: authToken
+        },
+        channels: [userChannel]
+    };
 
-    ircClient.on('error', function(e){
-        console.log(e);
-    })
+    ircClient = new tmi.client(options);
 
-    ircClient.on(('message' + userChannel), function(nick, text, message) {
-        console.log('Message ' + userChannel);
-        console.log(nick);
-        console.log(text);
-        console.log(message);
-
-    });
-
-    ircClient.on(('message'), function (nick, to, text, message) {
-        console.log('Message Event.');
-        console.log(nick);
-        console.log(text);
-        console.log(message);
-
-    });
-
-    ircClient.on(('raw'), function (message) {
-        console.log('Got Raw');
-        console.log(message);
-
-        var msgArguments = message.args;
-        fullBody = msgArguments[0];
-
-        if(fullBody.includes('PRIVMSG')){
-            var userIndex = fullBody.indexOf(((userChannel) + ' :')) + ((userChannel) + ' :').length;
-            var body = fullBody.substring(userIndex);
-            var fullCommand = message.command;
-            var colorStartIndex = fullCommand.indexOf('color=') + 'color='.length;
-            var colorEndIndex = fullCommand.indexOf(';', colorStartIndex);
-            var userColor = fullCommand.substring(colorStartIndex, colorEndIndex);
-            var fromStartIndex = fullCommand.indexOf('display-name=') + 'display-name'.length;
-            var fromEndIndex = fullCommand.indexOf(';');
-            var from = fullCommand.substring(fromStartIndex,fromEndIndex);
-            from = from.toLowerCase();
-            console.log(userColor);
-            console.log(from);
-
+    ircClient.on('chat', function (channel, user, message, self) {
+        if (user.mod) {
+            
         }
+        gotChat(user, message);
+        console.log('Got an IRC Message!');
 
     });
 
-    ircClient.connect(10, function(){
-        console.log('Connected to IRC!');
-    });
-
-    ircClient.send('CAP REQ', 'twitch.tv/tags');
-    //ircClient.send('CAP REQ', 'twitch.tv/commands');
-
-    ircClient.join(userChannel, function () {
-        console.log('Joined ' + userChannel);
-        chatTalk('/color HotPink');
-        chatAction('Hello everybody! Type !help to get some help with my commands.');
+    ircClient.on('connected', function(address, port){
         callback();
     });
+
+    ircClient.connect();
+
+    // ircClient = new irc.Client('irc://irc.chat.twitch.tv:6697', botNick, {
+    //     password: authToken,
+    //     debug: true,
+    //     showErrors: false,
+    //     channels: [userChannel],
+    //     autoConnect: false,
+    //     autoRejoin: true,
+    //     retryCount: 10,
+    //     retryDelay: 2000,
+    //     stripColors: false,
+    //     millisecondsOfSilenceBeforePingSent: 15 * 1000,
+    //     millisecondsBeforePingTimeout: 8 * 1000,
+    // });
+
+    // ircClient.on('error', function(e){
+    //     console.log(e);
+    // })
+
+    // ircClient.on(('message' + userChannel), function(nick, text, message) {
+    //     console.log('Message ' + userChannel);
+    //     console.log(nick);
+    //     console.log(text);
+    //     console.log(message);
+
+    // });
+
+    // ircClient.on(('message'), function (nick, to, text, message) {
+    //     console.log('Message Event.');
+    //     console.log(nick);
+    //     console.log(text);
+    //     console.log(message);
+
+    // });
+
+    // ircClient.on(('raw'), function (message) {
+    //     console.log('Got Raw');
+    //     console.log(message);
+
+    //     var msgArguments = message.args;
+    //     fullBody = msgArguments[0];
+
+    //     if(fullBody.includes('PRIVMSG')){
+    //         var userIndex = fullBody.indexOf(((userChannel) + ' :')) + ((userChannel) + ' :').length;
+    //         var body = fullBody.substring(userIndex);
+    //         var fullCommand = message.command;
+    //         var colorStartIndex = fullCommand.indexOf('color=') + 'color='.length;
+    //         var colorEndIndex = fullCommand.indexOf(';', colorStartIndex);
+    //         var userColor = fullCommand.substring(colorStartIndex, colorEndIndex);
+    //         var fromStartIndex = fullCommand.indexOf('display-name=') + 'display-name'.length;
+    //         var fromEndIndex = fullCommand.indexOf(';');
+    //         var from = fullCommand.substring(fromStartIndex,fromEndIndex);
+    //         from = from.toLowerCase();
+    //         console.log(userColor);
+    //         console.log(from);
+
+    //     }else if(fullBody.includes('RESPONSE')){
+    //         callback();
+    //     }
+
+    // });
+
+    // ircClient.connect(10, function(){
+    //     console.log('Connected to IRC!');
+    //     //callback();
+    // });
+
+    // //ircClient.send('CAP REQ', 'twitch.tv/tags');
+    // //ircClient.send('CAP REQ', 'twitch.tv/commands');
+
+    // ircClient.join(userChannel, function () {
+    //     console.log('Joined ' + userChannel);
+    //     chatTalk('/color HotPink');
+    //     chatAction('Hello everybody! Type !help to get some help with my commands.');
+    //     callback();
+    // });
 }
 
-function gotChat(from, message, userColor){
-    console.log(messageObject);
+function gotChat(from, message){
+    //console.log(messageObject);
     
 
-    db.checkCommand(message, 'twitchChat', function (commandObject) {
+    db.checkCommand(message, function (commandObject) {
         if (commandObject) {
 
-            commandObject.apiType.forEach( function (type) {
+            commandObject.api.forEach( function (type) {
                 if(type == 'twitchChat'){
                     console.log('An Command Was Called');
                     console.log(commandObject.response);
-                    var response = commandReplaceFrom(commandObject.response, from);
+                    var response = commandReplaceFrom(commandObject.response, from.username);
                     chatTalk(response);
                 }
-            })
+            });
         }
     });
 }
@@ -258,7 +293,7 @@ function chatAction(message){
 }
 
 function whisper(to, message){
-    ircClient.say(userChannel, ("/w " + to + " " + message));
+    ircClient.whisper(to, message);
 }
 
 function commandReplaceFrom(response, from){
