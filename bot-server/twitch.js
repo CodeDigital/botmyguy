@@ -1,19 +1,24 @@
 const irc = require('irc-upd');
-const tmi = require('tmi.js');
+const tmi = require('twitch-js');
 const WebSocket = require('ws');
 const disp = require('../user-interface/display.js');
 const db = require('../database/database.js');
 const ck = require('../database/cookies.js');
-const ta = require('./twitch-authenticate.js');
+//const ta = require('./twitch-authenticate.js');
 const clientID = 'yblspem7dabcfdv0nk918jaq8a70yb';
+const {ipcMain} = require('electron');
+const te = require('./twitch-icons.js');
 
 var bot_id;
 var user_id;
 var token;
 var authToken;
 var botNick;
+var userNick;
 var userChannel;
 var nonce;
+
+var mainWindow;
 
 var heartbeat;
 var userEnded = false;
@@ -93,7 +98,9 @@ function startWS(callback) {
     });
 }
 
-module.exports.connect = function(callback){
+module.exports.connect = function(callback, mainw){
+
+    mainWindow = mainw
 
     ck.getCookie('twitchBotInfo', function (cookie) {
         db.getSettings(function(settings){
@@ -103,10 +110,11 @@ module.exports.connect = function(callback){
             token = cookie.accessToken;
             authToken = ("oauth:" + token);
             botNick = settings.bot_nick;
+            userNick = settings.user;
             userChannel = settings.user;
             userChannel = "#" + userChannel.toLowerCase();
             //userChannel = userChannel.toLowerCase();
-            nonce = ta.generateNonce();
+            //nonce = ta.generateNonce();
             console.log("botID - " + bot_id);
             startWS(callback);
         });
@@ -231,8 +239,29 @@ function startIRC(callback){
 }
 
 function gotChat(from, message){
-    //console.log(messageObject);
+    // var twitchemotes = require('twitchemotes');
+    // var emotes = twitchemotes({
+    //      /* options */
+    //      'channels':['twitch', userNick]
+    //      });
+    // //console.log(messageObject);
+    var data = {
+        'user': {
+            'colour': '',
+            'displayName': ''
+        },
+        'time':'',
+        'message':''
+    };
+    data.user.colour = from.color;
+    data.user.displayName = from['display-name'];
+    var now = new Date();
+    data.time = now.toDateString() + " - " + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+    data.message = te.formatEmotes(message, from.emotes);
     
+    //data.message = emotes(message);
+
+    mainWindow.webContents.send("dashboard:chat", data);
 
     db.checkCommand(message, function (commandObject) {
         if (commandObject) {
@@ -252,7 +281,7 @@ function gotChat(from, message){
 function gotWhisper(from, body) {
     db.checkCommand(body, function(commandObject){
         if(commandObject){
-            commandObject.apiType.forEach(function(type) {
+            commandObject.api.forEach(function(type) {
                 if (type == 'twitchWhisper') {
                     console.log('An Command Was Called');
                     console.log(commandObject.response);

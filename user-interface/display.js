@@ -13,6 +13,7 @@ module.exports.mainWindow = function() {
     frame: false,
     width: 1280,
     height: 720,
+    show: false,
     minHeight: 450,
     minWidth: 800
   });
@@ -24,6 +25,10 @@ module.exports.mainWindow = function() {
       slashes: true
   }));
   mainWindow.webContents.openDevTools();
+
+  mainWindow.on('ready-to-show', function() {
+    mainWindow.show();
+  });
 
   return mainWindow;
 }
@@ -73,6 +78,7 @@ module.exports.loadingWindow = function() {
     resizable: false,
     width: 550,
     height: 550,
+    show: false,
     title: 'Loading In!'
   });
 
@@ -84,6 +90,10 @@ module.exports.loadingWindow = function() {
   }));
 
   //loadWindow.webContents.openDevTools();
+
+  loadWindow.on('ready-to-show', function() {
+    loadWindow.show();
+  });
 
   return loadWindow;
 

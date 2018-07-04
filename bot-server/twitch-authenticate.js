@@ -66,7 +66,6 @@ module.exports.getInfo = function(callback, firstTime) {
   twitch_auth_window.webContents.session.clearStorageData(function() {
     console.log('Electron password auth cache cleared');
 
-    //TODO: add chat_login	scope \/
     twitch_auth_window.loadURL('https://id.twitch.tv/oauth2/authorize?' +
       'client_id=' + clientID +
       '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +
@@ -148,7 +147,6 @@ module.exports.getInfoNoReset = function (callback) {
 
   //twitch_auth_window.webContents.openDevTools();
 
-  //TODO: add chat_login	scope \/
   twitch_auth_window.loadURL('https://id.twitch.tv/oauth2/authorize?' +
     'client_id=' + clientID +
     '&redirect_uri=' + 'http%3A%2F%2Flocalhost' +

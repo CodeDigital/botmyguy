@@ -73,7 +73,9 @@ ipcMain.on('setup:complete', function (e, item) {
       //Create the mainwindow
       mainWindow = disp.mainWindow();
 
-      setup.close();
+        mainWindow.on('ready-to-show', function () {
+          setup.close();
+        });
 
         //Quit Everything when Window Closed.
         mainWindow.on('closed', function () {
@@ -88,7 +90,9 @@ ipcMain.on('loading:complete', function (e, item) {
   //Create the mainwindow
   mainWindow = disp.mainWindow();
 
-  loadingWindow.close();
+  mainWindow.on('ready-to-show', function() {
+      loadingWindow.close();
+  });
 
     //Quit Everything when Window Closed.
     mainWindow.on('closed', function () {
@@ -98,16 +102,18 @@ ipcMain.on('loading:complete', function (e, item) {
 
 ipcMain.on('connect', function (e, item) {
   tw.connect(function(){
-    botConnected = setInterval(function () {
-      mainWindow.webContents.send("connect:success");
-    }, 10);
+    // botConnected = setInterval(function () {
+    //   mainWindow.webContents.send("connect:success");
+    // }, 10);
     mainWindow.webContents.send("connect:success");
-  });
+  }, mainWindow);
 });
 
 ipcMain.on('disconnect', function (e, item) {
-    mainWindow.webContents.send("disconnect:success");
-    clearInterval(botConnected);
+  tw.disconnect(function() {
+      mainWindow.webContents.send("disconnect:success");
+      clearInterval(botConnected);
+  });
 });
 
 ipcMain.on('newCommand:ready', function(e,item) {
