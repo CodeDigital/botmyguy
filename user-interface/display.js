@@ -1,12 +1,15 @@
 //App JS File meant to simplify main.js communication with electron!
 
 //Declaration of Electron Things...
-const {BrowserWindow, ipcMain} = require('electron');
+const {
+  BrowserWindow,
+  ipcMain
+} = require('electron');
 const url = require('url');
 const path = require('path');
 let mainWindow, errorWindow, loadWindow, setupWindow, commandWindow;
 
-module.exports.mainWindow = function() {
+module.exports.mainWindow = function () {
   //Create The Main Window
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
@@ -20,57 +23,58 @@ module.exports.mainWindow = function() {
 
   //Load HTML File into window.
   mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'home/home.html'),
-      protocol: 'file:',
-      slashes: true
+    pathname: path.join(__dirname, 'home/home.html'),
+    protocol: 'file:',
+    slashes: true
   }));
-  mainWindow.webContents.openDevTools();
 
-  mainWindow.on('ready-to-show', function() {
+  //mainWindow.webContents.openDevTools();
+
+  mainWindow.on('ready-to-show', function () {
     mainWindow.show();
   });
 
   return mainWindow;
 }
 
-module.exports.errorWindow = function(title, message) {
-		var errorMessage = {};
-		errorMessage.title = title;
-		errorMessage.body = message;
-    errorMessage.timer;
+module.exports.errorWindow = function (title, message) {
+  var errorMessage = {};
+  errorMessage.title = title;
+  errorMessage.body = message;
+  errorMessage.timer;
 
-		//Create Error Window
-		errorWindow = new BrowserWindow({
-				titleBarStyle: 'customButtonsOnHover',
-				frame: false,
-        resizable: false,
-				width: 400,
-				height: 200,
-				title: 'An Error Occured!'
-		});
+  //Create Error Window
+  errorWindow = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 400,
+    height: 200,
+    title: 'An Error Occured!'
+  });
 
-		//Load Error Window Template
-		errorWindow.loadURL(url.format({
-				pathname: path.join(__dirname, 'error.html'),
-				protocol: 'file:',
-				slashes: true
-		}));
+  //Load Error Window Template
+  errorWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'error.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
 
-		errorMessage.timer = setInterval(function () {
-				//console.log('Shown');
-				errorWindow.webContents.send('got:error', errorMessage);
-		}, 10);
+  errorMessage.timer = setInterval(function () {
+    //console.log('Shown');
+    errorWindow.webContents.send('got:error', errorMessage);
+  }, 10);
 
 
-		//Garbage Collection Handle.
-		errorWindow.on('closed', function(){
-				errorWindow = null;
-		});
+  //Garbage Collection Handle.
+  errorWindow.on('closed', function () {
+    errorWindow = null;
+  });
 
-    return errorWindow;
+  return errorWindow;
 }
 
-module.exports.loadingWindow = function() {
+module.exports.loadingWindow = function () {
   //Create The Main Window
   loadWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
@@ -84,14 +88,14 @@ module.exports.loadingWindow = function() {
 
   //Load HTML File into window.
   loadWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'loading.html'),
-      protocol: 'file:',
-      slashes: true
+    pathname: path.join(__dirname, 'loading.html'),
+    protocol: 'file:',
+    slashes: true
   }));
 
   //loadWindow.webContents.openDevTools();
 
-  loadWindow.on('ready-to-show', function() {
+  loadWindow.on('ready-to-show', function () {
     loadWindow.show();
   });
 
@@ -99,7 +103,7 @@ module.exports.loadingWindow = function() {
 
 }
 
-module.exports.setup = function() {
+module.exports.setup = function () {
   //Create The Main Window
   setupWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
@@ -112,13 +116,13 @@ module.exports.setup = function() {
 
   //Load HTML File into window.
   setupWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'setup/setup.html'),
-      // pathname: path.join(__dirname, 'h.html'),
-      protocol: 'file:',
-      slashes: true
+    pathname: path.join(__dirname, 'setup/setup.html'),
+    // pathname: path.join(__dirname, 'h.html'),
+    protocol: 'file:',
+    slashes: true
   }));
 
-  setupWindow.webContents.openDevTools();
+  //setupWindow.webContents.openDevTools();
 
   return setupWindow;
 
@@ -130,6 +134,7 @@ module.exports.editCommand = function () {
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     resizable: false,
+    show: false,
     width: 1200,
     height: 600,
     title: 'Edit A Command!'
@@ -142,7 +147,11 @@ module.exports.editCommand = function () {
     slashes: true
   }));
 
-  commandWindow.webContents.openDevTools()
+  commandWindow.on('ready-to-show', function () {
+    commandWindow.show();
+  });
+
+  //commandWindow.webContents.openDevTools()
 
   return commandWindow;
 
