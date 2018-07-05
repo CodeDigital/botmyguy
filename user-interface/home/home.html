@@ -61,10 +61,10 @@
 
   <!-- Menu -->
 
-  <ul id="slide-out" class="sidenav blue darken-2" style="height: 100vh;overflow-y: auto;">
+  <ul id="slide-out" class="sidenav grey darken-4" style="height: 100vh;overflow-y: auto;">
     <li class="white-text center-align">
       <br>
-      <img src="../assets/icons/Icon.svg" style="width: 90%; margin-bottom: -65px;margin-top: -20px;" alt="">
+      <img src="../assets/icons/Icon.svg" style="width: 90%; margin-bottom: -65px;margin-top: -50px;" alt="">
 
       <div class="container">
         <h4 id="welcomeText">Welcome, USER</h4>
@@ -91,27 +91,27 @@
         <i class="large material-icons left">eject</i> Disconnect</button>
     </li>
     <br>
-    <li onclick="changeTo('dashboard');" id="dashboardButton" class="blue darken-4">
+<li onclick="changeTo('dashboard');" id="dashboardButton" class="blue darken-4" style="user-select: none;cursor: pointer;">
       <a class="white-text">
         <i class="material-icons white-text">dashboard</i> Dashboard</a>
     </li>
-    <li onclick="changeTo('commands');reloadCommands();" id="commandsButton">
+<li onclick="changeTo('commands');reloadCommands();" id="commandsButton" style="user-select: none;cursor: pointer;">
       <a class="white-text">
         <i class="material-icons white-text">announcement</i> Commands</a>
     </li>
-    <li>
-      <a href="poll.html" class="white-text">
-        <i class="material-icons white-text">pie_chart</i> Polls</a>
+<li style="user-select: none;cursor: pointer;">
+<a class="white-text">
+<i class="material-icons white-text">pie_chart</i> Polls
+<span class="new badge" data-badge-caption="Coming Soon!"></span>
+</a>
     </li>
-    <li onclick="includeHTML('test');">
+<li style="user-select: none;cursor: pointer;">
       <a class="white-text">
-        <i class="material-icons white-text">pie_chart</i> Test</a>
+<i class="material-icons white-text">timer</i> Timed Events
+<span class="new badge" data-badge-caption="Coming..."></span>
+</a>
     </li>
-    <li>
-      <a href="timed-messages.html" class="white-text">
-        <i class="material-icons white-text">timer</i> Timed Events</a>
-    </li>
-    <li class="white-text">
+<li class="white-text" style="user-select: none;cursor: pointer;">
       <ul class="collapsible collapsible-accordion" style="margin-top: 0px;">
         <li>
           <a class="collapsible-header white-text">
@@ -121,17 +121,23 @@
           </a>
           <div class="collapsible-body indigo darken-3">
             <ul>
-              <li>
-                <a href="#" class="white-text">
-                  <i class="material-icons white-text">repeat</i> Game Cycle</a>
+<li style="user-select: none;cursor: pointer;">
+                <a class="white-text">
+<i class="material-icons white-text">repeat</i> Game Cycle
+<span class="new badge" data-badge-caption="Coming Soon!"></span>
+</a>
               </li>
-              <li>
-                <a href="#" class="white-text">
-                  <i class="material-icons white-text">pets</i> Werewolves</a>
+<li style="user-select: none;cursor: pointer;">
+                <a class="white-text">
+<i class="material-icons white-text">pets</i> Werewolves
+<span class="new badge" data-badge-caption="Coming Soon!"></span>
+</a>
               </li>
-              <li>
-                <a href="#" class="white-text">
-                  <i class="material-icons white-text">people</i> Community</a>
+<li style="user-select: none;cursor: pointer;">
+                <a class="white-text">
+<i class="material-icons white-text">people</i> Community
+<span class="new badge" data-badge-caption="Coming Soon!"></span>
+</a>
               </li>
             </ul>
           </div>

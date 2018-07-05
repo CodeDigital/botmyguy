@@ -254,7 +254,9 @@ function gotChat(from, message){
         'message':''
     };
     data.user.colour = from.color;
-    data.user.displayName = from['display-name'];
+    console.log(from.badges);
+    console.log(from['badges']);
+    data.user.displayName = te.formatBadges(from['display-name'], from['badges']);
     var now = new Date();
     data.time = now.toDateString() + " - " + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
     data.message = te.formatEmotes(message, from.emotes);

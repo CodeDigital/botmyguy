@@ -1,1 +1,1 @@
-[{"command":"!hello","response":"Hey there, FROM!","description":"Simple Greeting","api":["twitchChat","twitchWhisper","discord"]},{"command":"!luke","response":"Buke Busso","description":"no","api":["twitchChat","twitchWhisper","discord"]},{"command":"!jack","response":"Jack Attack FROM","description":"Jack attack","api":["twitchWhisper"]}]
+[]

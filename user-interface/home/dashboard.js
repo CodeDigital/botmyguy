@@ -25,11 +25,12 @@ ipcDashboardRenderer.on('dashboard:chat', function (e, data) {
     var uNameSpan = document.createElement('SPAN');
     uNameSpan.className = 'title left';
     uNameSpan.style.marginTop = '10px';
+    uNameSpan.style.marginBottom = '2px';
     uNameSpan.style.display = 'block';
 
     var uName = document.createElement('B');
     uName.style.color = data.user.colour;
-    uName.innerText = data.user.displayName;
+    uName.innerHTML = data.user.displayName;
 
     uNameSpan.appendChild(uName);
     newChat.appendChild(uNameSpan);
