@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron  ."
+    "start": "electron  .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,16 @@
     "ws": "^5.2.1"
   },
   "devDependencies": {
-    "electron": "^1.8.7"
+    "electron": "^1.8.7",
+    "electron-builder": "^20.19.2",
+    "electron-packager": "^12.1.0"
+  },
+  "build": {
+    "appId": "com.codedigital.botmyguy",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "asar": false
   }
 }

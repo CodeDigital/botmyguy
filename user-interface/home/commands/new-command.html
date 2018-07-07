@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
-<body class="blue-grey darken-4 white-text">
+<body class="blue-grey darken-4 white-text" style="overflow: hidden;">
 
 <nav style="height: 64px;position:fixed;-webkit-app-region: drag">
         <div class="nav-wrapper pink darken-2" style="height: 64px;">
@@ -34,10 +34,8 @@
             </ul>
         </div>
     </nav>
-
-    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;">
-
-        <br><br><br><br>
+<br><br><br>
+    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow: auto; height:calc(100vh - 64px);width: 790px;">
 
         <div class="center-align">
             <h1 style="margin-top: 0px;margin-bottom: -15px;">Edit Command</h1>
@@ -78,18 +76,18 @@
                 <div class="row">
                     <div class="col s4">
                         <button type="button" onmouseout="typeMouseOff(this, 'twitchChat');" onmouseover="typeHover(this, 'twitchChat');" onclick="apiTypeClicked('twitchChat');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
-                                <img src="../../assets/icons/twitchChat.svg" class="left hide" style="height: 50px;">
+                                <img src="../../../assets/icons/twitchChat.svg" class="left hide" style="height: 50px;">
 
                             Twitch Chat</button>
                     </div>
                     <div class="col s4">
                         <button type="button" onmouseout="typeMouseOff(this, 'twitchWhisper');" onmouseover="typeHover(this, 'twitchWhisper');" onclick="apiTypeClicked('twitchWhisper');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
-                                <img src="../../assets/icons/twitchWhisper.svg" class="left hide" style="height: 50px;">
+                                <img src="../../../assets/icons/twitchWhisper.svg" class="left hide" style="height: 50px;">
                             Twitch Whisper</button>
                     </div>
                     <div class="col s4">
                         <button type="button" onmouseout="typeMouseOff(this, 'discord');" onmouseover="typeHover(this, 'discord');" onclick="apiTypeClicked('discord');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
-                            <img src="../../assets/icons/discordChat.svg" class="left hide" style="height: 50px;">
+                            <img src="../../../assets/icons/discordChat.svg" class="left hide" style="height: 50px;">
                             Discord Chat</button>
                     </div>
                 </div>
@@ -106,6 +104,7 @@
                     </div>
                 </div>
             </form>
+            <br>
         </div>
 
     </div>

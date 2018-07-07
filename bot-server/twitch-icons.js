@@ -22,7 +22,7 @@ module.exports.formatEmotes = function(text, emotes) {
                     1,
                     '<img style="height:1.5rem;" src="http://static-cdn.jtvnw.net/emoticons/v1/' +
                     i +
-                    '/3.0">',
+                    '/3.0">'
                 );
             }
         }

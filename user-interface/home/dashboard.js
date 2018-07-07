@@ -48,4 +48,7 @@ ipcDashboardRenderer.on('dashboard:chat', function (e, data) {
 
     newChat.appendChild(chatMessage);
     chatList.appendChild(newChat);
+
+    chatList.scrollTop = chatList.scrollHeight;
+
 });

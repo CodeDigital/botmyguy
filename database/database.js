@@ -1,10 +1,12 @@
 const fs = require('fs');
+const path = require('path');
+const url = require('url');
 
 module.exports.getSettingsSync = function () {
     //settings from JSON
     var settings;
 
-    var settingBuffer = fs.readFileSync('database/settings.json');
+    var settingBuffer = fs.readFileSync(__dirname + "\\settings.json");
     settings = JSON.parse(settingBuffer);
 
     return settings;
@@ -15,18 +17,20 @@ module.exports.getSettings = function (callback) {
     let settings;
 
     var settingsBuffer;
-    fs.readFile('database/settings.json', function (err, data) {
-        if (!(data == "")) {
+    //console.log(__dirname + "\\settings.json");
+
+    fs.readFile(__dirname + "\\settings.json", function (err, data) {
+        if (data != "") {
             settingsBuffer = data;
             settings = JSON.parse(settingsBuffer);
 
             callback(settings);
         } else {
-            fs.readFile('database/defaultSettings.json', function(err, data){
+            fs.readFile(__dirname + "\\defaultSettings.json", function (err, data) {
                 if (err){
 
                 }else{
-                    var createStream = fs.createWriteStream("database/settings.json");
+                    var createStream = fs.createWriteStream(__dirname + "\\settings.json");
                     createStream.end();
 
                     settingsBuffer = data;
@@ -43,17 +47,17 @@ module.exports.getSettings = function (callback) {
 function setSettings(settings) {
     var settingsBuffer = JSON.stringify(settings);
 
-    if (fs.existsSync('database.settings.json')){
-        fs.writeFileSync('database/settings.json', settingsBuffer);
+    if (fs.existsSync(__dirname + "\\settings.json")) {
+        fs.writeFileSync(__dirname + "\\settings.json", settingsBuffer);
     } else {
-        fs.readFile('database/defaultSettings.json', function (err, data) {
+        fs.readFile(__dirname + "\\defaultSettings.json", function (err, data) {
             if (err) {
 
             } else {
-                var createStream = fs.createWriteStream("database/settings.json");
+                var createStream = fs.createWriteStream(__dirname + "\\settings.json");
                 createStream.end();
 
-                fs.writeFileSync('database/settings.json', settingsBuffer);
+                fs.writeFileSync(__dirname + "\\settings.json", settingsBuffer);
             }
         });
     }
@@ -62,7 +66,7 @@ function setSettings(settings) {
 module.exports.setSettings = setSettings;
 
 module.exports.newCommand = function (commandObject) {
-    fs.readFile('database/commandTemplate.json', function (err, data) {
+    fs.readFile(__dirname + "\\commandTemplate.json", function (err, data) {
         if (err) throw err;
 
         let newCommand = JSON.parse(data);
@@ -71,7 +75,7 @@ module.exports.newCommand = function (commandObject) {
         newCommand.description = commandObject.description;
         newCommand.api = commandObject.api;
 
-        fs.readFile('database/commands.json', function (err, data) {
+        fs.readFile(__dirname + "\\commands.json", function (err, data) {
             if (err) throw err;
 
             var commands = JSON.parse(data);
@@ -88,7 +92,7 @@ module.exports.newCommand = function (commandObject) {
             }
 
             var commandsBuffer = JSON.stringify(commands);
-            fs.writeFileSync('database/commands.json', commandsBuffer);
+            fs.writeFileSync(__dirname + "\\commands.json", commandsBuffer);
         });
     });
 };
@@ -98,7 +102,7 @@ module.exports.checkCommand = function (command, callback) {
     let commands;
 
     var commandsBuffer;
-    fs.readFile('database/commands.json', function (err, data) {
+    fs.readFile(__dirname + "\\commands.json", function (err, data) {
         if (err) throw err;
 
         commandsBuffer = data;
@@ -124,7 +128,7 @@ module.exports.getCommands = function (callback) {
     let commands;
 
     var commandsBuffer;
-    fs.readFile('database/commands.json', function (err, data) {
+    fs.readFile(__dirname + "\\commands.json", function (err, data) {
         commandsBuffer = data;
         commands = JSON.parse(commandsBuffer);
 
@@ -137,7 +141,7 @@ module.exports.getCommandTemplate = function (callback) {
     let commands;
 
     var commandsBuffer;
-    fs.readFile('database/commandTemplate.json', function (err, data) {
+    fs.readFile(__dirname + "\\commandTemplate.json", function (err, data) {
         commandsBuffer = data;
         commands = JSON.parse(commandsBuffer);
 
@@ -150,7 +154,7 @@ module.exports.removeCommand = function (command, callback) {
     let commands;
     console.log(command);
     var commandsBuffer;
-    fs.readFile('database/commands.json', function (err, data) {
+    fs.readFile(__dirname + "\\commands.json", function (err, data) {
         commandsBuffer = data;
         commands = JSON.parse(commandsBuffer);
         console.log(commands);
@@ -159,7 +163,7 @@ module.exports.removeCommand = function (command, callback) {
                 console.log('Removed!');
                 commands.splice(index, 1);
                 commandsBuffer = JSON.stringify(commands);
-                fs.writeFileSync('database/commands.json', commandsBuffer);
+                fs.writeFileSync(__dirname + "\\commands.json", commandsBuffer);
                 callback(true);
             }
         });

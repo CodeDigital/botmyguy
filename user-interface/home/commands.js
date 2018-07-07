@@ -74,17 +74,17 @@ function reloadCommands() {
                 img.style.margin = '0 5px';
                 switch (api) {
                     case 'twitchChat':
-                        img.setAttribute('src', '../assets/icons/twitchChat.svg');
+                        img.setAttribute('src', '../../assets/icons/twitchChat.svg');
                         addApiIcon = true;
                         break;
 
                     case 'twitchWhisper':
-                        img.setAttribute('src', '../assets/icons/twitchWhisper.svg');
+                        img.setAttribute('src', '../../assets/icons/twitchWhisper.svg');
                         addApiIcon = true;
                         break;
 
                     case 'discord':
-                        img.setAttribute('src', '../assets/icons/discordChat.svg');
+                        img.setAttribute('src', '../../assets/icons/discordChat.svg');
                         addApiIcon = true;
                         break;
 

@@ -86,7 +86,7 @@ function startWS(callback) {
 
                         console.log("Whisper from " + message.tags.display_name + ": " + message.body);
 
-                        gotWhisper(message.tags.login, message.body);
+                        gotWhisper(message.tags.display_name, message.body);
 
                         break;
 
@@ -287,6 +287,7 @@ function gotWhisper(from, body) {
                 if (type == 'twitchWhisper') {
                     console.log('An Command Was Called');
                     console.log(commandObject.response);
+                    console.log(from);
                     var response = commandReplaceFrom(commandObject.response, from);
                     whisper(from, response);
                 }                
@@ -324,7 +325,9 @@ function chatAction(message){
 }
 
 function whisper(to, message){
-    ircClient.whisper(to, message);
+    ircClient.whisper(to, message).catch(function (err) {
+        console.log(err);
+    });
 }
 
 function commandReplaceFrom(response, from){

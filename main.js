@@ -1,3 +1,5 @@
+//process.env.NODE_ENV = 'production';
+
 const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');

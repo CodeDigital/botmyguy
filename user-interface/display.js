@@ -109,7 +109,7 @@ module.exports.setup = function () {
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     resizable: false,
-    width: 1200,
+    width: 800,
     height: 600,
     title: 'Welcome to Bot My Guy!'
   });
@@ -135,7 +135,7 @@ module.exports.editCommand = function () {
     frame: false,
     resizable: false,
     show: false,
-    width: 1200,
+    width: 800,
     height: 600,
     title: 'Edit A Command!'
   });
