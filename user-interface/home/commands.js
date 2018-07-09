@@ -1,4 +1,10 @@
-const dbCommands = require('../../database/database.js');
+
+var dbCommands;
+if (process.env.NODE_ENV == "production") {
+    dbCommands = require('../../../app.asar.unpacked/database/database.js');
+} else {
+    dbCommands = require('../../database/database.js');
+}
 
 const ipcCommandsRenderer = require('electron').ipcRenderer;
 
@@ -163,7 +169,7 @@ function reloadCommands() {
         addButton.appendChild(addDiv);
         addButton.onclick = function() {
             commandAdd();
-        }
+        };
 
         addCommandButton.appendChild(addButton);
 

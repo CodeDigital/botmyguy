@@ -1,13 +1,14 @@
 {
   "name": "botmyguy",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron  .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder -l -w",
+    "dist-win": "electron-builder -w"
   },
   "repository": {
     "type": "git",
@@ -35,14 +36,58 @@
   "devDependencies": {
     "electron": "^1.8.7",
     "electron-builder": "^20.19.2",
+    "electron-builder-squirrel-windows": "^20.19.0",
     "electron-packager": "^12.1.0"
   },
   "build": {
     "appId": "com.codedigital.botmyguy",
-    "win": {
-      "target": "nsis",
+     "win": {
+       "target": [{
+           "target": "nsis"
+         },
+         {
+           "target": "msi"
+         },
+         {
+           "target": "zip"
+         },
+         {
+           "target": "squirrel"
+         },
+         {
+           "target": "portable"
+         }
+       ],
+       "icon": "build/icon.png"
+     },
+    "mac":{
+      "category": "public.app-category.entertainment",
+      "target": [
+        {
+          "target": "default"
+        },
+        {
+          "target": "dmg"
+        },
+        {
+          "target": "zip"
+        }
+      ],
+      "icon":"build/icon.icns"
+    },
+    "linux": {
+      "category": "game",
+      "target": [
+        {
+          "target": "snap"
+        },
+        {
+          "target": "zip"
+        }
+      ],
       "icon": "build/icon.png"
     },
-    "asar": false
+    "asar": true,
+    "asarUnpack": ["./database/*", "./database/events/*"]
   }
 }

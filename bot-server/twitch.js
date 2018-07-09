@@ -2,8 +2,16 @@ const irc = require('irc-upd');
 const tmi = require('twitch-js');
 const WebSocket = require('ws');
 const disp = require('../user-interface/display.js');
-const db = require('../database/database.js');
-const ck = require('../database/cookies.js');
+
+var db, ck;
+
+if (process.env.NODE_ENV == "production") {
+    db = require('../../app.asar.unpacked/database/database.js');
+    ck = require('../../app.asar.unpacked/database/cookies.js');
+} else {
+    db = require('../database/database.js');
+    ck = require('../database/cookies.js');
+}
 //const ta = require('./twitch-authenticate.js');
 const clientID = 'yblspem7dabcfdv0nk918jaq8a70yb';
 const {ipcMain} = require('electron');

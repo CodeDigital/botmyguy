@@ -1,11 +1,21 @@
 //process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
 const twitchauth = require('./bot-server/twitch-authenticate.js');
-const db = require('./database/database.js');
-const ck = require('./database/cookies.js');
+
+var db, ck;
+
+if(process.env.NODE_ENV == "production"){
+  db = require('../app.asar.unpacked/database/database.js');
+  ck = require('../app.asar.unpacked/database/cookies.js');
+}else{
+  db = require('./database/database.js');
+  ck = require('./database/cookies.js');
+}
+
 const tw = require('./bot-server/twitch.js');
 let setupComplete = false;
 

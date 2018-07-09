@@ -1,7 +1,7 @@
 var $ = require("jquery");
 
 const fs = require('fs');
-const db = require('../../database/database.js');
+
 const twitchauth = require('../../bot-server/twitch-authenticate.js');
 
 const {

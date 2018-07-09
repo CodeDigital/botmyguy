@@ -1,7 +1,14 @@
 var $ = require("jquery");
 
 const fs = require('fs');
-const db = require('../../database/database.js');
+
+var db;
+
+if (process.env.NODE_ENV == "production") {
+  db = require('../../../app.asar.unpacked/database/database.js');
+} else {
+  db = require('../../database/database.js');
+}
 
 const {
   shell,

@@ -28,7 +28,9 @@ module.exports.mainWindow = function () {
     slashes: true
   }));
 
-  //mainWindow.webContents.openDevTools();
+  if(process.env.NODE_ENV != 'production'){
+  mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('ready-to-show', function () {
     mainWindow.show();
@@ -93,7 +95,9 @@ module.exports.loadingWindow = function () {
     slashes: true
   }));
 
-  //loadWindow.webContents.openDevTools();
+    if (process.env.NODE_ENV != 'production') {
+  loadWindow.webContents.openDevTools();
+    }
 
   loadWindow.on('ready-to-show', function () {
     loadWindow.show();
@@ -122,7 +126,9 @@ module.exports.setup = function () {
     slashes: true
   }));
 
-  //setupWindow.webContents.openDevTools();
+    if (process.env.NODE_ENV != 'production') {
+  setupWindow.webContents.openDevTools();
+    }
 
   return setupWindow;
 
@@ -151,7 +157,9 @@ module.exports.editCommand = function () {
     commandWindow.show();
   });
 
-  //commandWindow.webContents.openDevTools()
+    if (process.env.NODE_ENV != 'production') {
+  commandWindow.webContents.openDevTools();
+    }
 
   return commandWindow;
 
