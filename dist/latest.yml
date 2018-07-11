@@ -1,0 +1,9 @@
+version: 0.0.2-pre-alpha
+files:
+  - url: botmyguy-setup-0.0.2-pre-alpha.exe
+    sha512: P2Eji03C+YT6JU52n4oHu87rFS5qW4VtVijLdLpus8D/3MVjarGcg0J57dbp9l6sfHkRC8EfUoJ3KM9r/Av5ow==
+    size: 54517165
+path: botmyguy-setup-0.0.2-pre-alpha.exe
+sha512: P2Eji03C+YT6JU52n4oHu87rFS5qW4VtVijLdLpus8D/3MVjarGcg0J57dbp9l6sfHkRC8EfUoJ3KM9r/Av5ow==
+sha2: fe75514ef65c671275e59bff13a19b7d7d9301c99b3e45b594ace7beff45d048
+releaseDate: '2018-07-11T16:32:51.932Z'

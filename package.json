@@ -58,9 +58,6 @@
           "target": "zip"
         },
         {
-          "target": "squirrel"
-        },
-        {
           "target": "portable"
         }
       ],

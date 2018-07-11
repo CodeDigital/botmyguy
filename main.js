@@ -1,8 +1,15 @@
-//process.env.NODE_ENV = 'production';
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'production';
+//process.env.NODE_ENV = 'development';
 
-const {app, BrowserWindow, Menu, ipcMain} = require('electron');
-const { autoUpdater } = require("electron-updater");
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain
+} = require('electron');
+const {
+  autoUpdater
+} = require("electron-updater");
 
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
@@ -10,10 +17,10 @@ const twitchauth = require('./bot-server/twitch-authenticate.js');
 
 var db, ck;
 
-if(process.env.NODE_ENV == "production"){
+if (process.env.NODE_ENV == "production") {
   db = require('../app.asar.unpacked/database/database.js');
   ck = require('../app.asar.unpacked/database/cookies.js');
-}else{
+} else {
   db = require('./database/database.js');
   ck = require('./database/cookies.js');
 }
@@ -32,29 +39,43 @@ let setup;
 let errorWindow;
 let commandWindow;
 
-app.on('ready', function() {
-  if(process.env.NODE_ENV == 'production'){
-  autoUpdater.checkForUpdates();
+app.on('ready', function () {
+  if (process.env.NODE_ENV == 'production') {
+    autoUpdater.checkForUpdates();
 
-  autoUpdater.on('error', function(err) {
-    console.log('Error on line 39');
-    console.log(err);
-  });
+    autoUpdater.on('error', function (err) {
+      console.log('Error on line 39');
+      console.log(err);
+    });
 
-  autoUpdater.on('checking-for-update', function() {
-    console.log('Checking for an update');
-  });
+    autoUpdater.on('checking-for-update', function () {
+      console.log('Checking for an update');
+    });
 
-  autoUpdater.on('update-available', function() {
-    console.log('There is an Update');
+    autoUpdater.on('update-available', function () {
+      console.log('There is an Update');
 
-    updateWindow = disp.updateWindow();
-  });
+      updateWindow = disp.updateWindow();
+    });
 
-  autoUpdater.on('update-not-available', function() {
-    console.log('no updates are available');
+    autoUpdater.on('update-not-available', function () {
+      console.log('no updates are available');
 
-    db.getSettings(function(settings){
+      db.getSettings(function (settings) {
+        //if this is the first time, then just load, otherwise, setup process!
+        if (settings.firstTime) {
+          setup = disp.setup();
+        } else {
+          loadingWindow = disp.loadingWindow();
+        }
+      });
+    });
+
+    autoUpdater.on('update-downloaded', function (response) {
+      autoUpdater.quitAndInstall(true, true);
+    });
+  } else {
+    db.getSettings(function (settings) {
       //if this is the first time, then just load, otherwise, setup process!
       if (settings.firstTime) {
         setup = disp.setup();
@@ -62,34 +83,20 @@ app.on('ready', function() {
         loadingWindow = disp.loadingWindow();
       }
     });
-  });
-
-  autoUpdater.on('update-downloaded', function(response) {
-    autoUpdater.quitAndInstall(true, true);
-  });
-}else{
-  db.getSettings(function(settings){
-    //if this is the first time, then just load, otherwise, setup process!
-    if (settings.firstTime) {
-      setup = disp.setup();
-    } else {
-      loadingWindow = disp.loadingWindow();
-    }
-  });
-}
+  }
 
 });
 
-app.on('window-all-closed', function(){
+app.on('window-all-closed', function () {
   app.quit();
-  if(botConnected){
+  if (botConnected) {
     clearInterval(botConnected);
   }
 });
 
 
 ipcMain.on('streamerauth:done', function (e, item) {
-  db.getSettings(function(sets){
+  db.getSettings(function (sets) {
     var settings = sets;
     settings.streamer_id = item.user.id;
     settings.user = item.user.display_name;
@@ -103,10 +110,10 @@ ipcMain.on('botauth:done', function (e, item) {
     settings.bot_id = item.user.id;
     settings.bot_nick = item.user.login;
     db.setSettings(settings);
-    ck.setCookie('twitchBotInfo', item, function(cookie){
+    ck.setCookie('twitchBotInfo', item, function (cookie) {
       //console.log(cookie);
 
-      ck.getCookie('twitchBotInfo', function(response){
+      ck.getCookie('twitchBotInfo', function (response) {
         console.log(response);
       });
     });
@@ -115,23 +122,23 @@ ipcMain.on('botauth:done', function (e, item) {
 
 ipcMain.on('setup:complete', function (e, item) {
   console.log('all is setup!');
-  db.getSettings(function(sets) {
+  db.getSettings(function (sets) {
 
     var settings = sets;
     settings.firstTime = false;
     db.setSettings(settings);
 
-      //Create the mainwindow
-      mainWindow = disp.mainWindow();
+    //Create the mainwindow
+    mainWindow = disp.mainWindow();
 
-        mainWindow.on('ready-to-show', function () {
-          setup.close();
-        });
+    mainWindow.on('ready-to-show', function () {
+      setup.close();
+    });
 
-        //Quit Everything when Window Closed.
-        mainWindow.on('closed', function () {
-          app.quit();
-        });
+    //Quit Everything when Window Closed.
+    mainWindow.on('closed', function () {
+      app.quit();
+    });
   });
 });
 
@@ -141,18 +148,18 @@ ipcMain.on('loading:complete', function (e, item) {
   //Create the mainwindow
   mainWindow = disp.mainWindow();
 
-  mainWindow.on('ready-to-show', function() {
-      loadingWindow.close();
+  mainWindow.on('ready-to-show', function () {
+    loadingWindow.close();
   });
 
-    //Quit Everything when Window Closed.
-    mainWindow.on('closed', function () {
-      app.quit();
-    });
+  //Quit Everything when Window Closed.
+  mainWindow.on('closed', function () {
+    app.quit();
+  });
 });
 
 ipcMain.on('connect', function (e, item) {
-  tw.connect(function(){
+  tw.connect(function () {
     // botConnected = setInterval(function () {
     //   mainWindow.webContents.send("connect:success");
     // }, 10);
@@ -161,14 +168,14 @@ ipcMain.on('connect', function (e, item) {
 });
 
 ipcMain.on('disconnect', function (e, item) {
-  tw.disconnect(function() {
-      mainWindow.webContents.send("disconnect:success");
-      clearInterval(botConnected);
+  tw.disconnect(function () {
+    mainWindow.webContents.send("disconnect:success");
+    clearInterval(botConnected);
   });
 });
 
-ipcMain.on('newCommand:ready', function(e,item) {
-  if(editingCommands){
+ipcMain.on('newCommand:ready', function (e, item) {
+  if (editingCommands) {
 
     commandWindow.webContents.send('commandedit:editing', commandToEdit);
     commandToEdit = null;
@@ -177,20 +184,20 @@ ipcMain.on('newCommand:ready', function(e,item) {
   }
 });
 
-ipcMain.on('commandedit:cancel', function(e, item) {
+ipcMain.on('commandedit:cancel', function (e, item) {
   commandWindow.close();
 });
 
-ipcMain.on('commandedit:edit', function(e, item) {
+ipcMain.on('commandedit:edit', function (e, item) {
   db.newCommand(item);
   commandWindow.close();
   mainWindow.webContents.send('reload:command');
 });
 
-ipcMain.on('command:edit', function(e, item) {
+ipcMain.on('command:edit', function (e, item) {
   commandWindow = disp.editCommand();
 
-  if(item){
+  if (item) {
 
     editingCommands = true;
     commandToEdit = item;
