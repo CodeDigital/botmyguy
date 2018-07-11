@@ -2,6 +2,8 @@
 process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu, ipcMain} = require('electron');
+const { autoUpdater } = require("electron-updater");
+
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
 const twitchauth = require('./bot-server/twitch-authenticate.js');
@@ -31,6 +33,41 @@ let errorWindow;
 let commandWindow;
 
 app.on('ready', function() {
+  if(process.env.NODE_ENV == 'production'){
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on('error', function(err) {
+    console.log('Error on line 39');
+    console.log(err);
+  });
+
+  autoUpdater.on('checking-for-update', function() {
+    console.log('Checking for an update');
+  });
+
+  autoUpdater.on('update-available', function() {
+    console.log('There is an Update');
+
+    updateWindow = disp.updateWindow();
+  });
+
+  autoUpdater.on('update-not-available', function() {
+    console.log('no updates are available');
+
+    db.getSettings(function(settings){
+      //if this is the first time, then just load, otherwise, setup process!
+      if (settings.firstTime) {
+        setup = disp.setup();
+      } else {
+        loadingWindow = disp.loadingWindow();
+      }
+    });
+  });
+
+  autoUpdater.on('update-downloaded', function(response) {
+    autoUpdater.quitAndInstall(true, true);
+  });
+}else{
   db.getSettings(function(settings){
     //if this is the first time, then just load, otherwise, setup process!
     if (settings.firstTime) {
@@ -39,6 +76,8 @@ app.on('ready', function() {
       loadingWindow = disp.loadingWindow();
     }
   });
+}
+
 });
 
 app.on('window-all-closed', function(){

@@ -51,12 +51,14 @@ module.exports.getInfo = function(callback, firstTime) {
       width: 500,
       height: 700,
       //show: false,
-      frame: false,
+      frame: true,
       title: 'Welcome to Bot My Guy!',
       webPreferences: {
         nodeIntegration: false
       }
     });
+
+    twitch_auth_window.setMenu(null);
 
     // twitch_auth_window.once('ready-to-show', function() {
     //   twitch_auth_window.show();

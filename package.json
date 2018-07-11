@@ -1,14 +1,21 @@
 {
   "name": "botmyguy",
-  "version": "0.0.1",
+  "version": "0.0.2-pre-alpha",
   "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron  .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder -l -w",
-    "dist-win": "electron-builder -w"
+    "dist-all": "electron-builder -l -m -w",
+    "dist-lin": "electron-builder -l",
+    "dist-mac": "electron-builder -m",
+    "dist-win": "electron-builder -w",
+    "dist-all-p": "electron-builder -l -m -w -p onTagOrDraft",
+    "dist-lin-win-p": "electron-builder -l -w -p onTagOrDraft",
+    "dist-lin-p": "electron-builder -l -p onTagOrDraft",
+    "dist-mac-p": "electron-builder -m -p onTagOrDraft",
+    "dist-win-p": "electron-builder -w -p onTagOrDraft"
   },
   "repository": {
     "type": "git",
@@ -22,6 +29,7 @@
   "homepage": "https://github.com/CodeDigital/botmyguy#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
+    "electron-updater": "^2.23.3",
     "grunt": "^1.0.3",
     "irc-upd": "^0.9.0",
     "jquery": "^3.3.1",
@@ -41,26 +49,29 @@
   },
   "build": {
     "appId": "com.codedigital.botmyguy",
-     "win": {
-       "target": [{
-           "target": "nsis"
-         },
-         {
-           "target": "msi"
-         },
-         {
-           "target": "zip"
-         },
-         {
-           "target": "squirrel"
-         },
-         {
-           "target": "portable"
-         }
-       ],
-       "icon": "build/icon.png"
-     },
-    "mac":{
+    "win": {
+      "target": [
+        {
+          "target": "nsis"
+        },
+        {
+          "target": "zip"
+        },
+        {
+          "target": "squirrel"
+        },
+        {
+          "target": "portable"
+        }
+      ],
+      "publisherName": "<Code>Digital",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
       "category": "public.app-category.entertainment",
       "target": [
         {
@@ -73,7 +84,7 @@
           "target": "zip"
         }
       ],
-      "icon":"build/icon.icns"
+      "icon": "build/icon.icns"
     },
     "linux": {
       "category": "game",
@@ -88,6 +99,9 @@
       "icon": "build/icon.png"
     },
     "asar": true,
-    "asarUnpack": ["./database/*", "./database/events/*"]
+    "asarUnpack": [
+      "./database/*",
+      "./database/events/*"
+    ]
   }
 }

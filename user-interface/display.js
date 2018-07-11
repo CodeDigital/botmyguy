@@ -7,7 +7,7 @@ const {
 } = require('electron');
 const url = require('url');
 const path = require('path');
-let mainWindow, errorWindow, loadWindow, setupWindow, commandWindow;
+let mainWindow, errorWindow, loadWindow, updateWindow, setupWindow, commandWindow;
 
 module.exports.mainWindow = function () {
   //Create The Main Window
@@ -104,6 +104,37 @@ module.exports.loadingWindow = function () {
   });
 
   return loadWindow;
+
+}
+
+module.exports.updategWindow = function () {
+  //Create The Main Window
+  updateWindow = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    resizable: false,
+    width: 550,
+    height: 550,
+    show: false,
+    title: 'Loading In!'
+  });
+
+  //Load HTML File into window.
+  updateWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'updater.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+  if (process.env.NODE_ENV != 'production') {
+    updateWindow.webContents.openDevTools();
+  }
+
+  updateWindow.on('ready-to-show', function () {
+    updateWindow.show();
+  });
+
+  return updateWindow;
 
 }
 
