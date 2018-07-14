@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/CodeDigital/botmyguy#readme",
   "dependencies": {
+    "chart.js": "^2.7.2",
     "dotenv": "^5.0.1",
     "electron-updater": "^2.23.3",
     "grunt": "^1.0.3",

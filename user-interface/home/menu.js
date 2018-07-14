@@ -1,6 +1,6 @@
-var $ = require("jquery");
+//var $ = require("jquery");
 
-const fs = require('fs');
+//const fs = require('fs');
 
 var db;
 
@@ -10,8 +10,8 @@ if (process.env.NODE_ENV == "production") {
   db = require('../../database/database.js');
 }
 
+const shell = require('electron').shell;
 const {
-  shell,
   ipcRenderer
 } = require('electron');
 
@@ -62,6 +62,7 @@ function changeTo(type) {
 changeTo('dashboard');
 
 function openGithub() {
+  shell.beep();
   shell.openExternal('https://github.com/CodeDigital/botmyguy');
 }
 

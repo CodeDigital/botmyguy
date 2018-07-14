@@ -1,213 +1,50 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
 
-<head>
-    <meta charset="utf-8">
-    <title>Bot MyGuy | Commands</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/ionicons.css">
-    <style>
-        body {
-            height: 100%;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container-fluid text-white h-100">
-
-        <!-- Header of Page... -->
-        <div class="row align-middle fixed-top" style="-webkit-app-region: drag">
-            <div class="col-md-2" style="background-color: #210021;text-align:center;">
-                <h6 class="ml-4 mb-0 mt-2 float-left">Bot My Guy</h6>
-            </div>
-            <div class="col" style="background-color: #210021;">
-                <i class="float-right d-inline ion-close-round p-0 py-1 mx-2" id="close-btn" style="-webkit-app-region: no-drag;"></i>
-                <i class="float-right d-inline ion-plus-round p-0 py-1 mx-2" id="max-btn" style="-webkit-app-region: no-drag;"></i>
-                <i class="float-right d-inline ion-minus-round p-0 py-1 mx-2" id="min-btn" style="-webkit-app-region: no-drag;"></i>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-2 text-truncate" style="background-color: #210021;min-width: 320px;max-width:320px; height:100vh;">
-                <br>
-                <div class="dropdown-divider" style="border-color:#180018;"></div>
-                <br>
-                <ul class="list-group list-group-flush bg-transparent" style="font-size:120%;">
-
-                    <p class="font-weight-bold pl-3">Abilities</p>
-                    <a href="dashboard.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-monitor" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Dashboard</p>
-                    </a>
-                    <a href="commands.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-alert text-center" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Commands</p>
-                    </a>
-                    <a href="timed-messages.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-ios-timer" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Timed Messages</p>
-                    </a>
-                    <a href="poll.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                         id="active" onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-pie-graph" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Polls</p>
-                    </a>
-                    <a href="stream-games.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-ios-game-controller-a" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Stream Games</p>
-                    </a>
-                    <a href="settings.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-gear-b" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Settings</p>
-                    </a>
-                    <a href="help.html" class="list-group-item list-group-item-action text-white" style="background-color: #210021; border-color:#180018;"
-                        onmouseover="menuHover(this)" onmouseout="menuNormal(this)" onmousedown="menuClicked(this)">
-                        <i class="d-inline-block ion-help-buoy" style="width:7%;"></i>
-                        <p class="ml-3 d-inline">Help</p>
-                    </a>
-                    <br>
-                    <p>
-                        <small style="font-size:55%;bottom:0;" class="text-center">Copyright (c) 2018 Copyright Holder All Rights Reserved.</small>
-                    </p>
-                    <div class="dropdown-divider fixed-bottom mb-1" style="border-color:#180018;"></div>
-            </div>
-
-            <div class="col" style="background-color: #470047; height:100vh;max-height:100vh;overflow-y:hidden;" id="app-display">
-                <br>
-                <br>
-                <button type="button" class="btn btn-lg btn-success float-right text-white d-inline mx-3" id="addButton" onclick="add()">
-                    <i class="d-inline ion-compose pr-2"></i> New</button>
-
-                <h1 class="display-4" id="welcomeText">Polling</h1>
-                <p class="lead">Use this page here to edit and add commands to which your bot will respond!</p>
-
-                <div class="list-group w-100 d-block" style="overflow-y:auto;overflow-x:hidden;height:calc(100% - 200px);" id="commandList">
-                </div>
-            </div>
-        </div>
-
-        <div class="row fixed-bottom">
-            <div class="col" style="background-color: #210021;">
-                <h6 class="mb-0 mr-2 d-inline-block float-right">Test Version</h6>
-            </div>
-        </div>
+  <div id="commands">
+    <div class="center-align">
+      <h1 style="margin-top: 0px;margin-bottom: -15px;">Commands</h1>
+      <h6>Let your viewers ask your bot the usual questions!</h6>
+      <!-- <div class="divider"></div> -->
     </div>
 
-    <script src="../titlebar.js"></script>
-    <script src="menu.js"></script>
+    <div style="margin-bottom: 0px;margin-left: 1vw;margin-right: 1.5vw;overflow-y: hidden;">
+      <div class="row" style="overflow-y: hidden;margin-top: 0px;">
+        <div class="col s12">
 
-    <script type="text/javascript">
+          <ul id="commandList" class="collection grey darken-4" style="overflow-y:auto; height: calc(100vh - 200px);">
+          
+            <li class="collection-item avatar pink darken-3">
+              <span class="title" style="margin-top: 10px;display:block;">
+                <b>Test User</b>
+              </span>
+              <p style="text-align: justify;">Test</p>
+              <div class="secondary-content white-text right">
+                <div class="left" style="margin-right: 15px;">
+                  <img src="../../assets/icons/twitchChat.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
+                  <img src="../../assets/icons/twitchWhisper.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
+                  <img src="../../assets/icons/discordChat.svg" alt="" class="btn btn-large btn-floating grey darken-4" style="padding: 0px;">
+                </div>
+                <button class="btn-large _btn-floating blue" style="margin: 0px 10px;">
+                  <i class="material-icons large">edit</i>
+                </button>
+                <button class="btn-large _btn-floating hoverable waves-effect red" style="margin: 0px 10px;">
+                  <i class="material-icons large">delete</i>
+                </button>
+              </div>
+            </li>
+            <br>
+            <li class="container center-align">
+              <button class="btn btn-large green center-align hoverable waves-effect" style="width: 500px;height:100px;padding: 0px 90px;">
+                <div style="font-size: 30px;">
+                  <i class="large material-icons left" style="font-size: 50px;">add_circle</i>New Command
+                </div>
+              </button>
+            </li>
+          </ul>
 
-        const { ipcRenderer } = require('electron');
-        const fs = require('fs');
-        const db = require('../../database/database.js');
+        </div>
+      </div>
+    </div>
 
-        function edit(x) {
-            console.log("Edit button");
-            console.log(x);
-            ipcRenderer.send('command:edit', x);
-        }
+    <script src="commands.js"></script>
 
-        function add() {
-            console.log("Add button");
-            ipcRenderer.send('command:edit', undefined);
-        }
-
-        function remove(x) {
-            console.log("remove Button");
-            console.log(x);
-            db.removeCommand(x, function (success) {
-                if (success) {
-                    location.reload();
-                }
-            });
-        }
-
-        function reloadCommands() {
-            db.getCommands(function (commands) {
-                var btnList = document.getElementById('commandList');
-
-                commands.forEach(function (commObj) {
-                    var newBTN = '<button type="button" class="btn btn-lg btn-primary float-right text-white d-inline-block mx-3" style="width:7%;" onclick="edit()"><i class="ion-edit"></i></button></div >';
-                    var listItem = document.createElement('DIV');
-                    listItem.className = "list-group-item bg-dark align-middle";
-
-                    var subDiv = document.createElement('DIV');
-                    subDiv.className = "d-inline h-100 align-middle";
-
-                    var subH5 = document.createElement('H5');
-                    subH5.className = "d-inline-block text-left h-100 border-right text-truncate my-2 mr-2 pr-2";
-                    subH5.style.width = "10%";
-                    subH5.style.minWidth = "80px";
-                    subH5.innerHTML = commObj.command;
-
-                    subDiv.appendChild(subH5);
-
-                    var subP = document.createElement('P');
-                    subP.className = "d-inline-block h-100 text-truncate my-2";
-                    subP.style.width = "calc(90% - 350px)";
-                    subP.style.minWidth = "150px";
-                    subP.innerHTML = commObj.description;
-
-                    subDiv.appendChild(subP);
-
-                    listItem.appendChild(subDiv);
-
-                    var removeButton = document.createElement('BUTTON');
-                    removeButton.setAttribute("type", "button");
-                    removeButton.className = "btn btn-lg btn-danger float-right text-white d-inline-block";
-                    removeButton.style.width = "55px";
-                    removeButton.setAttribute("onclick", "remove('" + commObj.command + "');");
-
-                    var removeIcon = document.createElement('I');
-                    removeIcon.className = "ion-trash-b";
-
-                    removeButton.appendChild(removeIcon);
-                    listItem.appendChild(removeButton);
-
-                    var editButton = document.createElement('BUTTON');
-                    editButton.setAttribute("type", "button");
-                    editButton.className = "btn btn-lg btn-primary float-right text-white d-inline-block mx-3";
-                    editButton.style.width = "55px";
-                    editButton.setAttribute("onclick", "edit('" + commObj.command + "');");
-
-                    var editIcon = document.createElement('I');
-                    editIcon.className = "ion-edit";
-
-                    editButton.appendChild(editIcon);
-                    listItem.appendChild(editButton);
-
-
-                    btnList.appendChild(listItem);
-                });
-                console.log(commands);
-            });
-        }
-
-        ipcRenderer.on("reload:command", function (e) {
-            console.log('test');
-            location.reload();
-        });
-
-        reloadCommands();
-
-    </script>
-
-</body>
-
-</html>
+  </div>
