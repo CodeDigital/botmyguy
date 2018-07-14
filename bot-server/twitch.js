@@ -1,6 +1,5 @@
 const irc = require('irc-upd');
 const tmi = require('twitch-js');
-const WebSocket = require('ws');
 const disp = require('../user-interface/display.js');
 
 var db, ck;
@@ -28,83 +27,9 @@ var nonce;
 
 var mainWindow;
 
-var heartbeat;
-var userEnded = false;
-
-let ws;
-var whisperEvent;
-var wsSuccess = false;
-var wsRetryChecker;
-
-var wsTopic;
-
-let ircClient;
+let client;
 var ircSuccess = false;
 
-const ping = {
-    "type": "PING"
-};
-const pong = {
-    "type": "PONG"
-};
-
-function startWS(callback) {
-    ws = new WebSocket('wss://pubsub-edge.twitch.tv');
-
-    ws.on('open', function () {
-
-        console.log('WS Connection Open!');
-        ws.send(JSON.stringify(
-            {
-                "type": "LISTEN",
-                "nonce": nonce,
-                "data": {
-                    "topics": [whisperEvent],
-                    "auth_token": token
-                }
-            }
-        ));
-
-        startIRC(callback);
-
-        heartbeat = setInterval(function () {
-            ws.send(JSON.stringify(ping));
-        }, (60 * 1000));
-    });
-
-    ws.on('message', function (e) {
-        console.log(e);
-        if (e) {
-            var event = JSON.parse(e);
-            //console.log(event);
-            if ((event.nonce + "") == nonce && event.type == 'RESPONSE') {
-                console.log('Response From TWITCH!');
-            }
-
-            if (event.type + '' == 'MESSAGE') {
-                console.log('Message from TWITCH!');
-                switch (event.data.topic + '') {
-                    case whisperEvent:
-                        //console.log('Whisper Received!');
-                        var parsed = JSON.parse(event.data.message);
-                        var message = JSON.parse(parsed.data);
-                        //console.log(message.tags.color);
-                        console.log(message.nonce);
-                        console.log('Whisper Received from TWITCH!');
-
-                        console.log("Whisper from " + message.tags.display_name + ": " + message.body);
-
-                        gotWhisper(message.tags.display_name, message.body);
-
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-    });
-}
 
 module.exports.connect = function(callback, mainw){
 
@@ -124,14 +49,22 @@ module.exports.connect = function(callback, mainw){
             //userChannel = userChannel.toLowerCase();
             //nonce = ta.generateNonce();
             console.log("botID - " + bot_id);
-            startWS(callback);
+            //startWS(callback);
+            startIRC(callback);
         });
     });
 };
 
 module.exports.disconnect = function(callback){
-    ircClient.disconnect();
-    ws.terminate();
+    client.disconnect().then(function() {
+        // ws.onclose(function () {
+        callback(); 
+        // });
+        //ws.terminate();
+    }).catch(function(err) {
+        // TODO:  Add error window event.
+    });
+
 };
 
 function startIRC(callback){
@@ -152,9 +85,9 @@ function startIRC(callback){
         channels: [userChannel]
     };
 
-    ircClient = new tmi.client(options);
+    client = new tmi.client(options);
 
-    ircClient.on('chat', function (channel, user, message, self) {
+    client.on('chat', function (channel, user, message, self) {
         if (user.mod) {
             
         }
@@ -163,87 +96,17 @@ function startIRC(callback){
 
     });
 
-    ircClient.on('connected', function(address, port){
+    client.on('whisper', function (from, userstate, message, self) {
+        // if(!self){
+            gotWhisper(from, message);
+        // }
+    });
+
+    client.on('connected', function(address, port){
         callback();
     });
 
-    ircClient.connect();
-
-    // ircClient = new irc.Client('irc://irc.chat.twitch.tv:6697', botNick, {
-    //     password: authToken,
-    //     debug: true,
-    //     showErrors: false,
-    //     channels: [userChannel],
-    //     autoConnect: false,
-    //     autoRejoin: true,
-    //     retryCount: 10,
-    //     retryDelay: 2000,
-    //     stripColors: false,
-    //     millisecondsOfSilenceBeforePingSent: 15 * 1000,
-    //     millisecondsBeforePingTimeout: 8 * 1000,
-    // });
-
-    // ircClient.on('error', function(e){
-    //     console.log(e);
-    // })
-
-    // ircClient.on(('message' + userChannel), function(nick, text, message) {
-    //     console.log('Message ' + userChannel);
-    //     console.log(nick);
-    //     console.log(text);
-    //     console.log(message);
-
-    // });
-
-    // ircClient.on(('message'), function (nick, to, text, message) {
-    //     console.log('Message Event.');
-    //     console.log(nick);
-    //     console.log(text);
-    //     console.log(message);
-
-    // });
-
-    // ircClient.on(('raw'), function (message) {
-    //     console.log('Got Raw');
-    //     console.log(message);
-
-    //     var msgArguments = message.args;
-    //     fullBody = msgArguments[0];
-
-    //     if(fullBody.includes('PRIVMSG')){
-    //         var userIndex = fullBody.indexOf(((userChannel) + ' :')) + ((userChannel) + ' :').length;
-    //         var body = fullBody.substring(userIndex);
-    //         var fullCommand = message.command;
-    //         var colorStartIndex = fullCommand.indexOf('color=') + 'color='.length;
-    //         var colorEndIndex = fullCommand.indexOf(';', colorStartIndex);
-    //         var userColor = fullCommand.substring(colorStartIndex, colorEndIndex);
-    //         var fromStartIndex = fullCommand.indexOf('display-name=') + 'display-name'.length;
-    //         var fromEndIndex = fullCommand.indexOf(';');
-    //         var from = fullCommand.substring(fromStartIndex,fromEndIndex);
-    //         from = from.toLowerCase();
-    //         console.log(userColor);
-    //         console.log(from);
-
-    //     }else if(fullBody.includes('RESPONSE')){
-    //         callback();
-    //     }
-
-    // });
-
-    // ircClient.connect(10, function(){
-    //     console.log('Connected to IRC!');
-    //     //callback();
-    // });
-
-    // //ircClient.send('CAP REQ', 'twitch.tv/tags');
-    // //ircClient.send('CAP REQ', 'twitch.tv/commands');
-
-    // ircClient.join(userChannel, function () {
-    //     console.log('Joined ' + userChannel);
-    //     chatTalk('/color HotPink');
-    //     chatAction('Hello everybody! Type !help to get some help with my commands.');
-    //     callback();
-    // });
+    client.connect();
 }
 
 function gotChat(from, message){
@@ -289,6 +152,7 @@ function gotChat(from, message){
 }
 
 function gotWhisper(from, body) {
+    console.log('got a whisper');
     db.checkCommand(body, function(commandObject){
         if(commandObject){
             commandObject.api.forEach(function(type) {
@@ -296,7 +160,7 @@ function gotWhisper(from, body) {
                     console.log('An Command Was Called');
                     console.log(commandObject.response);
                     console.log(from);
-                    var response = commandReplaceFrom(commandObject.response, from);
+                    var response = commandObject.response;
                     whisper(from, response);
                 }                
             });
@@ -325,15 +189,15 @@ function gotSubscription() {
 }
 
 function chatTalk(message){
-    ircClient.say(userChannel, message);
+    client.say(userChannel, message);
 }
 
 function chatAction(message){
-    ircClient.action(userChannel, message);
+    client.action(userChannel, message);
 }
 
 function whisper(to, message){
-    ircClient.whisper(to, message).catch(function (err) {
+    client.whisper(to, message).catch(function (err) {
         console.log(err);
     });
 }

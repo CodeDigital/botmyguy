@@ -1,1 +1,1 @@
-[]
+[{"command":"!hello","response":"hello FROM","description":"hello","api":["twitchChat","twitchWhisper"]},{"command":"!loop","response":"!loop","description":"loop","api":["twitchChat","twitchWhisper"]}]

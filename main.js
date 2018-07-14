@@ -1,5 +1,5 @@
-process.env.NODE_ENV = 'production';
-//process.env.NODE_ENV = 'development';
+//process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'development';
 
 const {
   app,
@@ -30,7 +30,6 @@ let setupComplete = false;
 
 var editingCommands = false;
 var commandToEdit = null;
-var botConnected;
 
 //Windows
 let mainWindow;
@@ -170,7 +169,6 @@ ipcMain.on('connect', function (e, item) {
 ipcMain.on('disconnect', function (e, item) {
   tw.disconnect(function () {
     mainWindow.webContents.send("disconnect:success");
-    clearInterval(botConnected);
   });
 });
 
