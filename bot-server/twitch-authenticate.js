@@ -107,6 +107,11 @@ module.exports.getInfo = function(callback, firstTime) {
           //Decode the IDToken for security.
           var decoded = jwt.decode(idToken, { complete: true });
           console.log(decoded);
+          console.log(decoded.payload.exp);
+          var expiry = new Date();
+          expiry.setTime(decoded.payload.exp);
+          console.log(expiry);
+
           //Compares Nonce and ISS to verify accesstoken.
           if (decoded.payload.nonce == nonce && decoded.payload.iss == 'https://id.twitch.tv/oauth2') {
             console.log('Nonce and Sender Valid! bot_Info Validated!');

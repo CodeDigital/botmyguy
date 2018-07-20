@@ -13,7 +13,8 @@ const {
 
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
-const twitchauth = require('./bot-server/twitch-authenticate.js');
+//const twitchauth = require('./bot-server/twitch-authenticate.js');
+const tw = require('./bot-server/twitch.js');
 
 var db, ck;
 
@@ -24,9 +25,6 @@ if (process.env.NODE_ENV == "production") {
   db = require('./database/database.js');
   ck = require('./database/cookies.js');
 }
-
-const tw = require('./bot-server/twitch.js');
-let setupComplete = false;
 
 var editingCommands = false;
 var commandToEdit = null;
@@ -88,11 +86,12 @@ app.on('ready', function () {
 
 app.on('window-all-closed', function () {
   app.quit();
-  if (botConnected) {
-    clearInterval(botConnected);
-  }
 });
 
+ipcMain.on('auth:restart', function(e) {
+  setup = disp.setup();
+  mainWindow.hide();
+});
 
 ipcMain.on('streamerauth:done', function (e, item) {
   db.getSettings(function (sets) {

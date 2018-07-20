@@ -24,9 +24,14 @@ const commandsContent = document.getElementById('commandsLink');
 var commandsBody = commandsContent.import.body;
 commandsBody.id = 'commands';
 
+const settingsContent = document.getElementById('settingsLink');
+var settingsBody = settingsContent.import.body;
+settingsBody.id = 'settings';
+
 const mainBody = document.getElementById('main');
 mainBody.appendChild(dashboardBody);
 mainBody.appendChild(commandsBody);
+mainBody.appendChild(settingsBody);
 //changeTo('commands');
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -40,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function changeTo(type) {
 
-  mainBody.childNodes.forEach(function(cNode){
+  mainBody.childNodes.forEach(function (cNode) {
     cNode.className = 'hide';
   });
 
@@ -48,12 +53,17 @@ function changeTo(type) {
   dashboardButton.className = '';
   var commandsButton = document.getElementById('commandsButton');
   commandsButton.className = '';
+  //var settingsButton = document.getElementById('settingsButton');
+
 
   var link = document.getElementById(type);
-  var linkButton = document.getElementById(type + 'Button');
-  linkButton.className = 'blue darken-4';
-  link.className = '';
 
+  if (type != 'settings') {
+    var linkButton = document.getElementById(type + 'Button');
+    linkButton.className = 'blue darken-4';
+  }
+
+  link.className = '';
   //$(".main").empty();
   //$(".main").html = content;
   //console.log($(".main"));
@@ -103,11 +113,11 @@ ipcRenderer.on('disconnect:success', function (e) {
   var connectButton = document.getElementById('cButton');
   var disconnectButton = document.getElementById('dcButton');
 
-        var connectIcon = document.getElementById('connectIcon');
-      var loadingCircle = document.getElementById('loadingCircle');
+  var connectIcon = document.getElementById('connectIcon');
+  var loadingCircle = document.getElementById('loadingCircle');
 
-      loadingCircle.className = "preloader-wrapper small active left hide";
-      connectIcon.style = "";
+  loadingCircle.className = "preloader-wrapper small active left hide";
+  connectIcon.style = "";
 
   connectButton.className = "btn btn-large green waves-effect";
   disconnectButton.className = "btn btn-large red waves-effect hide";
