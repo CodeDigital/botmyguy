@@ -582,7 +582,7 @@ Encoding
 
 .. js:function:: irc.canConvertEncoding()
 
-    Tests if the library can convert messages with different encodings, using the ``jschardet`` and ``iconv-lite`` libraries.
+    Tests if the library can convert messages with different encodings, using the ``chardet`` and ``iconv-lite`` libraries.
     Allows you to more easily (programmatically) detect if the ``encoding`` option will result in any effect, instead of setting it and otherwise resulting in errors.
     (See also ``Client.canConvertEncoding``, an alias for this function.)
 

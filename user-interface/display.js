@@ -28,16 +28,20 @@ module.exports.mainWindow = function () {
     slashes: true
   }));
 
-  if(process.env.NODE_ENV != 'production'){
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV != 'production') {
+    mainWindow.webContents.openDevTools();
   }
 
   mainWindow.on('ready-to-show', function () {
     mainWindow.show();
   });
 
+  mainWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+  };
+
   return mainWindow;
-}
+};
 
 module.exports.errorWindow = function (title, message) {
   var errorMessage = {};
@@ -73,8 +77,12 @@ module.exports.errorWindow = function (title, message) {
     errorWindow = null;
   });
 
+  errorWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
+
   return errorWindow;
-}
+};
 
 module.exports.loadingWindow = function () {
   //Create The Main Window
@@ -95,19 +103,23 @@ module.exports.loadingWindow = function () {
     slashes: true
   }));
 
-    if (process.env.NODE_ENV != 'production') {
-  loadWindow.webContents.openDevTools();
-    }
+  if (process.env.NODE_ENV != 'production') {
+    loadWindow.webContents.openDevTools();
+  }
 
   loadWindow.on('ready-to-show', function () {
     loadWindow.show();
   });
 
+  loadWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
+
   return loadWindow;
 
-}
+};
 
-module.exports.updategWindow = function () {
+module.exports.updateWindow = function () {
   //Create The Main Window
   updateWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
@@ -116,7 +128,7 @@ module.exports.updategWindow = function () {
     width: 550,
     height: 550,
     show: false,
-    title: 'Loading In!'
+    title: 'Updating!'
   });
 
   //Load HTML File into window.
@@ -126,6 +138,8 @@ module.exports.updategWindow = function () {
     slashes: true
   }));
 
+      //updateWindow.webContents.openDevTools();
+
   if (process.env.NODE_ENV != 'production') {
     updateWindow.webContents.openDevTools();
   }
@@ -134,9 +148,13 @@ module.exports.updategWindow = function () {
     updateWindow.show();
   });
 
+  updateWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
+
   return updateWindow;
 
-}
+};
 
 module.exports.setup = function () {
   //Create The Main Window
@@ -157,13 +175,17 @@ module.exports.setup = function () {
     slashes: true
   }));
 
-    if (process.env.NODE_ENV != 'production') {
-  setupWindow.webContents.openDevTools();
-    }
+  if (process.env.NODE_ENV != 'production') {
+    setupWindow.webContents.openDevTools();
+  }
+
+  setupWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
 
   return setupWindow;
 
-}
+};
 
 module.exports.editCommand = function () {
   //Create The Main Window
@@ -188,10 +210,14 @@ module.exports.editCommand = function () {
     commandWindow.show();
   });
 
-    if (process.env.NODE_ENV != 'production') {
-  commandWindow.webContents.openDevTools();
-    }
+  if (process.env.NODE_ENV != 'production') {
+    commandWindow.webContents.openDevTools();
+  }
+
+  commandWindow.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
 
   return commandWindow;
 
-}
+};

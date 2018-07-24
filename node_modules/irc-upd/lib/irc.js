@@ -640,7 +640,7 @@ function Client(server, clientNick, opt) {
             case 'AUTHENTICATE':
                 if (message.args[0] !== '+') break;
                 // AUTHENTICATE response (params) must be split into 400-byte chunks
-                var authMessage = new Buffer(
+                var authMessage = Buffer.from(
                     self.opt.nick + '\0' +
                     self.opt.userName + '\0' +
                     self.opt.password
@@ -867,7 +867,7 @@ Client.prototype.connect = function(retryCount, callback) {
         self.conn.setEncoding('utf8');
     }
 
-    var buffer = new Buffer('');
+    var buffer = Buffer.from('');
 
     function handleData(chunk) {
         self.conn.cyclingPingTimer.notifyOfActivity();
@@ -885,7 +885,7 @@ Client.prototype.connect = function(retryCount, callback) {
             return;
         }
         // else, re-initialize the buffer.
-        buffer = new Buffer('');
+        buffer = Buffer.from('');
 
         lines.forEach(function(line) {
             if (line.length) {
@@ -1174,7 +1174,7 @@ Client.prototype._splitLongLines = function(words, maxLength, destination) {
     }
 
     // else, attempt to write maxLength bytes of message, truncate accordingly
-    var truncatingBuffer = new Buffer(maxLength + 1);
+    var truncatingBuffer = Buffer.alloc(maxLength + 1);
     var writtenLength = truncatingBuffer.write(words, 'utf8');
     var truncatedStr = truncatingBuffer.toString('utf8', 0, writtenLength);
     // and then check for a word boundary to try to keep words together
@@ -1296,9 +1296,9 @@ function convertEncodingHelper(str, encoding, errorHandler) {
     var charset;
     try {
         var iconv = require('iconv-lite');
-        var charsetDetector = require('jschardet');
+        var charsetDetector = require('chardet');
 
-        charset = charsetDetector.detect(str).encoding;
+        charset = charsetDetector.detect(str);
         var decoded = iconv.decode(str, charset);
         out = Buffer.from(iconv.encode(decoded, encoding));
     } catch (err) {
@@ -1322,8 +1322,8 @@ Client.prototype.convertEncoding = function(str) {
 
 function canConvertEncoding() {
     // hardcoded "schön" in ISO-8859-1 and UTF-8
-    var sampleText = new Buffer([0x73, 0x63, 0x68, 0xf6, 0x6e]);
-    var expectedText = new Buffer([0x73, 0x63, 0x68, 0xc3, 0xb6, 0x6e]);
+    var sampleText = Buffer.from([0x73, 0x63, 0x68, 0xf6, 0x6e]);
+    var expectedText = Buffer.from([0x73, 0x63, 0x68, 0xc3, 0xb6, 0x6e]);
     var error;
     var text = convertEncodingHelper(sampleText, 'utf-8', function(e) { error = e; });
     if (error || text.toString() !== expectedText.toString()) {

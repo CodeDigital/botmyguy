@@ -1,5 +1,5 @@
-//process.env.NODE_ENV = 'production';
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'production';
+//process.env.NODE_ENV = 'development';
 
 const {
   app,
@@ -35,42 +35,63 @@ let loadingWindow;
 let setup;
 let errorWindow;
 let commandWindow;
+let updateWindow; 
 
 app.on('ready', function () {
   if (process.env.NODE_ENV == 'production') {
-    autoUpdater.checkForUpdates();
 
-    autoUpdater.on('error', function (err) {
-      console.log('Error on line 39');
-      console.log(err);
-    });
+    db.getSettings(function (settings) {
+      //if this is the first time, then just load, otherwise, setup process!
+      if (settings.firstTime) {
+        setup = disp.setup();
+      } else {
 
-    autoUpdater.on('checking-for-update', function () {
-      console.log('Checking for an update');
-    });
+        updateWindow = disp.updateWindow();
 
-    autoUpdater.on('update-available', function () {
-      console.log('There is an Update');
+        autoUpdater.checkForUpdatesAndNotify();
 
-      updateWindow = disp.updateWindow();
-    });
-
-    autoUpdater.on('update-not-available', function () {
-      console.log('no updates are available');
-
-      db.getSettings(function (settings) {
-        //if this is the first time, then just load, otherwise, setup process!
-        if (settings.firstTime) {
-          setup = disp.setup();
-        } else {
+        autoUpdater.on('error', function (err) {
+          console.log('Error on line 39');
+          console.log(err);
+          updateWindow.webContents.send('updater:log', err);
+          console.log('skipping update due to error');
           loadingWindow = disp.loadingWindow();
-        }
-      });
+
+          loadingWindow.on('ready-to-show', function () {
+            updateWindow.close();
+          });
+
+        });
+
+        autoUpdater.on('checking-for-update', function () {
+          console.log('Checking for an update');
+          updateWindow.webContents.send('updater:log', 'checking for update.');
+        });
+
+        autoUpdater.on('update-available', function () {
+          console.log('There is an Update');
+          updateWindow.webContents.send('updater:log', 'There is an update');
+        });
+
+        autoUpdater.on('update-not-available', function () {
+          updateWindow.webContents.send('updater:log', "no updates available");
+          updateWindow.close();
+          console.log('no updates are available');
+          loadingWindow = disp.loadingWindow();
+
+          loadingWindow.on('ready-to-show', function() {
+            updateWindow.close();
+          });
+        });
+
+        autoUpdater.on('update-downloaded', function (response) {
+          updateWindow.webContents.send('updater:log', 'update downloaded');
+
+          autoUpdater.quitAndInstall(true, true);
+        });
+      }
     });
 
-    autoUpdater.on('update-downloaded', function (response) {
-      autoUpdater.quitAndInstall(true, true);
-    });
   } else {
     db.getSettings(function (settings) {
       //if this is the first time, then just load, otherwise, setup process!

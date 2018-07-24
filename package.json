@@ -1,6 +1,6 @@
 {
   "name": "botmyguy",
-  "version": "0.0.2-pre-alpha",
+  "version": "0.0.3-alpha",
   "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
   "main": "main.js",
   "scripts": {
@@ -11,28 +11,28 @@
     "dist-lin": "electron-builder -l",
     "dist-mac": "electron-builder -m",
     "dist-win": "electron-builder -w",
-    "dist-all-p": "electron-builder -l -m -w -p onTagOrDraft",
-    "dist-lin-win-p": "electron-builder -l -w -p onTagOrDraft",
-    "dist-lin-p": "electron-builder -l -p onTagOrDraft",
-    "dist-mac-p": "electron-builder -m -p onTagOrDraft",
-    "dist-win-p": "electron-builder -w -p onTagOrDraft"
+    "dist-all-p": "electron-builder -l -m -w -p always",
+    "dist-lin-win-p": "electron-builder -l -w -p always",
+    "dist-lin-p": "electron-builder -l -p always",
+    "dist-mac-p": "electron-builder -m -p always",
+    "dist-win-p": "electron-builder -w -p always"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CodeDigital/botmyguy.git"
   },
-  "author": "Xavier Travers",
+  "author": "CodeDigital",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/CodeDigital/botmyguy/issues"
   },
-  "homepage": "https://github.com/CodeDigital/botmyguy#readme",
+  "homepage": "https://github.com/CodeDigital/botmyguy",
   "dependencies": {
     "chart.js": "^2.7.2",
-    "dotenv": "^5.0.1",
-    "electron-updater": "^2.23.3",
+    "dotenv": "^6.0.0",
+    "electron-updater": "^3.0.3",
     "grunt": "^1.0.3",
-    "irc-upd": "^0.9.0",
+    "irc-upd": "^0.10.0",
     "jquery": "^3.3.1",
     "jsonwebtoken": "^8.3.0",
     "material-icons": "^0.2.3",
@@ -42,16 +42,19 @@
     "twitch-js": "^1.2.12"
   },
   "devDependencies": {
-    "electron": "^1.8.7",
-    "electron-builder": "^20.19.2",
-    "electron-builder-squirrel-windows": "^20.19.0",
-    "electron-packager": "^12.1.0"
+    "electron": "^2.0.5",
+    "electron-builder": "^20.24.4"
   },
   "build": {
-    "appId": "com.codedigital.botmyguy",
+    "appId": "com.github.codedigital.botmyguy",
+    "publish": {
+      "provider": "github",
+      "repo": "botmyguy",
+      "owner": "CodeDigital",
+      "private": false
+    },
     "win": {
-      "target": [
-        {
+      "target": [{
           "target": "nsis"
         },
         {
@@ -61,8 +64,7 @@
           "target": "portable"
         }
       ],
-      "publisherName": "<Code>Digital",
-      "requestedExecutionLevel": "highestAvailable",
+      "publisherName": "CodeDigital",
       "icon": "build/icon.png"
     },
     "nsis": {
@@ -71,8 +73,7 @@
     },
     "mac": {
       "category": "public.app-category.entertainment",
-      "target": [
-        {
+      "target": [{
           "target": "default"
         },
         {
@@ -86,8 +87,7 @@
     },
     "linux": {
       "category": "game",
-      "target": [
-        {
+      "target": [{
           "target": "snap"
         },
         {

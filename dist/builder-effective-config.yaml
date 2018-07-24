@@ -1,0 +1,37 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.github.codedigital.botmyguy
+publish:
+  provider: github
+  repo: botmyguy
+  owner: CodeDigital
+  private: false
+win:
+  target:
+    - target: nsis
+    - target: zip
+    - target: portable
+  publisherName: CodeDigital
+  icon: build/icon.png
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  category: public.app-category.entertainment
+  target:
+    - target: default
+    - target: dmg
+    - target: zip
+  icon: build/icon.icns
+linux:
+  category: game
+  target:
+    - target: snap
+    - target: zip
+  icon: build/icon.png
+asar: true
+asarUnpack:
+  - ./database/*
+  - ./database/events/*
+electronVersion: 2.0.5

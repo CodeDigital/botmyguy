@@ -1,3 +1,4 @@
 owner: CodeDigital
 repo: botmyguy
 provider: github
+private: false

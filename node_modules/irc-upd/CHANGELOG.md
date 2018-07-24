@@ -1,5 +1,21 @@
 # Change Log
 
+## [v0.10.0](https://github.com/Throne3d/node-irc/tree/v0.10.0) (2018-06-14)
+[Full Changelog](https://github.com/Throne3d/node-irc/compare/v0.9.0...v0.10.0)
+
+**Fixed bugs:**
+
+- Fix character set detection by using [node-chardet](https://github.com/runk/node-chardet) instead of jschardet – fixes [#59](https://github.com/Throne3d/node-irc/issues/59)
+
+**Misc:**
+
+- Test on Node 10, and no longer on Node 4
+- Use [Greenkeeper](https://greenkeeper.io/) for keeping dependency versions up to date
+- Add tests to ensure the character set conversion code works (with dependencies) on various test data, instead of just checking it uses stubbed dependencies
+- Fix deprecation warnings on Node 10 around using the `Buffer()` constructor
+- Update sinon to ^6.0.0
+- Update nyc to ^12.0.1
+
 ## [v0.9.0](https://github.com/Throne3d/node-irc/tree/v0.9.0) (2018-03-29)
 [Full Changelog](https://github.com/Throne3d/node-irc/compare/v0.8.1...v0.9.0)
 
