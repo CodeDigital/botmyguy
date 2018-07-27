@@ -138,7 +138,7 @@ module.exports.updateWindow = function () {
     slashes: true
   }));
 
-      //updateWindow.webContents.openDevTools();
+      updateWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV != 'production') {
     updateWindow.webContents.openDevTools();

@@ -1,6 +1,6 @@
 {
   "name": "botmyguy",
-  "version": "0.0.3-alpha",
+  "version": "0.0.4-alpha",
   "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
   "main": "main.js",
   "scripts": {
@@ -54,7 +54,8 @@
       "private": false
     },
     "win": {
-      "target": [{
+      "target": [
+        {
           "target": "nsis"
         },
         {
@@ -69,11 +70,14 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "packElevateHelper": true,
+      "allowElevation": true
     },
     "mac": {
       "category": "public.app-category.entertainment",
-      "target": [{
+      "target": [
+        {
           "target": "default"
         },
         {
@@ -87,7 +91,8 @@
     },
     "linux": {
       "category": "game",
-      "target": [{
+      "target": [
+        {
           "target": "snap"
         },
         {

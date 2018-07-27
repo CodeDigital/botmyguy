@@ -17,6 +17,8 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  packElevateHelper: true
+  allowElevation: true
 mac:
   category: public.app-category.entertainment
   target:

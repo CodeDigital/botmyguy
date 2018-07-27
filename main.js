@@ -7,9 +7,7 @@ const {
   Menu,
   ipcMain
 } = require('electron');
-const {
-  autoUpdater
-} = require("electron-updater");
+const {autoUpdater} = require("electron-updater");
 
 app.disableHardwareAcceleration();
 const disp = require('./user-interface/display.js');
@@ -35,7 +33,7 @@ let loadingWindow;
 let setup;
 let errorWindow;
 let commandWindow;
-let updateWindow; 
+let updateWindow;
 
 app.on('ready', function () {
   if (process.env.NODE_ENV == 'production') {
@@ -75,19 +73,20 @@ app.on('ready', function () {
 
         autoUpdater.on('update-not-available', function () {
           updateWindow.webContents.send('updater:log', "no updates available");
-          updateWindow.close();
           console.log('no updates are available');
           loadingWindow = disp.loadingWindow();
 
-          loadingWindow.on('ready-to-show', function() {
+          loadingWindow.on('ready-to-show', function () {
             updateWindow.close();
           });
         });
 
         autoUpdater.on('update-downloaded', function (response) {
           updateWindow.webContents.send('updater:log', 'update downloaded');
+          setTimeout(function () {
+            autoUpdater.quitAndInstall(false, true);
 
-          autoUpdater.quitAndInstall(true, true);
+          }, 30000);
         });
       }
     });
@@ -109,7 +108,7 @@ app.on('window-all-closed', function () {
   app.quit();
 });
 
-ipcMain.on('auth:restart', function(e) {
+ipcMain.on('auth:restart', function (e) {
   setup = disp.setup();
   mainWindow.hide();
 });
