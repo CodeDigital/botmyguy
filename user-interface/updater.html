@@ -36,6 +36,11 @@
 
       <div class="valign-wrapper center-align">
         <h3 class="brand-logo">Bot My Guy</h3>
+
+        <div class="progress">
+          <div class="determinate" id="updateProgress" style="width: 0%"></div>
+        </div>
+
       </div>
 
       <ul class="right">
@@ -61,23 +66,31 @@
   <div class="row center-align text-center" style="margin-top: -20px;">
     <div class="col s12 center-align text-center" id="loadingDiv">
     </div>
-<small>'Game of Life' Code by Daniel Shiffman.
-  <a onclick="goToLink();" style="cursor: pointer;">Link</a>
-</small>
+    <small>'Game of Life' Code by Daniel Shiffman.
+      <a onclick="goToLink();" style="cursor: pointer;">Link</a>
+    </small>
 
   </div>
 
   <script>
- const { shell, ipcRenderer } = require('electron');
+    const {
+      shell,
+      ipcRenderer
+    } = require('electron');
 
-      function goToLink() {
-        shell.openExternal('https://p5js.org/examples/simulate-game-of-life.html');
+    function goToLink() {
+      shell.openExternal('https://p5js.org/examples/simulate-game-of-life.html');
+    }
+
+    ipcRenderer.on('updater:log', function (e, item) {
+      console.log(e);
+      console.log(item.event);
+      if (item.event == "progress") {
+        var progressBar = document.getElementById('updateProgress');
+        progressBar.style.width = item.percent + "%";
+        console.log(item);
       }
-
-ipcRenderer.on('updater:log', function(e, item) {
-console.log(e);
-console.log(item);
-});
+    });
 
     var w;
     var columns;

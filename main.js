@@ -51,7 +51,10 @@ app.on('ready', function () {
         autoUpdater.on('error', function (err) {
           console.log('Error on line 39');
           console.log(err);
-          updateWindow.webContents.send('updater:log', err);
+          var item;
+          item.event = "error";
+          item.error = err;
+          updateWindow.webContents.send('updater:log', item);
           console.log('skipping update due to error');
           loadingWindow = disp.loadingWindow();
 
@@ -63,16 +66,22 @@ app.on('ready', function () {
 
         autoUpdater.on('checking-for-update', function () {
           console.log('Checking for an update');
-          updateWindow.webContents.send('updater:log', 'checking for update.');
+          var item;
+          item.event = "Checking for an update";
+          updateWindow.webContents.send('updater:log', item);
         });
 
         autoUpdater.on('update-available', function () {
           console.log('There is an Update');
-          updateWindow.webContents.send('updater:log', 'There is an update');
+          var item;
+          item.event = "There is an update";
+          updateWindow.webContents.send('updater:log', item);
         });
 
         autoUpdater.on('update-not-available', function () {
-          updateWindow.webContents.send('updater:log', "no updates available");
+          var item;
+          item.event = "no updates available";
+          updateWindow.webContents.send('updater:log', item);
           console.log('no updates are available');
           loadingWindow = disp.loadingWindow();
 
@@ -81,10 +90,21 @@ app.on('ready', function () {
           });
         });
 
+        autoUpdater.on('download-progress', function (progress, bytesPerSecond, percent, total, transferred) {
+          var item;
+          item.event = "progress";
+          item.progress = progress;
+          item.bytesPerSecond = bytesPerSecond;
+          item.percent = percent;
+          item.total = total;
+          item.transferred = transferred;
+          updateWindow.webContents.send('updater:log', item);
+        });
+
         autoUpdater.on('update-downloaded', function (response) {
           updateWindow.webContents.send('updater:log', 'update downloaded');
           setTimeout(function () {
-            autoUpdater.quitAndInstall(false, true);
+            autoUpdater.quitAndInstall(true, true);
 
           }, 30000);
         });
