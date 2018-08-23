@@ -1,9 +1,9 @@
-version: 0.0.4-alpha
+version: 0.0.5-alpha
 files:
-  - url: botmyguy-setup-0.0.4-alpha.exe
-    sha512: bdfRzQbT0RQ8PwTmnLINlVPvWtiDpWkPEDI67/RG2GmiJDCRRORuXfh0JDAmVIkcdt0lZbw1UHST8mQ6ChSVQA==
-    size: 56015365
-path: botmyguy-setup-0.0.4-alpha.exe
-sha512: bdfRzQbT0RQ8PwTmnLINlVPvWtiDpWkPEDI67/RG2GmiJDCRRORuXfh0JDAmVIkcdt0lZbw1UHST8mQ6ChSVQA==
-sha2: 6fe5f80b99a288857c42ec29b1fa57171ebe020dbc2ae45fb9234280fc8e7c49
-releaseDate: '2018-07-25T16:38:12.046Z'
+  - url: botmyguy-setup-0.0.5-alpha.exe
+    sha512: kKSlsCOO9irTyHNXVWqcYgkdeRey55holjcQdD7TOp7vTRaf173Wl6WtJ0+3ukM6zpqOqYqom1T1FLe0WGuXCQ==
+    size: 56136143
+path: botmyguy-setup-0.0.5-alpha.exe
+sha512: kKSlsCOO9irTyHNXVWqcYgkdeRey55holjcQdD7TOp7vTRaf173Wl6WtJ0+3ukM6zpqOqYqom1T1FLe0WGuXCQ==
+sha2: 2e46066869cc7713f05ce4c9014376e7692373657405d0e73fb32309baa4a40a
+releaseDate: '2018-08-23T07:00:12.630Z'
