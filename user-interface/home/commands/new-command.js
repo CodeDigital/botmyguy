@@ -30,7 +30,7 @@ function typeHover(x, type) {
             var children = x.childNodes;
             console.log(children);
             var img = children[1];
-            img.className = "left"
+            img.className = "left";
             break;
 
         case "twitchWhisper":
@@ -38,7 +38,7 @@ function typeHover(x, type) {
             var children = x.childNodes;
             console.log(children);
             var img = children[1];
-            img.className = "left"
+            img.className = "left";
             break;
 
         case "discord":
@@ -46,7 +46,7 @@ function typeHover(x, type) {
             var children = x.childNodes;
             console.log(children);
             var img = children[1];
-            img.className = "left"
+            img.className = "left";
             break;
 
         default:
@@ -62,7 +62,7 @@ function typeMouseOff(x, type) {
                 var children = x.childNodes;
                 console.log(children);
                 var img = children[1];
-                img.className = "left hide"
+                img.className = "left hide";
             }
             break;
 
@@ -72,7 +72,7 @@ function typeMouseOff(x, type) {
                 var children = x.childNodes;
                 console.log(children);
                 var img = children[1];
-                img.className = "left hide"
+                img.className = "left hide";
             }
             break;
 
@@ -82,7 +82,7 @@ function typeMouseOff(x, type) {
                 var children = x.childNodes;
                 console.log(children);
                 var img = children[1];
-                img.className = "left hide"
+                img.className = "left hide";
             }
             break;
 
@@ -179,22 +179,35 @@ ipcRenderer.on('commandedit:editing', function (e, item) {
         commandText.value = itemCommand.substring(1);
         responseText.value = commandObject.response;
         descriptionText.value = commandObject.description;
+        M.updateTextFields();
         var apiArray = commandObject.api;
-        apiArray.forEach(apiType => {
+        apiArray.forEach(function (apiType) {
             switch (apiType) {
                 case 'twitchChat':
                     twitchChatActive = true;
-                    chatButton.style.backgroundColor = "#533093";
+                    chatButton.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+                    var children = chatButton.childNodes;
+                    console.log(children);
+                    var img = children[1];
+                    img.className = "left";
                     break;
 
                 case 'twitchWhisper':
                     twitchWhisperActive = true;
-                    whisperButton.style.backgroundColor = "#533093";
+                    whisperButton.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+                    var children = whisperButton.childNodes;
+                    console.log(children);
+                    var img = children[1];
+                    img.className = "left";
                     break;
 
                 case 'discord':
                     discordActive = true;
-                    discordButton.style.backgroundColor = "1B1E22";
+                    discordButton.className = "btn btn-large grey lighten-4 grey-text text-darken-3 hoverable";
+                    var children = discordButton.childNodes;
+                    console.log(children);
+                    var img = children[1];
+                    img.className = "left";
                     break;
 
                 default:

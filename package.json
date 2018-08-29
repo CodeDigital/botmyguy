@@ -1,6 +1,6 @@
 {
   "name": "botmyguy",
-  "version": "0.0.5-alpha",
+  "version": "0.0.6-alpha",
   "description": "A Twitch Chat Bot with Stream Games, Commands and More!",
   "main": "main.js",
   "scripts": {

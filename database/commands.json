@@ -1,1 +1,1 @@
-[{"command":"!example","response":"Hello there, FROM!","description":"This is an example command!","api":["twitchChat","twitchWhisper"]}]
+[{"command":"!example","response":"Hello there, FROM!","description":"This is an example command!","api":["twitchChat","twitchWhisper"]},{"command":"!dchi","response":"Hello Discord User!","description":"Kindly greets Discord users when called.","api":["discord"]}]

@@ -75,18 +75,18 @@
                 <div class="row" style="margin-bottom: -20px;"><div class="col s12"><h6 class="grey-text text-lighten-1" style="margin-left: 2px;">Where does the bot respond to the command?</h6></div></div>
                 <div class="row">
                     <div class="col s4">
-                        <button type="button" onmouseout="typeMouseOff(this, 'twitchChat');" onmouseover="typeHover(this, 'twitchChat');" onclick="apiTypeClicked('twitchChat');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
+                        <button id="chatButton" type="button" onmouseout="typeMouseOff(this, 'twitchChat');" onmouseover="typeHover(this, 'twitchChat');" onclick="apiTypeClicked('twitchChat');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
                                 <img src="../../../assets/icons/twitchChat.svg" class="left hide" style="height: 50px;">
 
                             Twitch Chat</button>
                     </div>
                     <div class="col s4">
-                        <button type="button" onmouseout="typeMouseOff(this, 'twitchWhisper');" onmouseover="typeHover(this, 'twitchWhisper');" onclick="apiTypeClicked('twitchWhisper');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
+                        <button id="whisperButton" type="button" onmouseout="typeMouseOff(this, 'twitchWhisper');" onmouseover="typeHover(this, 'twitchWhisper');" onclick="apiTypeClicked('twitchWhisper');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
                                 <img src="../../../assets/icons/twitchWhisper.svg" class="left hide" style="height: 50px;">
                             Twitch Whisper</button>
                     </div>
                     <div class="col s4">
-                        <button type="button" onmouseout="typeMouseOff(this, 'discord');" onmouseover="typeHover(this, 'discord');" onclick="apiTypeClicked('discord');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
+                        <button id="discordButton" type="button" onmouseout="typeMouseOff(this, 'discord');" onmouseover="typeHover(this, 'discord');" onclick="apiTypeClicked('discord');" class="btn btn-large grey hoverable darken-3" style="width: 100%;">
                             <img src="../../../assets/icons/discordChat.svg" class="left hide" style="height: 50px;">
                             Discord Chat</button>
                     </div>
