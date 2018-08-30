@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron  .",
+    "update-dep": "ncu -u -a --packageFile package.json",
     "pack": "electron-builder --dir",
     "dist-all": "electron-builder -l -m -w",
     "dist-lin": "electron-builder -l",
@@ -29,22 +30,22 @@
   "homepage": "https://github.com/CodeDigital/botmyguy",
   "dependencies": {
     "chart.js": "^2.7.2",
-    "discord.js": "^11.3.2",
+    "discord.js": "^11.4.2",
     "dotenv": "^6.0.0",
-    "electron-updater": "^3.0.3",
+    "electron-updater": "^3.1.2",
     "grunt": "^1.0.3",
     "irc-upd": "^0.10.0",
     "jquery": "^3.3.1",
     "jsonwebtoken": "^8.3.0",
     "material-icons": "^0.2.3",
     "materialize-css": "^1.0.0-rc.2",
-    "p5": "^0.6.1",
-    "request": "^2.87.0",
-    "twitch-js": "^1.2.12"
+    "p5": "^0.7.1",
+    "request": "^2.88.0",
+    "twitch-js": "^1.2.14"
   },
   "devDependencies": {
-    "electron": "^2.0.5",
-    "electron-builder": "^20.24.4"
+    "electron": "^2.0.8",
+    "electron-builder": "^20.28.3"
   },
   "build": {
     "appId": "com.github.codedigital.botmyguy",
