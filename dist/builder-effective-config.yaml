@@ -36,4 +36,4 @@ asar: true
 asarUnpack:
   - ./database/*
   - ./database/events/*
-electronVersion: 2.0.5
+electronVersion: 2.0.8
