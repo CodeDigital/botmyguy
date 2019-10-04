@@ -29,23 +29,23 @@
   },
   "homepage": "https://github.com/CodeDigital/botmyguy",
   "dependencies": {
-    "chart.js": "^2.7.2",
-    "discord.js": "^11.4.2",
-    "dotenv": "^6.0.0",
-    "electron-updater": "^3.1.2",
-    "grunt": "^1.0.3",
+    "chart.js": "^2.8.0",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.1.0",
+    "electron-updater": "^4.1.2",
+    "grunt": "^1.0.4",
     "irc-upd": "^0.10.0",
-    "jquery": "^3.3.1",
-    "jsonwebtoken": "^8.3.0",
-    "material-icons": "^0.2.3",
-    "materialize-css": "^1.0.0-rc.2",
-    "p5": "^0.7.1",
+    "jquery": "^3.4.1",
+    "jsonwebtoken": "^8.5.1",
+    "material-icons": "^0.3.1",
+    "materialize-css": "^1.0.0",
+    "p5": "^0.9.0",
     "request": "^2.88.0",
-    "twitch-js": "^1.2.14"
+    "twitch-js": "^1.2.17"
   },
   "devDependencies": {
-    "electron": "^2.0.8",
-    "electron-builder": "^20.28.3"
+    "electron": "^6.0.11",
+    "electron-builder": "^21.2.0"
   },
   "build": {
     "appId": "com.github.codedigital.botmyguy",

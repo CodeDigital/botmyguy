@@ -1,4 +1,4 @@
-/*! p5.sound.js v0.3.8 2018-06-15 */
+/*! p5.sound.js v0.3.11 2019-03-14 */
 /**
  *  p5.sound extends p5 with <a href="http://caniuse.com/audio-api"
  *  target="_blank">Web Audio</a> functionality including audio input,
@@ -14,7 +14,7 @@
  *    Triangle, Square and Sawtooth waveforms. Base class of
  *    <a href="#/p5.Noise">p5.Noise</a> and <a href="#/p5.Pulse">p5.Pulse</a>.
  *    <br/>
- *  <a href="#/p5.Env"><b>p5.Env</b></a>: An Envelope is a series
+ *  <a href="#/p5.Envelope"><b>p5.Envelope</b></a>: An Envelope is a series
  *    of fades over time. Often used to control an object's
  *    output gain level as an "ADSR Envelope" (Attack, Decay,
  *    Sustain, Release). Can also modulate other parameters.<br/>
@@ -254,11 +254,754 @@ shims = function () {
     }
   };
 }();
+var StartAudioContext;
+(function (root, factory) {
+  if (true) {
+    StartAudioContext = function () {
+      return factory();
+    }();
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    root.StartAudioContext = factory();
+  }
+}(this, function () {
+  var TapListener = function (element, context) {
+    this._dragged = false;
+    this._element = element;
+    this._bindedMove = this._moved.bind(this);
+    this._bindedEnd = this._ended.bind(this, context);
+    element.addEventListener('touchstart', this._bindedEnd);
+    element.addEventListener('touchmove', this._bindedMove);
+    element.addEventListener('touchend', this._bindedEnd);
+    element.addEventListener('mouseup', this._bindedEnd);
+  };
+  TapListener.prototype._moved = function (e) {
+    this._dragged = true;
+  };
+  TapListener.prototype._ended = function (context) {
+    if (!this._dragged) {
+      startContext(context);
+    }
+    this._dragged = false;
+  };
+  TapListener.prototype.dispose = function () {
+    this._element.removeEventListener('touchstart', this._bindedEnd);
+    this._element.removeEventListener('touchmove', this._bindedMove);
+    this._element.removeEventListener('touchend', this._bindedEnd);
+    this._element.removeEventListener('mouseup', this._bindedEnd);
+    this._bindedMove = null;
+    this._bindedEnd = null;
+    this._element = null;
+  };
+  function startContext(context) {
+    var buffer = context.createBuffer(1, 1, context.sampleRate);
+    var source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(context.destination);
+    source.start(0);
+    if (context.resume) {
+      context.resume();
+    }
+  }
+  function isStarted(context) {
+    return context.state === 'running';
+  }
+  function onStarted(context, callback) {
+    function checkLoop() {
+      if (isStarted(context)) {
+        callback();
+      } else {
+        requestAnimationFrame(checkLoop);
+        if (context.resume) {
+          context.resume();
+        }
+      }
+    }
+    if (isStarted(context)) {
+      callback();
+    } else {
+      checkLoop();
+    }
+  }
+  function bindTapListener(element, tapListeners, context) {
+    if (Array.isArray(element) || NodeList && element instanceof NodeList) {
+      for (var i = 0; i < element.length; i++) {
+        bindTapListener(element[i], tapListeners, context);
+      }
+    } else if (typeof element === 'string') {
+      bindTapListener(document.querySelectorAll(element), tapListeners, context);
+    } else if (element.jquery && typeof element.toArray === 'function') {
+      bindTapListener(element.toArray(), tapListeners, context);
+    } else if (Element && element instanceof Element) {
+      var tap = new TapListener(element, context);
+      tapListeners.push(tap);
+    }
+  }
+  function StartAudioContext(context, elements, callback) {
+    var promise = new Promise(function (success) {
+      onStarted(context, success);
+    });
+    var tapListeners = [];
+    if (!elements) {
+      elements = document.body;
+    }
+    bindTapListener(elements, tapListeners, context);
+    promise.then(function () {
+      for (var i = 0; i < tapListeners.length; i++) {
+        tapListeners[i].dispose();
+      }
+      tapListeners = null;
+      if (callback) {
+        callback();
+      }
+    });
+    return promise;
+  }
+  return StartAudioContext;
+}));
+/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
+var Tone_core_Tone;
+Tone_core_Tone = function () {
+  'use strict';
+  var Tone = function (inputs, outputs) {
+    if (this.isUndef(inputs) || inputs === 1) {
+      this.input = this.context.createGain();
+    } else if (inputs > 1) {
+      this.input = new Array(inputs);
+    }
+    if (this.isUndef(outputs) || outputs === 1) {
+      this.output = this.context.createGain();
+    } else if (outputs > 1) {
+      this.output = new Array(inputs);
+    }
+  };
+  Tone.prototype.set = function (params, value, rampTime) {
+    if (this.isObject(params)) {
+      rampTime = value;
+    } else if (this.isString(params)) {
+      var tmpObj = {};
+      tmpObj[params] = value;
+      params = tmpObj;
+    }
+    paramLoop:
+      for (var attr in params) {
+        value = params[attr];
+        var parent = this;
+        if (attr.indexOf('.') !== -1) {
+          var attrSplit = attr.split('.');
+          for (var i = 0; i < attrSplit.length - 1; i++) {
+            parent = parent[attrSplit[i]];
+            if (parent instanceof Tone) {
+              attrSplit.splice(0, i + 1);
+              var innerParam = attrSplit.join('.');
+              parent.set(innerParam, value);
+              continue paramLoop;
+            }
+          }
+          attr = attrSplit[attrSplit.length - 1];
+        }
+        var param = parent[attr];
+        if (this.isUndef(param)) {
+          continue;
+        }
+        if (Tone.Signal && param instanceof Tone.Signal || Tone.Param && param instanceof Tone.Param) {
+          if (param.value !== value) {
+            if (this.isUndef(rampTime)) {
+              param.value = value;
+            } else {
+              param.rampTo(value, rampTime);
+            }
+          }
+        } else if (param instanceof AudioParam) {
+          if (param.value !== value) {
+            param.value = value;
+          }
+        } else if (param instanceof Tone) {
+          param.set(value);
+        } else if (param !== value) {
+          parent[attr] = value;
+        }
+      }
+    return this;
+  };
+  Tone.prototype.get = function (params) {
+    if (this.isUndef(params)) {
+      params = this._collectDefaults(this.constructor);
+    } else if (this.isString(params)) {
+      params = [params];
+    }
+    var ret = {};
+    for (var i = 0; i < params.length; i++) {
+      var attr = params[i];
+      var parent = this;
+      var subRet = ret;
+      if (attr.indexOf('.') !== -1) {
+        var attrSplit = attr.split('.');
+        for (var j = 0; j < attrSplit.length - 1; j++) {
+          var subAttr = attrSplit[j];
+          subRet[subAttr] = subRet[subAttr] || {};
+          subRet = subRet[subAttr];
+          parent = parent[subAttr];
+        }
+        attr = attrSplit[attrSplit.length - 1];
+      }
+      var param = parent[attr];
+      if (this.isObject(params[attr])) {
+        subRet[attr] = param.get();
+      } else if (Tone.Signal && param instanceof Tone.Signal) {
+        subRet[attr] = param.value;
+      } else if (Tone.Param && param instanceof Tone.Param) {
+        subRet[attr] = param.value;
+      } else if (param instanceof AudioParam) {
+        subRet[attr] = param.value;
+      } else if (param instanceof Tone) {
+        subRet[attr] = param.get();
+      } else if (!this.isFunction(param) && !this.isUndef(param)) {
+        subRet[attr] = param;
+      }
+    }
+    return ret;
+  };
+  Tone.prototype._collectDefaults = function (constr) {
+    var ret = [];
+    if (!this.isUndef(constr.defaults)) {
+      ret = Object.keys(constr.defaults);
+    }
+    if (!this.isUndef(constr._super)) {
+      var superDefs = this._collectDefaults(constr._super);
+      for (var i = 0; i < superDefs.length; i++) {
+        if (ret.indexOf(superDefs[i]) === -1) {
+          ret.push(superDefs[i]);
+        }
+      }
+    }
+    return ret;
+  };
+  Tone.prototype.toString = function () {
+    for (var className in Tone) {
+      var isLetter = className[0].match(/^[A-Z]$/);
+      var sameConstructor = Tone[className] === this.constructor;
+      if (this.isFunction(Tone[className]) && isLetter && sameConstructor) {
+        return className;
+      }
+    }
+    return 'Tone';
+  };
+  Object.defineProperty(Tone.prototype, 'numberOfInputs', {
+    get: function () {
+      if (this.input) {
+        if (this.isArray(this.input)) {
+          return this.input.length;
+        } else {
+          return 1;
+        }
+      } else {
+        return 0;
+      }
+    }
+  });
+  Object.defineProperty(Tone.prototype, 'numberOfOutputs', {
+    get: function () {
+      if (this.output) {
+        if (this.isArray(this.output)) {
+          return this.output.length;
+        } else {
+          return 1;
+        }
+      } else {
+        return 0;
+      }
+    }
+  });
+  Tone.prototype.dispose = function () {
+    if (!this.isUndef(this.input)) {
+      if (this.input instanceof AudioNode) {
+        this.input.disconnect();
+      }
+      this.input = null;
+    }
+    if (!this.isUndef(this.output)) {
+      if (this.output instanceof AudioNode) {
+        this.output.disconnect();
+      }
+      this.output = null;
+    }
+    return this;
+  };
+  Tone.prototype.connect = function (unit, outputNum, inputNum) {
+    if (Array.isArray(this.output)) {
+      outputNum = this.defaultArg(outputNum, 0);
+      this.output[outputNum].connect(unit, 0, inputNum);
+    } else {
+      this.output.connect(unit, outputNum, inputNum);
+    }
+    return this;
+  };
+  Tone.prototype.disconnect = function (destination, outputNum, inputNum) {
+    if (this.isArray(this.output)) {
+      if (this.isNumber(destination)) {
+        this.output[destination].disconnect();
+      } else {
+        outputNum = this.defaultArg(outputNum, 0);
+        this.output[outputNum].disconnect(destination, 0, inputNum);
+      }
+    } else {
+      this.output.disconnect.apply(this.output, arguments);
+    }
+  };
+  Tone.prototype.connectSeries = function () {
+    if (arguments.length > 1) {
+      var currentUnit = arguments[0];
+      for (var i = 1; i < arguments.length; i++) {
+        var toUnit = arguments[i];
+        currentUnit.connect(toUnit);
+        currentUnit = toUnit;
+      }
+    }
+    return this;
+  };
+  Tone.prototype.chain = function () {
+    if (arguments.length > 0) {
+      var currentUnit = this;
+      for (var i = 0; i < arguments.length; i++) {
+        var toUnit = arguments[i];
+        currentUnit.connect(toUnit);
+        currentUnit = toUnit;
+      }
+    }
+    return this;
+  };
+  Tone.prototype.fan = function () {
+    if (arguments.length > 0) {
+      for (var i = 0; i < arguments.length; i++) {
+        this.connect(arguments[i]);
+      }
+    }
+    return this;
+  };
+  AudioNode.prototype.chain = Tone.prototype.chain;
+  AudioNode.prototype.fan = Tone.prototype.fan;
+  Tone.prototype.defaultArg = function (given, fallback) {
+    if (this.isObject(given) && this.isObject(fallback)) {
+      var ret = {};
+      for (var givenProp in given) {
+        ret[givenProp] = this.defaultArg(fallback[givenProp], given[givenProp]);
+      }
+      for (var fallbackProp in fallback) {
+        ret[fallbackProp] = this.defaultArg(given[fallbackProp], fallback[fallbackProp]);
+      }
+      return ret;
+    } else {
+      return this.isUndef(given) ? fallback : given;
+    }
+  };
+  Tone.prototype.optionsObject = function (values, keys, defaults) {
+    var options = {};
+    if (values.length === 1 && this.isObject(values[0])) {
+      options = values[0];
+    } else {
+      for (var i = 0; i < keys.length; i++) {
+        options[keys[i]] = values[i];
+      }
+    }
+    if (!this.isUndef(defaults)) {
+      return this.defaultArg(options, defaults);
+    } else {
+      return options;
+    }
+  };
+  Tone.prototype.isUndef = function (val) {
+    return typeof val === 'undefined';
+  };
+  Tone.prototype.isFunction = function (val) {
+    return typeof val === 'function';
+  };
+  Tone.prototype.isNumber = function (arg) {
+    return typeof arg === 'number';
+  };
+  Tone.prototype.isObject = function (arg) {
+    return Object.prototype.toString.call(arg) === '[object Object]' && arg.constructor === Object;
+  };
+  Tone.prototype.isBoolean = function (arg) {
+    return typeof arg === 'boolean';
+  };
+  Tone.prototype.isArray = function (arg) {
+    return Array.isArray(arg);
+  };
+  Tone.prototype.isString = function (arg) {
+    return typeof arg === 'string';
+  };
+  Tone.noOp = function () {
+  };
+  Tone.prototype._readOnly = function (property) {
+    if (Array.isArray(property)) {
+      for (var i = 0; i < property.length; i++) {
+        this._readOnly(property[i]);
+      }
+    } else {
+      Object.defineProperty(this, property, {
+        writable: false,
+        enumerable: true
+      });
+    }
+  };
+  Tone.prototype._writable = function (property) {
+    if (Array.isArray(property)) {
+      for (var i = 0; i < property.length; i++) {
+        this._writable(property[i]);
+      }
+    } else {
+      Object.defineProperty(this, property, { writable: true });
+    }
+  };
+  Tone.State = {
+    Started: 'started',
+    Stopped: 'stopped',
+    Paused: 'paused'
+  };
+  Tone.prototype.equalPowerScale = function (percent) {
+    var piFactor = 0.5 * Math.PI;
+    return Math.sin(percent * piFactor);
+  };
+  Tone.prototype.dbToGain = function (db) {
+    return Math.pow(2, db / 6);
+  };
+  Tone.prototype.gainToDb = function (gain) {
+    return 20 * (Math.log(gain) / Math.LN10);
+  };
+  Tone.prototype.intervalToFrequencyRatio = function (interval) {
+    return Math.pow(2, interval / 12);
+  };
+  Tone.prototype.now = function () {
+    return Tone.context.now();
+  };
+  Tone.now = function () {
+    return Tone.context.now();
+  };
+  Tone.extend = function (child, parent) {
+    if (Tone.prototype.isUndef(parent)) {
+      parent = Tone;
+    }
+    function TempConstructor() {
+    }
+    TempConstructor.prototype = parent.prototype;
+    child.prototype = new TempConstructor();
+    child.prototype.constructor = child;
+    child._super = parent;
+  };
+  var audioContext;
+  Object.defineProperty(Tone, 'context', {
+    get: function () {
+      return audioContext;
+    },
+    set: function (context) {
+      if (Tone.Context && context instanceof Tone.Context) {
+        audioContext = context;
+      } else {
+        audioContext = new Tone.Context(context);
+      }
+      if (Tone.Context) {
+        Tone.Context.emit('init', audioContext);
+      }
+    }
+  });
+  Object.defineProperty(Tone.prototype, 'context', {
+    get: function () {
+      return Tone.context;
+    }
+  });
+  Tone.setContext = function (ctx) {
+    Tone.context = ctx;
+  };
+  Object.defineProperty(Tone.prototype, 'blockTime', {
+    get: function () {
+      return 128 / this.context.sampleRate;
+    }
+  });
+  Object.defineProperty(Tone.prototype, 'sampleTime', {
+    get: function () {
+      return 1 / this.context.sampleRate;
+    }
+  });
+  Object.defineProperty(Tone, 'supported', {
+    get: function () {
+      var hasAudioContext = window.hasOwnProperty('AudioContext') || window.hasOwnProperty('webkitAudioContext');
+      var hasPromises = window.hasOwnProperty('Promise');
+      var hasWorkers = window.hasOwnProperty('Worker');
+      return hasAudioContext && hasPromises && hasWorkers;
+    }
+  });
+  Tone.version = 'r10';
+  if (!window.TONE_SILENCE_VERSION_LOGGING) {
+  }
+  return Tone;
+}();
+/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
+var Tone_core_Emitter;
+Tone_core_Emitter = function (Tone) {
+  'use strict';
+  Tone.Emitter = function () {
+    this._events = {};
+  };
+  Tone.extend(Tone.Emitter);
+  Tone.Emitter.prototype.on = function (event, callback) {
+    var events = event.split(/\W+/);
+    for (var i = 0; i < events.length; i++) {
+      var eventName = events[i];
+      if (!this._events.hasOwnProperty(eventName)) {
+        this._events[eventName] = [];
+      }
+      this._events[eventName].push(callback);
+    }
+    return this;
+  };
+  Tone.Emitter.prototype.off = function (event, callback) {
+    var events = event.split(/\W+/);
+    for (var ev = 0; ev < events.length; ev++) {
+      event = events[ev];
+      if (this._events.hasOwnProperty(event)) {
+        if (Tone.prototype.isUndef(callback)) {
+          this._events[event] = [];
+        } else {
+          var eventList = this._events[event];
+          for (var i = 0; i < eventList.length; i++) {
+            if (eventList[i] === callback) {
+              eventList.splice(i, 1);
+            }
+          }
+        }
+      }
+    }
+    return this;
+  };
+  Tone.Emitter.prototype.emit = function (event) {
+    if (this._events) {
+      var args = Array.apply(null, arguments).slice(1);
+      if (this._events.hasOwnProperty(event)) {
+        var eventList = this._events[event];
+        for (var i = 0, len = eventList.length; i < len; i++) {
+          eventList[i].apply(this, args);
+        }
+      }
+    }
+    return this;
+  };
+  Tone.Emitter.mixin = function (object) {
+    var functions = [
+      'on',
+      'off',
+      'emit'
+    ];
+    object._events = {};
+    for (var i = 0; i < functions.length; i++) {
+      var func = functions[i];
+      var emitterFunc = Tone.Emitter.prototype[func];
+      object[func] = emitterFunc;
+    }
+  };
+  Tone.Emitter.prototype.dispose = function () {
+    Tone.prototype.dispose.call(this);
+    this._events = null;
+    return this;
+  };
+  return Tone.Emitter;
+}(Tone_core_Tone);
+/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
+var Tone_core_Context;
+Tone_core_Context = function (Tone) {
+  if (!window.hasOwnProperty('AudioContext') && window.hasOwnProperty('webkitAudioContext')) {
+    window.AudioContext = window.webkitAudioContext;
+  }
+  Tone.Context = function (context) {
+    Tone.Emitter.call(this);
+    if (!context) {
+      context = new window.AudioContext();
+    }
+    this._context = context;
+    for (var prop in this._context) {
+      this._defineProperty(this._context, prop);
+    }
+    this._latencyHint = 'interactive';
+    this._lookAhead = 0.1;
+    this._updateInterval = this._lookAhead / 3;
+    this._computedUpdateInterval = 0;
+    this._worker = this._createWorker();
+    this._constants = {};
+  };
+  Tone.extend(Tone.Context, Tone.Emitter);
+  Tone.Emitter.mixin(Tone.Context);
+  Tone.Context.prototype._defineProperty = function (context, prop) {
+    if (this.isUndef(this[prop])) {
+      Object.defineProperty(this, prop, {
+        get: function () {
+          if (typeof context[prop] === 'function') {
+            return context[prop].bind(context);
+          } else {
+            return context[prop];
+          }
+        },
+        set: function (val) {
+          context[prop] = val;
+        }
+      });
+    }
+  };
+  Tone.Context.prototype.now = function () {
+    return this._context.currentTime;
+  };
+  Tone.Context.prototype._createWorker = function () {
+    window.URL = window.URL || window.webkitURL;
+    var blob = new Blob(['var timeoutTime = ' + (this._updateInterval * 1000).toFixed(1) + ';' + 'self.onmessage = function(msg){' + '\ttimeoutTime = parseInt(msg.data);' + '};' + 'function tick(){' + '\tsetTimeout(tick, timeoutTime);' + '\tself.postMessage(\'tick\');' + '}' + 'tick();']);
+    var blobUrl = URL.createObjectURL(blob);
+    var worker = new Worker(blobUrl);
+    worker.addEventListener('message', function () {
+      this.emit('tick');
+    }.bind(this));
+    worker.addEventListener('message', function () {
+      var now = this.now();
+      if (this.isNumber(this._lastUpdate)) {
+        var diff = now - this._lastUpdate;
+        this._computedUpdateInterval = Math.max(diff, this._computedUpdateInterval * 0.97);
+      }
+      this._lastUpdate = now;
+    }.bind(this));
+    return worker;
+  };
+  Tone.Context.prototype.getConstant = function (val) {
+    if (this._constants[val]) {
+      return this._constants[val];
+    } else {
+      var buffer = this._context.createBuffer(1, 128, this._context.sampleRate);
+      var arr = buffer.getChannelData(0);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = val;
+      }
+      var constant = this._context.createBufferSource();
+      constant.channelCount = 1;
+      constant.channelCountMode = 'explicit';
+      constant.buffer = buffer;
+      constant.loop = true;
+      constant.start(0);
+      this._constants[val] = constant;
+      return constant;
+    }
+  };
+  Object.defineProperty(Tone.Context.prototype, 'lag', {
+    get: function () {
+      var diff = this._computedUpdateInterval - this._updateInterval;
+      diff = Math.max(diff, 0);
+      return diff;
+    }
+  });
+  Object.defineProperty(Tone.Context.prototype, 'lookAhead', {
+    get: function () {
+      return this._lookAhead;
+    },
+    set: function (lA) {
+      this._lookAhead = lA;
+    }
+  });
+  Object.defineProperty(Tone.Context.prototype, 'updateInterval', {
+    get: function () {
+      return this._updateInterval;
+    },
+    set: function (interval) {
+      this._updateInterval = Math.max(interval, Tone.prototype.blockTime);
+      this._worker.postMessage(Math.max(interval * 1000, 1));
+    }
+  });
+  Object.defineProperty(Tone.Context.prototype, 'latencyHint', {
+    get: function () {
+      return this._latencyHint;
+    },
+    set: function (hint) {
+      var lookAhead = hint;
+      this._latencyHint = hint;
+      if (this.isString(hint)) {
+        switch (hint) {
+        case 'interactive':
+          lookAhead = 0.1;
+          this._context.latencyHint = hint;
+          break;
+        case 'playback':
+          lookAhead = 0.8;
+          this._context.latencyHint = hint;
+          break;
+        case 'balanced':
+          lookAhead = 0.25;
+          this._context.latencyHint = hint;
+          break;
+        case 'fastest':
+          lookAhead = 0.01;
+          break;
+        }
+      }
+      this.lookAhead = lookAhead;
+      this.updateInterval = lookAhead / 3;
+    }
+  });
+  function shimConnect() {
+    var nativeConnect = AudioNode.prototype.connect;
+    var nativeDisconnect = AudioNode.prototype.disconnect;
+    function toneConnect(B, outNum, inNum) {
+      if (B.input) {
+        if (Array.isArray(B.input)) {
+          if (Tone.prototype.isUndef(inNum)) {
+            inNum = 0;
+          }
+          this.connect(B.input[inNum]);
+        } else {
+          this.connect(B.input, outNum, inNum);
+        }
+      } else {
+        try {
+          if (B instanceof AudioNode) {
+            nativeConnect.call(this, B, outNum, inNum);
+          } else {
+            nativeConnect.call(this, B, outNum);
+          }
+        } catch (e) {
+          throw new Error('error connecting to node: ' + B + '\n' + e);
+        }
+      }
+    }
+    function toneDisconnect(B, outNum, inNum) {
+      if (B && B.input && Array.isArray(B.input)) {
+        if (Tone.prototype.isUndef(inNum)) {
+          inNum = 0;
+        }
+        this.disconnect(B.input[inNum], outNum, inNum);
+      } else if (B && B.input) {
+        this.disconnect(B.input, outNum, inNum);
+      } else {
+        try {
+          nativeDisconnect.apply(this, arguments);
+        } catch (e) {
+          throw new Error('error disconnecting node: ' + B + '\n' + e);
+        }
+      }
+    }
+    if (AudioNode.prototype.connect !== toneConnect) {
+      AudioNode.prototype.connect = toneConnect;
+      AudioNode.prototype.disconnect = toneDisconnect;
+    }
+  }
+  if (Tone.supported) {
+    shimConnect();
+    Tone.context = new Tone.Context();
+  } else {
+    console.warn('This browser does not support Tone.js');
+  }
+  return Tone.Context;
+}(Tone_core_Tone);
 var audiocontext;
 'use strict';
-audiocontext = function () {
+audiocontext = function (StartAudioContext, Context, Tone) {
   // Create the Audio Context
-  var audiocontext = new window.AudioContext();
+  const audiocontext = new window.AudioContext();
+  Tone.context.dispose();
+  Tone.setContext(audiocontext);
   /**
    * <p>Returns the Audio Context for this sketch. Useful for users
    * who would like to dig deeper into the <a target='_blank' href=
@@ -296,46 +1039,74 @@ audiocontext = function () {
   p5.prototype.getAudioContext = function () {
     return audiocontext;
   };
-  // if it is iOS, we have to have a user interaction to start Web Audio
-  // http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
-  var iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false;
-  if (iOS) {
-    var iosStarted = false;
-    var startIOS = function () {
-      if (iosStarted)
-        return;
-      // create empty buffer
-      var buffer = audiocontext.createBuffer(1, 1, 22050);
-      var source = audiocontext.createBufferSource();
-      source.buffer = buffer;
-      // connect to output (your speakers)
-      source.connect(audiocontext.destination);
-      // play the file
-      source.start(0);
-      console.log('start ios!');
-      if (audiocontext.state === 'running') {
-        iosStarted = true;
-      }
-    };
-    document.addEventListener('touchend', startIOS, false);
-    document.addEventListener('touchstart', startIOS, false);
-  }
+  /**
+   *  <p>It is a good practice to give users control over starting audio playback.
+   *  This practice is enforced by Google Chrome's autoplay policy as of r70
+   *  (<a href="https://goo.gl/7K7WLu">info</a>), iOS Safari, and other browsers.
+   *  </p>
+   *
+   *  <p>
+   *  userStartAudio() starts the <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext"
+   *  target="_blank" title="Audio Context @ MDN">Audio Context</a> on a user gesture. It utilizes
+   *  the <a href="https://github.com/tambien/StartAudioContext">StartAudioContext</a> library by
+   *  Yotam Mann (MIT Licence, 2016). Read more at https://github.com/tambien/StartAudioContext.
+   *  </p>
+   *
+   *  <p>Starting the audio context on a user gesture can be as simple as <code>userStartAudio()</code>.
+   *  Optional parameters let you decide on a specific element that will start the audio context,
+   *  and/or call a function once the audio context is started.</p>
+   *  @param  {Element|Array}   [element(s)] This argument can be an Element,
+   *                                Selector String, NodeList, p5.Element,
+   *                                jQuery Element, or an Array of any of those.
+   *  @param  {Function} [callback] Callback to invoke when the AudioContext has started
+   *  @return {Promise}            Returns a Promise which is resolved when
+   *                                       the AudioContext state is 'running'
+   * @method userStartAudio
+   *  @example
+   *  <div><code>
+   *  function setup() {
+   *    var myDiv = createDiv('click to start audio');
+   *    myDiv.position(0, 0);
+   *
+   *    var mySynth = new p5.MonoSynth();
+   *
+   *    // This won't play until the context has started
+   *    mySynth.play('A6');
+   *
+   *    // Start the audio context on a click/touch event
+   *    userStartAudio().then(function() {
+   *       myDiv.remove();
+   *     });
+   *  }
+   *  </code></div>
+   */
+  p5.prototype.userStartAudio = function (elements, callback) {
+    var elt = elements;
+    if (elements instanceof p5.Element) {
+      elt = elements.elt;
+    } else if (elements instanceof Array && elements[0] instanceof p5.Element) {
+      elt = elements.map(function (e) {
+        return e.elt;
+      });
+    }
+    return StartAudioContext(audiocontext, elt, callback);
+  };
   return audiocontext;
-}();
+}(StartAudioContext, Tone_core_Context, Tone_core_Tone);
 var master;
 'use strict';
-master = function () {
+master = function (audiocontext) {
   /**
    * Master contains AudioContext and the master sound output.
    */
   var Master = function () {
-    var audiocontext = p5.prototype.getAudioContext();
     this.input = audiocontext.createGain();
     this.output = audiocontext.createGain();
     //put a hard limiter on the output
     this.limiter = audiocontext.createDynamicsCompressor();
-    this.limiter.threshold.value = 0;
+    this.limiter.threshold.value = -3;
     this.limiter.ratio.value = 20;
+    this.limiter.knee.value = 1;
     this.audiocontext = audiocontext;
     this.output.disconnect();
     // connect input to limiter
@@ -431,7 +1202,7 @@ master = function () {
   p5.soundOut._silentNode.gain.value = 0;
   p5.soundOut._silentNode.connect(p5sound.audiocontext.destination);
   return p5sound;
-}();
+}(audiocontext);
 var helpers;
 'use strict';
 helpers = function () {
@@ -500,7 +1271,7 @@ helpers = function () {
     return 440 * Math.pow(2, (m - 69) / 12);
   };
   // This method converts ANSI notes specified as a string "C4", "Eb3" to a frequency
-  noteToFreq = function (note) {
+  var noteToFreq = function (note) {
     if (typeof note !== 'string') {
       return note;
     }
@@ -661,7 +1432,72 @@ helpers = function () {
     o.mathOps[thisChain] = math;
     return o;
   };
+  // helper methods to convert audio file as .wav format,
+  // will use as saving .wav file and saving blob object
+  // Thank you to Matt Diamond's RecorderJS (MIT License)
+  // https://github.com/mattdiamond/Recorderjs
+  function convertToWav(audioBuffer) {
+    var leftChannel, rightChannel;
+    leftChannel = audioBuffer.getChannelData(0);
+    // handle mono files
+    if (audioBuffer.numberOfChannels > 1) {
+      rightChannel = audioBuffer.getChannelData(1);
+    } else {
+      rightChannel = leftChannel;
+    }
+    var interleaved = interleave(leftChannel, rightChannel);
+    // create the buffer and view to create the .WAV file
+    var buffer = new window.ArrayBuffer(44 + interleaved.length * 2);
+    var view = new window.DataView(buffer);
+    // write the WAV container,
+    // check spec at: https://web.archive.org/web/20171215131933/http://tiny.systems/software/soundProgrammer/WavFormatDocs.pdf
+    // RIFF chunk descriptor
+    writeUTFBytes(view, 0, 'RIFF');
+    view.setUint32(4, 36 + interleaved.length * 2, true);
+    writeUTFBytes(view, 8, 'WAVE');
+    // FMT sub-chunk
+    writeUTFBytes(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    // stereo (2 channels)
+    view.setUint16(22, 2, true);
+    view.setUint32(24, p5sound.audiocontext.sampleRate, true);
+    view.setUint32(28, p5sound.audiocontext.sampleRate * 4, true);
+    view.setUint16(32, 4, true);
+    view.setUint16(34, 16, true);
+    // data sub-chunk
+    writeUTFBytes(view, 36, 'data');
+    view.setUint32(40, interleaved.length * 2, true);
+    // write the PCM samples
+    var lng = interleaved.length;
+    var index = 44;
+    var volume = 1;
+    for (var i = 0; i < lng; i++) {
+      view.setInt16(index, interleaved[i] * (32767 * volume), true);
+      index += 2;
+    }
+    return view;
+  }
+  // helper methods to save waves
+  function interleave(leftChannel, rightChannel) {
+    var length = leftChannel.length + rightChannel.length;
+    var result = new Float32Array(length);
+    var inputIndex = 0;
+    for (var index = 0; index < length;) {
+      result[index++] = leftChannel[inputIndex];
+      result[index++] = rightChannel[inputIndex];
+      inputIndex++;
+    }
+    return result;
+  }
+  function writeUTFBytes(view, offset, string) {
+    var lng = string.length;
+    for (var i = 0; i < lng; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  }
   return {
+    convertToWav: convertToWav,
     midiToFreq: midiToFreq,
     noteToFreq: noteToFreq
   };
@@ -805,6 +1641,7 @@ soundfile = function () {
   var p5sound = master;
   var ac = p5sound.audiocontext;
   var midiToFreq = helpers.midiToFreq;
+  var convertToWav = helpers.convertToWav;
   /**
    *  <p>SoundFile object with a path to a file.</p>
    *
@@ -881,6 +1718,7 @@ soundfile = function () {
     this._pauseTime = 0;
     // cues for scheduling events with addCue() removeCue()
     this._cues = [];
+    this._cueIDCounter = 0;
     //  position of the most recently played sample
     this._lastPos = 0;
     this._counterNode = null;
@@ -917,6 +1755,8 @@ soundfile = function () {
       this._whileLoading = function () {
       };
     }
+    this._onAudioProcess = _onAudioProcess.bind(this);
+    this._clearOnEnd = _clearOnEnd.bind(this);
   };
   // register preload handling of loadSound
   p5.prototype.registerPreloadMethod('loadSound', p5.prototype);
@@ -992,8 +1832,12 @@ soundfile = function () {
       request.onload = function () {
         if (request.status === 200) {
           // on sucess loading file:
+          if (!self.panner)
+            return;
           ac.decodeAudioData(request.response, // success decoding buffer:
           function (buff) {
+            if (!self.panner)
+              return;
             self.buffer = buff;
             self.panner.inputChannels(buff.numberOfChannels);
             if (callback) {
@@ -1001,6 +1845,8 @@ soundfile = function () {
             }
           }, // error decoding buffer. "e" is undefined in Chrome 11/22/2015
           function () {
+            if (!self.panner)
+              return;
             var err = new CustomError('decodeAudioData', errorTrace, self.url);
             var msg = 'AudioContext error at decodeAudioData for ' + self.url;
             if (errorCallback) {
@@ -1011,6 +1857,8 @@ soundfile = function () {
             }
           });
         } else {
+          if (!self.panner)
+            return;
           var err = new CustomError('loadSound', errorTrace, self.url);
           var msg = 'Unable to load ' + self.url + '. The request status was: ' + request.status + ' (' + request.statusText + ')';
           if (errorCallback) {
@@ -1036,7 +1884,11 @@ soundfile = function () {
     } else if (this.file !== undefined) {
       var reader = new FileReader();
       reader.onload = function () {
+        if (!self.panner)
+          return;
         ac.decodeAudioData(reader.result, function (buff) {
+          if (!self.panner)
+            return;
           self.buffer = buff;
           self.panner.inputChannels(buff.numberOfChannels);
           if (callback) {
@@ -1045,6 +1897,8 @@ soundfile = function () {
         });
       };
       reader.onerror = function (e) {
+        if (!self.panner)
+          return;
         if (onerror) {
           onerror(e);
         }
@@ -1150,22 +2004,7 @@ soundfile = function () {
       // add source to sources array, which is used in stopAll()
       this.bufferSourceNodes.push(this.bufferSourceNode);
       this.bufferSourceNode._arrayIndex = this.bufferSourceNodes.length - 1;
-      // delete this.bufferSourceNode from the sources array when it is done playing:
-      var clearOnEnd = function () {
-        this._playing = false;
-        this.removeEventListener('ended', clearOnEnd, false);
-        // call the onended callback
-        self._onended(self);
-        self.bufferSourceNodes.forEach(function (n, i) {
-          if (n._playing === false) {
-            self.bufferSourceNodes.splice(i);
-          }
-        });
-        if (self.bufferSourceNodes.length === 0) {
-          self._playing = false;
-        }
-      };
-      this.bufferSourceNode.onended = clearOnEnd;
+      this.bufferSourceNode.addEventListener('ended', this._clearOnEnd);
     } else {
       throw 'not ready to play file, buffer has yet to load. Try preload()';
     }
@@ -1384,12 +2223,11 @@ soundfile = function () {
     var now = p5sound.audiocontext.currentTime;
     var time = _time || 0;
     if (this.buffer && this.bufferSourceNode) {
-      for (var i = 0; i < this.bufferSourceNodes.length; i++) {
-        if (typeof this.bufferSourceNodes[i] !== undefined) {
+      for (var i in this.bufferSourceNodes) {
+        const bufferSourceNode = this.bufferSourceNodes[i];
+        if (!!bufferSourceNode) {
           try {
-            this.bufferSourceNodes[i].onended = function () {
-            };
-            this.bufferSourceNodes[i].stop(now + time);
+            bufferSourceNode.stop(now + time);
           } catch (e) {
           }
         }
@@ -1880,7 +2718,7 @@ soundfile = function () {
     // dispose of scope node if it already exists
     if (self._scopeNode) {
       self._scopeNode.disconnect();
-      delete self._scopeNode.onaudioprocess;
+      self._scopeNode.removeEventListener('audioprocess', self._onAudioProcess);
       delete self._scopeNode;
     }
     self._scopeNode = ac.createScriptProcessor(256, 1, 1);
@@ -1889,12 +2727,7 @@ soundfile = function () {
     cNode.playbackRate.setValueAtTime(self.playbackRate, now);
     cNode.connect(self._scopeNode);
     self._scopeNode.connect(p5.soundOut._silentNode);
-    self._scopeNode.onaudioprocess = function (processEvent) {
-      var inputBuffer = processEvent.inputBuffer.getChannelData(0);
-      self._lastPos = inputBuffer[inputBuffer.length - 1] || 0;
-      // do any callbacks that have been scheduled
-      self._onTimeUpdate(self._lastPos);
-    };
+    self._scopeNode.addEventListener('audioprocess', self._onAudioProcess);
     return cNode;
   };
   // initialize sourceNode, set its initial buffer and playbackRate
@@ -1944,6 +2777,8 @@ soundfile = function () {
     // Render the song
     // act on the result
     offlineContext.oncomplete = function (e) {
+      if (!self.panner)
+        return;
       var filteredBuffer = e.renderedBuffer;
       var bufferData = filteredBuffer.getChannelData(0);
       // step 1:
@@ -2195,7 +3030,8 @@ soundfile = function () {
     for (var i = 0; i < cueLength; i++) {
       var cue = this._cues[i];
       if (cue.id === id) {
-        this.cues.splice(i, 1);
+        this._cues.splice(i, 1);
+        break;
       }
     }
     if (this._cues.length === 0) {
@@ -2226,7 +3062,116 @@ soundfile = function () {
     }
     this._prevTime = playbackTime;
   };
-}(errorHandler, master, helpers);
+  /**
+   * Save a p5.SoundFile as a .wav file. The browser will prompt the user
+   * to download the file to their device. To upload a file to a server, see
+   * <a href="/docs/reference/#/p5.SoundFile/getBlob">getBlob</a>
+   * 
+   * @method save
+   * @param  {String} [fileName]      name of the resulting .wav file.
+   * @example
+   *  <div><code>
+   *  var inp, button, mySound;
+   *  var fileName = 'cool';
+   *  function preload() {
+   *    mySound = loadSound('assets/doorbell.mp3');
+   *  }
+   *  function setup() {
+   *    btn = createButton('click to save file');
+   *    btn.position(0, 0);
+   *    btn.mouseClicked(handleMouseClick);
+   *  }
+   *
+   *  function handleMouseClick() {
+   *    mySound.save(fileName);
+   *  }
+   * </code></div>
+   */
+  p5.SoundFile.prototype.save = function (fileName) {
+    const dataView = convertToWav(this.buffer);
+    p5.prototype.saveSound([dataView], fileName, 'wav');
+  };
+  /**
+   * This method is useful for sending a SoundFile to a server. It returns the
+   * .wav-encoded audio data as a "<a target="_blank" title="Blob reference at
+   * MDN" href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>".
+   * A Blob is a file-like data object that can be uploaded to a server
+   * with an <a href="/docs/reference/#/p5/httpDo">http</a> request. We'll
+   * use the `httpDo` options object to send a POST request with some
+   * specific options: we encode the request as `multipart/form-data`,
+   * and attach the blob as one of the form values using `FormData`.
+   * 
+   *
+   * @method getBlob
+   * @returns {Blob} A file-like data object
+   * @example
+   *  <div><code>
+   *
+   *  function preload() {
+   *    mySound = loadSound('assets/doorbell.mp3');
+   *  }
+   *
+   *  function setup() {
+   *    noCanvas();
+   *    var soundBlob = mySound.getBlob();
+   *
+   *    // Now we can send the blob to a server...
+   *    var serverUrl = 'https://jsonplaceholder.typicode.com/posts';
+   *    var httpRequestOptions = {
+   *      method: 'POST',
+   *      body: new FormData().append('soundBlob', soundBlob),
+   *      headers: new Headers({
+   *        'Content-Type': 'multipart/form-data'
+   *      })
+   *    };
+   *    httpDo(serverUrl, httpRequestOptions);
+   *
+   *    // We can also create an `ObjectURL` pointing to the Blob
+   *    var blobUrl = URL.createObjectURL(soundBlob);
+   *
+   *    // The `<Audio>` Element accepts Object URL's
+   *    var htmlAudioElt = createAudio(blobUrl).showControls();
+   *
+   *    createDiv();
+   *
+   *    // The ObjectURL exists as long as this tab is open
+   *    var input = createInput(blobUrl);
+   *    input.attribute('readonly', true);
+   *    input.mouseClicked(function() { input.elt.select() });
+   *  }
+   *
+   * </code></div>
+   */
+  p5.SoundFile.prototype.getBlob = function () {
+    const dataView = convertToWav(this.buffer);
+    return new Blob([dataView], { type: 'audio/wav' });
+  };
+  // event handler to keep track of current position
+  function _onAudioProcess(processEvent) {
+    var inputBuffer = processEvent.inputBuffer.getChannelData(0);
+    this._lastPos = inputBuffer[inputBuffer.length - 1] || 0;
+    // do any callbacks that have been scheduled
+    this._onTimeUpdate(self._lastPos);
+  }
+  // event handler to remove references to the bufferSourceNode when it is done playing
+  function _clearOnEnd(e) {
+    const thisBufferSourceNode = e.target;
+    const soundFile = this;
+    // delete this.bufferSourceNode from the sources array when it is done playing:
+    thisBufferSourceNode._playing = false;
+    thisBufferSourceNode.removeEventListener('ended', soundFile._clearOnEnd);
+    // call the onended callback
+    soundFile._onended(soundFile);
+    soundFile.bufferSourceNodes.forEach(function (n, i) {
+      if (n._playing === false) {
+        soundFile.bufferSourceNodes.splice(i);
+      }
+    });
+    if (soundFile.bufferSourceNodes.length === 0) {
+      soundFile._playing = false;
+    }
+  }
+}(errorHandler, master, helpers, helpers);
 var amplitude;
 'use strict';
 amplitude = function () {
@@ -3108,383 +4053,6 @@ fft = function () {
   };
 }(master);
 /** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
-var Tone_core_Tone;
-Tone_core_Tone = function () {
-  'use strict';
-  var Tone = function (inputs, outputs) {
-    if (this.isUndef(inputs) || inputs === 1) {
-      this.input = this.context.createGain();
-    } else if (inputs > 1) {
-      this.input = new Array(inputs);
-    }
-    if (this.isUndef(outputs) || outputs === 1) {
-      this.output = this.context.createGain();
-    } else if (outputs > 1) {
-      this.output = new Array(inputs);
-    }
-  };
-  Tone.prototype.set = function (params, value, rampTime) {
-    if (this.isObject(params)) {
-      rampTime = value;
-    } else if (this.isString(params)) {
-      var tmpObj = {};
-      tmpObj[params] = value;
-      params = tmpObj;
-    }
-    paramLoop:
-      for (var attr in params) {
-        value = params[attr];
-        var parent = this;
-        if (attr.indexOf('.') !== -1) {
-          var attrSplit = attr.split('.');
-          for (var i = 0; i < attrSplit.length - 1; i++) {
-            parent = parent[attrSplit[i]];
-            if (parent instanceof Tone) {
-              attrSplit.splice(0, i + 1);
-              var innerParam = attrSplit.join('.');
-              parent.set(innerParam, value);
-              continue paramLoop;
-            }
-          }
-          attr = attrSplit[attrSplit.length - 1];
-        }
-        var param = parent[attr];
-        if (this.isUndef(param)) {
-          continue;
-        }
-        if (Tone.Signal && param instanceof Tone.Signal || Tone.Param && param instanceof Tone.Param) {
-          if (param.value !== value) {
-            if (this.isUndef(rampTime)) {
-              param.value = value;
-            } else {
-              param.rampTo(value, rampTime);
-            }
-          }
-        } else if (param instanceof AudioParam) {
-          if (param.value !== value) {
-            param.value = value;
-          }
-        } else if (param instanceof Tone) {
-          param.set(value);
-        } else if (param !== value) {
-          parent[attr] = value;
-        }
-      }
-    return this;
-  };
-  Tone.prototype.get = function (params) {
-    if (this.isUndef(params)) {
-      params = this._collectDefaults(this.constructor);
-    } else if (this.isString(params)) {
-      params = [params];
-    }
-    var ret = {};
-    for (var i = 0; i < params.length; i++) {
-      var attr = params[i];
-      var parent = this;
-      var subRet = ret;
-      if (attr.indexOf('.') !== -1) {
-        var attrSplit = attr.split('.');
-        for (var j = 0; j < attrSplit.length - 1; j++) {
-          var subAttr = attrSplit[j];
-          subRet[subAttr] = subRet[subAttr] || {};
-          subRet = subRet[subAttr];
-          parent = parent[subAttr];
-        }
-        attr = attrSplit[attrSplit.length - 1];
-      }
-      var param = parent[attr];
-      if (this.isObject(params[attr])) {
-        subRet[attr] = param.get();
-      } else if (Tone.Signal && param instanceof Tone.Signal) {
-        subRet[attr] = param.value;
-      } else if (Tone.Param && param instanceof Tone.Param) {
-        subRet[attr] = param.value;
-      } else if (param instanceof AudioParam) {
-        subRet[attr] = param.value;
-      } else if (param instanceof Tone) {
-        subRet[attr] = param.get();
-      } else if (!this.isFunction(param) && !this.isUndef(param)) {
-        subRet[attr] = param;
-      }
-    }
-    return ret;
-  };
-  Tone.prototype._collectDefaults = function (constr) {
-    var ret = [];
-    if (!this.isUndef(constr.defaults)) {
-      ret = Object.keys(constr.defaults);
-    }
-    if (!this.isUndef(constr._super)) {
-      var superDefs = this._collectDefaults(constr._super);
-      for (var i = 0; i < superDefs.length; i++) {
-        if (ret.indexOf(superDefs[i]) === -1) {
-          ret.push(superDefs[i]);
-        }
-      }
-    }
-    return ret;
-  };
-  Tone.prototype.toString = function () {
-    for (var className in Tone) {
-      var isLetter = className[0].match(/^[A-Z]$/);
-      var sameConstructor = Tone[className] === this.constructor;
-      if (this.isFunction(Tone[className]) && isLetter && sameConstructor) {
-        return className;
-      }
-    }
-    return 'Tone';
-  };
-  Object.defineProperty(Tone.prototype, 'numberOfInputs', {
-    get: function () {
-      if (this.input) {
-        if (this.isArray(this.input)) {
-          return this.input.length;
-        } else {
-          return 1;
-        }
-      } else {
-        return 0;
-      }
-    }
-  });
-  Object.defineProperty(Tone.prototype, 'numberOfOutputs', {
-    get: function () {
-      if (this.output) {
-        if (this.isArray(this.output)) {
-          return this.output.length;
-        } else {
-          return 1;
-        }
-      } else {
-        return 0;
-      }
-    }
-  });
-  Tone.prototype.dispose = function () {
-    if (!this.isUndef(this.input)) {
-      if (this.input instanceof AudioNode) {
-        this.input.disconnect();
-      }
-      this.input = null;
-    }
-    if (!this.isUndef(this.output)) {
-      if (this.output instanceof AudioNode) {
-        this.output.disconnect();
-      }
-      this.output = null;
-    }
-    return this;
-  };
-  Tone.prototype.connect = function (unit, outputNum, inputNum) {
-    if (Array.isArray(this.output)) {
-      outputNum = this.defaultArg(outputNum, 0);
-      this.output[outputNum].connect(unit, 0, inputNum);
-    } else {
-      this.output.connect(unit, outputNum, inputNum);
-    }
-    return this;
-  };
-  Tone.prototype.disconnect = function (destination, outputNum, inputNum) {
-    if (this.isArray(this.output)) {
-      if (this.isNumber(destination)) {
-        this.output[destination].disconnect();
-      } else {
-        outputNum = this.defaultArg(outputNum, 0);
-        this.output[outputNum].disconnect(destination, 0, inputNum);
-      }
-    } else {
-      this.output.disconnect.apply(this.output, arguments);
-    }
-  };
-  Tone.prototype.connectSeries = function () {
-    if (arguments.length > 1) {
-      var currentUnit = arguments[0];
-      for (var i = 1; i < arguments.length; i++) {
-        var toUnit = arguments[i];
-        currentUnit.connect(toUnit);
-        currentUnit = toUnit;
-      }
-    }
-    return this;
-  };
-  Tone.prototype.chain = function () {
-    if (arguments.length > 0) {
-      var currentUnit = this;
-      for (var i = 0; i < arguments.length; i++) {
-        var toUnit = arguments[i];
-        currentUnit.connect(toUnit);
-        currentUnit = toUnit;
-      }
-    }
-    return this;
-  };
-  Tone.prototype.fan = function () {
-    if (arguments.length > 0) {
-      for (var i = 0; i < arguments.length; i++) {
-        this.connect(arguments[i]);
-      }
-    }
-    return this;
-  };
-  AudioNode.prototype.chain = Tone.prototype.chain;
-  AudioNode.prototype.fan = Tone.prototype.fan;
-  Tone.prototype.defaultArg = function (given, fallback) {
-    if (this.isObject(given) && this.isObject(fallback)) {
-      var ret = {};
-      for (var givenProp in given) {
-        ret[givenProp] = this.defaultArg(fallback[givenProp], given[givenProp]);
-      }
-      for (var fallbackProp in fallback) {
-        ret[fallbackProp] = this.defaultArg(given[fallbackProp], fallback[fallbackProp]);
-      }
-      return ret;
-    } else {
-      return this.isUndef(given) ? fallback : given;
-    }
-  };
-  Tone.prototype.optionsObject = function (values, keys, defaults) {
-    var options = {};
-    if (values.length === 1 && this.isObject(values[0])) {
-      options = values[0];
-    } else {
-      for (var i = 0; i < keys.length; i++) {
-        options[keys[i]] = values[i];
-      }
-    }
-    if (!this.isUndef(defaults)) {
-      return this.defaultArg(options, defaults);
-    } else {
-      return options;
-    }
-  };
-  Tone.prototype.isUndef = function (val) {
-    return typeof val === 'undefined';
-  };
-  Tone.prototype.isFunction = function (val) {
-    return typeof val === 'function';
-  };
-  Tone.prototype.isNumber = function (arg) {
-    return typeof arg === 'number';
-  };
-  Tone.prototype.isObject = function (arg) {
-    return Object.prototype.toString.call(arg) === '[object Object]' && arg.constructor === Object;
-  };
-  Tone.prototype.isBoolean = function (arg) {
-    return typeof arg === 'boolean';
-  };
-  Tone.prototype.isArray = function (arg) {
-    return Array.isArray(arg);
-  };
-  Tone.prototype.isString = function (arg) {
-    return typeof arg === 'string';
-  };
-  Tone.noOp = function () {
-  };
-  Tone.prototype._readOnly = function (property) {
-    if (Array.isArray(property)) {
-      for (var i = 0; i < property.length; i++) {
-        this._readOnly(property[i]);
-      }
-    } else {
-      Object.defineProperty(this, property, {
-        writable: false,
-        enumerable: true
-      });
-    }
-  };
-  Tone.prototype._writable = function (property) {
-    if (Array.isArray(property)) {
-      for (var i = 0; i < property.length; i++) {
-        this._writable(property[i]);
-      }
-    } else {
-      Object.defineProperty(this, property, { writable: true });
-    }
-  };
-  Tone.State = {
-    Started: 'started',
-    Stopped: 'stopped',
-    Paused: 'paused'
-  };
-  Tone.prototype.equalPowerScale = function (percent) {
-    var piFactor = 0.5 * Math.PI;
-    return Math.sin(percent * piFactor);
-  };
-  Tone.prototype.dbToGain = function (db) {
-    return Math.pow(2, db / 6);
-  };
-  Tone.prototype.gainToDb = function (gain) {
-    return 20 * (Math.log(gain) / Math.LN10);
-  };
-  Tone.prototype.intervalToFrequencyRatio = function (interval) {
-    return Math.pow(2, interval / 12);
-  };
-  Tone.prototype.now = function () {
-    return Tone.context.now();
-  };
-  Tone.now = function () {
-    return Tone.context.now();
-  };
-  Tone.extend = function (child, parent) {
-    if (Tone.prototype.isUndef(parent)) {
-      parent = Tone;
-    }
-    function TempConstructor() {
-    }
-    TempConstructor.prototype = parent.prototype;
-    child.prototype = new TempConstructor();
-    child.prototype.constructor = child;
-    child._super = parent;
-  };
-  var audioContext;
-  Object.defineProperty(Tone, 'context', {
-    get: function () {
-      return audioContext;
-    },
-    set: function (context) {
-      if (Tone.Context && context instanceof Tone.Context) {
-        audioContext = context;
-      } else {
-        audioContext = new Tone.Context(context);
-      }
-      if (Tone.Context) {
-        Tone.Context.emit('init', audioContext);
-      }
-    }
-  });
-  Object.defineProperty(Tone.prototype, 'context', {
-    get: function () {
-      return Tone.context;
-    }
-  });
-  Tone.setContext = function (ctx) {
-    Tone.context = ctx;
-  };
-  Object.defineProperty(Tone.prototype, 'blockTime', {
-    get: function () {
-      return 128 / this.context.sampleRate;
-    }
-  });
-  Object.defineProperty(Tone.prototype, 'sampleTime', {
-    get: function () {
-      return 1 / this.context.sampleRate;
-    }
-  });
-  Object.defineProperty(Tone, 'supported', {
-    get: function () {
-      var hasAudioContext = window.hasOwnProperty('AudioContext') || window.hasOwnProperty('webkitAudioContext');
-      var hasPromises = window.hasOwnProperty('Promise');
-      var hasWorkers = window.hasOwnProperty('Worker');
-      return hasAudioContext && hasPromises && hasWorkers;
-    }
-  });
-  Tone.version = 'r10';
-  if (!window.TONE_SILENCE_VERSION_LOGGING) {
-  }
-  return Tone;
-}();
-/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
 var Tone_signal_SignalBase;
 Tone_signal_SignalBase = function (Tone) {
   'use strict';
@@ -4254,264 +4822,6 @@ Tone_type_TransportTime = function (Tone) {
   return Tone.TransportTime;
 }(Tone_core_Tone);
 /** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
-var Tone_core_Emitter;
-Tone_core_Emitter = function (Tone) {
-  'use strict';
-  Tone.Emitter = function () {
-    this._events = {};
-  };
-  Tone.extend(Tone.Emitter);
-  Tone.Emitter.prototype.on = function (event, callback) {
-    var events = event.split(/\W+/);
-    for (var i = 0; i < events.length; i++) {
-      var eventName = events[i];
-      if (!this._events.hasOwnProperty(eventName)) {
-        this._events[eventName] = [];
-      }
-      this._events[eventName].push(callback);
-    }
-    return this;
-  };
-  Tone.Emitter.prototype.off = function (event, callback) {
-    var events = event.split(/\W+/);
-    for (var ev = 0; ev < events.length; ev++) {
-      event = events[ev];
-      if (this._events.hasOwnProperty(event)) {
-        if (Tone.prototype.isUndef(callback)) {
-          this._events[event] = [];
-        } else {
-          var eventList = this._events[event];
-          for (var i = 0; i < eventList.length; i++) {
-            if (eventList[i] === callback) {
-              eventList.splice(i, 1);
-            }
-          }
-        }
-      }
-    }
-    return this;
-  };
-  Tone.Emitter.prototype.emit = function (event) {
-    if (this._events) {
-      var args = Array.apply(null, arguments).slice(1);
-      if (this._events.hasOwnProperty(event)) {
-        var eventList = this._events[event];
-        for (var i = 0, len = eventList.length; i < len; i++) {
-          eventList[i].apply(this, args);
-        }
-      }
-    }
-    return this;
-  };
-  Tone.Emitter.mixin = function (object) {
-    var functions = [
-      'on',
-      'off',
-      'emit'
-    ];
-    object._events = {};
-    for (var i = 0; i < functions.length; i++) {
-      var func = functions[i];
-      var emitterFunc = Tone.Emitter.prototype[func];
-      object[func] = emitterFunc;
-    }
-  };
-  Tone.Emitter.prototype.dispose = function () {
-    Tone.prototype.dispose.call(this);
-    this._events = null;
-    return this;
-  };
-  return Tone.Emitter;
-}(Tone_core_Tone);
-/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
-var Tone_core_Context;
-Tone_core_Context = function (Tone) {
-  if (!window.hasOwnProperty('AudioContext') && window.hasOwnProperty('webkitAudioContext')) {
-    window.AudioContext = window.webkitAudioContext;
-  }
-  Tone.Context = function (context) {
-    Tone.Emitter.call(this);
-    if (!context) {
-      context = new window.AudioContext();
-    }
-    this._context = context;
-    for (var prop in this._context) {
-      this._defineProperty(this._context, prop);
-    }
-    this._latencyHint = 'interactive';
-    this._lookAhead = 0.1;
-    this._updateInterval = this._lookAhead / 3;
-    this._computedUpdateInterval = 0;
-    this._worker = this._createWorker();
-    this._constants = {};
-  };
-  Tone.extend(Tone.Context, Tone.Emitter);
-  Tone.Emitter.mixin(Tone.Context);
-  Tone.Context.prototype._defineProperty = function (context, prop) {
-    if (this.isUndef(this[prop])) {
-      Object.defineProperty(this, prop, {
-        get: function () {
-          if (typeof context[prop] === 'function') {
-            return context[prop].bind(context);
-          } else {
-            return context[prop];
-          }
-        },
-        set: function (val) {
-          context[prop] = val;
-        }
-      });
-    }
-  };
-  Tone.Context.prototype.now = function () {
-    return this._context.currentTime;
-  };
-  Tone.Context.prototype._createWorker = function () {
-    window.URL = window.URL || window.webkitURL;
-    var blob = new Blob(['var timeoutTime = ' + (this._updateInterval * 1000).toFixed(1) + ';' + 'self.onmessage = function(msg){' + '\ttimeoutTime = parseInt(msg.data);' + '};' + 'function tick(){' + '\tsetTimeout(tick, timeoutTime);' + '\tself.postMessage(\'tick\');' + '}' + 'tick();']);
-    var blobUrl = URL.createObjectURL(blob);
-    var worker = new Worker(blobUrl);
-    worker.addEventListener('message', function () {
-      this.emit('tick');
-    }.bind(this));
-    worker.addEventListener('message', function () {
-      var now = this.now();
-      if (this.isNumber(this._lastUpdate)) {
-        var diff = now - this._lastUpdate;
-        this._computedUpdateInterval = Math.max(diff, this._computedUpdateInterval * 0.97);
-      }
-      this._lastUpdate = now;
-    }.bind(this));
-    return worker;
-  };
-  Tone.Context.prototype.getConstant = function (val) {
-    if (this._constants[val]) {
-      return this._constants[val];
-    } else {
-      var buffer = this._context.createBuffer(1, 128, this._context.sampleRate);
-      var arr = buffer.getChannelData(0);
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] = val;
-      }
-      var constant = this._context.createBufferSource();
-      constant.channelCount = 1;
-      constant.channelCountMode = 'explicit';
-      constant.buffer = buffer;
-      constant.loop = true;
-      constant.start(0);
-      this._constants[val] = constant;
-      return constant;
-    }
-  };
-  Object.defineProperty(Tone.Context.prototype, 'lag', {
-    get: function () {
-      var diff = this._computedUpdateInterval - this._updateInterval;
-      diff = Math.max(diff, 0);
-      return diff;
-    }
-  });
-  Object.defineProperty(Tone.Context.prototype, 'lookAhead', {
-    get: function () {
-      return this._lookAhead;
-    },
-    set: function (lA) {
-      this._lookAhead = lA;
-    }
-  });
-  Object.defineProperty(Tone.Context.prototype, 'updateInterval', {
-    get: function () {
-      return this._updateInterval;
-    },
-    set: function (interval) {
-      this._updateInterval = Math.max(interval, Tone.prototype.blockTime);
-      this._worker.postMessage(Math.max(interval * 1000, 1));
-    }
-  });
-  Object.defineProperty(Tone.Context.prototype, 'latencyHint', {
-    get: function () {
-      return this._latencyHint;
-    },
-    set: function (hint) {
-      var lookAhead = hint;
-      this._latencyHint = hint;
-      if (this.isString(hint)) {
-        switch (hint) {
-        case 'interactive':
-          lookAhead = 0.1;
-          this._context.latencyHint = hint;
-          break;
-        case 'playback':
-          lookAhead = 0.8;
-          this._context.latencyHint = hint;
-          break;
-        case 'balanced':
-          lookAhead = 0.25;
-          this._context.latencyHint = hint;
-          break;
-        case 'fastest':
-          lookAhead = 0.01;
-          break;
-        }
-      }
-      this.lookAhead = lookAhead;
-      this.updateInterval = lookAhead / 3;
-    }
-  });
-  function shimConnect() {
-    var nativeConnect = AudioNode.prototype.connect;
-    var nativeDisconnect = AudioNode.prototype.disconnect;
-    function toneConnect(B, outNum, inNum) {
-      if (B.input) {
-        if (Array.isArray(B.input)) {
-          if (Tone.prototype.isUndef(inNum)) {
-            inNum = 0;
-          }
-          this.connect(B.input[inNum]);
-        } else {
-          this.connect(B.input, outNum, inNum);
-        }
-      } else {
-        try {
-          if (B instanceof AudioNode) {
-            nativeConnect.call(this, B, outNum, inNum);
-          } else {
-            nativeConnect.call(this, B, outNum);
-          }
-        } catch (e) {
-          throw new Error('error connecting to node: ' + B + '\n' + e);
-        }
-      }
-    }
-    function toneDisconnect(B, outNum, inNum) {
-      if (B && B.input && Array.isArray(B.input)) {
-        if (Tone.prototype.isUndef(inNum)) {
-          inNum = 0;
-        }
-        this.disconnect(B.input[inNum], outNum, inNum);
-      } else if (B && B.input) {
-        this.disconnect(B.input, outNum, inNum);
-      } else {
-        try {
-          nativeDisconnect.apply(this, arguments);
-        } catch (e) {
-          throw new Error('error disconnecting node: ' + B + '\n' + e);
-        }
-      }
-    }
-    if (AudioNode.prototype.connect !== toneConnect) {
-      AudioNode.prototype.connect = toneConnect;
-      AudioNode.prototype.disconnect = toneDisconnect;
-    }
-  }
-  if (Tone.supported) {
-    shimConnect();
-    Tone.context = new Tone.Context();
-  } else {
-    console.warn('This browser does not support Tone.js');
-  }
-  return Tone.Context;
-}(Tone_core_Tone);
-/** Tone.js module by Yotam Mann, MIT License 2016  http://opensource.org/licenses/MIT **/
 var Tone_type_Type;
 Tone_type_Type = function (Tone) {
   Tone.Type = {
@@ -4910,9 +5220,6 @@ signal = function () {
   var Add = Tone_signal_Add;
   var Mult = Tone_signal_Multiply;
   var Scale = Tone_signal_Scale;
-  var Tone = Tone_core_Tone;
-  var p5sound = master;
-  Tone.setContext(p5sound.audiocontext);
   /**
    *  <p>p5.Signal is a constant audio-rate signal used by p5.Oscillator
    *  and p5.Envelope for modulation math.</p>
@@ -5051,7 +5358,7 @@ signal = function () {
   Mult.prototype.scale = Signal.prototype.scale;
   Add.prototype.scale = Signal.prototype.scale;
   Scale.prototype.scale = Signal.prototype.scale;
-}(Tone_signal_Signal, Tone_signal_Add, Tone_signal_Multiply, Tone_signal_Scale, Tone_core_Tone, master);
+}(Tone_signal_Signal, Tone_signal_Add, Tone_signal_Multiply, Tone_signal_Scale);
 var oscillator;
 'use strict';
 oscillator = function () {
@@ -6006,8 +6313,6 @@ envelope = function () {
   var Mult = Tone_signal_Multiply;
   var Scale = Tone_signal_Scale;
   var TimelineSignal = Tone_signal_TimelineSignal;
-  var Tone = Tone_core_Tone;
-  Tone.setContext(p5sound.audiocontext);
   /**
    *  <p>Envelopes are pre-defined amplitude distribution over time.
    *  Typically, envelopes are used to control the output volume
@@ -6030,7 +6335,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.2;
    *  var susPercent = 0.2;
    *  var releaseTime = 0.5;
@@ -6055,7 +6360,7 @@ envelope = function () {
    *    cnv.mousePressed(playEnv);
    *  }
    *
-   *  function playEnv(){
+   *  function playEnv()  {
    *    env.play();
    *  }
    *  </code></div>
@@ -6206,7 +6511,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.2;
    *  var susPercent = 0.2;
    *  var releaseTime = 0.5;
@@ -6231,7 +6536,7 @@ envelope = function () {
    *    cnv.mousePressed(playEnv);
    *  }
    *
-   *  function playEnv(){
+   *  function playEnv()  {
    *    env.play();
    *  }
    *  </code></div>
@@ -6257,7 +6562,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.2;
    *  var susPercent = 0.2;
    *  var releaseTime = 0.5;
@@ -6282,7 +6587,7 @@ envelope = function () {
    *    cnv.mousePressed(playEnv);
    *  }
    *
-   *  function playEnv(){
+   *  function playEnv()  {
    *    env.play();
    *  }
    *  </code></div>
@@ -6376,7 +6681,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.2;
    *  var susPercent = 0.2;
    *  var releaseTime = 0.5;
@@ -6401,7 +6706,7 @@ envelope = function () {
    *    cnv.mousePressed(playEnv);
    *  }
    *
-   *  function playEnv(){
+   *  function playEnv()  {
    *    // trigger env on triOsc, 0 seconds from now
    *    // After decay, sustain for 0.2 seconds before release
    *    env.play(triOsc, 0, 0.2);
@@ -6436,7 +6741,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.3;
    *  var susPercent = 0.4;
    *  var releaseTime = 0.5;
@@ -6461,7 +6766,7 @@ envelope = function () {
    *    cnv.mousePressed(envAttack);
    *  }
    *
-   *  function envAttack(){
+   *  function envAttack()  {
    *    console.log('trigger attack');
    *    env.triggerAttack();
    *
@@ -6540,7 +6845,7 @@ envelope = function () {
    *  var attackLevel = 1.0;
    *  var releaseLevel = 0;
    *
-   *  var attackTime = 0.001
+   *  var attackTime = 0.001;
    *  var decayTime = 0.3;
    *  var susPercent = 0.4;
    *  var releaseTime = 0.5;
@@ -6565,7 +6870,7 @@ envelope = function () {
    *    cnv.mousePressed(envAttack);
    *  }
    *
-   *  function envAttack(){
+   *  function envAttack()  {
    *    console.log('trigger attack');
    *    env.triggerAttack();
    *
@@ -6801,7 +7106,7 @@ envelope = function () {
     p5.Envelope.call(this, t1, l1, t2, l2, t3, l3);
   };
   p5.Env.prototype = Object.create(p5.Envelope.prototype);
-}(master, Tone_signal_Add, Tone_signal_Multiply, Tone_signal_Scale, Tone_signal_TimelineSignal, Tone_core_Tone);
+}(master, Tone_signal_Add, Tone_signal_Multiply, Tone_signal_Scale, Tone_signal_TimelineSignal);
 var pulse;
 'use strict';
 pulse = function () {
@@ -7170,10 +7475,25 @@ audioin = function () {
    */
   p5.AudioIn = function (errorCallback) {
     // set up audio input
+    /**
+     * @property {GainNode} input
+     */
     this.input = p5sound.audiocontext.createGain();
+    /**
+     * @property {GainNode} output
+     */
     this.output = p5sound.audiocontext.createGain();
+    /**
+     * @property {MediaStream|null} stream
+     */
     this.stream = null;
+    /**
+     * @property {MediaStreamAudioSourceNode|null} mediaStream
+     */
     this.mediaStream = null;
+    /**
+     * @property {Number|null} currentSource
+     */
     this.currentSource = null;
     /**
      *  Client must allow browser to access their microphone / audioin source.
@@ -7182,7 +7502,11 @@ audioin = function () {
      *  @property {Boolean} enabled
      */
     this.enabled = false;
-    // create an amplitude, connect to it by default but not to master out
+    /**
+     * Input amplitude, connect to it by default but not to master out
+     *
+     *  @property {p5.Amplitude} amplitude
+     */
     this.amplitude = new p5.Amplitude();
     this.output.connect(this.amplitude.input);
     if (!window.MediaStreamTrack || !window.navigator.mediaDevices || !window.navigator.mediaDevices.getUserMedia) {
@@ -8317,7 +8641,6 @@ filter = function () {
       freq = 1;
     }
     if (typeof freq === 'number') {
-      this.biquad.frequency.value = freq;
       this.biquad.frequency.cancelScheduledValues(this.ac.currentTime + 0.01 + t);
       this.biquad.frequency.exponentialRampToValueAtTime(freq, this.ac.currentTime + 0.02 + t);
     } else if (freq) {
@@ -9460,11 +9783,9 @@ reverb = function () {
    */
   p5.Reverb = function () {
     Effect.call(this);
-    this.convolverNode = this.ac.createConvolver();
+    this._initConvolverNode();
     // otherwise, Safari distorts
     this.input.gain.value = 0.5;
-    this.input.connect(this.convolverNode);
-    this.convolverNode.connect(this.wet);
     // default params
     this._seconds = 3;
     this._decay = 2;
@@ -9472,6 +9793,22 @@ reverb = function () {
     this._buildImpulse();
   };
   p5.Reverb.prototype = Object.create(Effect.prototype);
+  p5.Reverb.prototype._initConvolverNode = function () {
+    this.convolverNode = this.ac.createConvolver();
+    this.input.connect(this.convolverNode);
+    this.convolverNode.connect(this.wet);
+  };
+  p5.Reverb.prototype._teardownConvolverNode = function () {
+    if (this.convolverNode) {
+      this.convolverNode.disconnect();
+      delete this.convolverNode;
+    }
+  };
+  p5.Reverb.prototype._setBuffer = function (audioBuffer) {
+    this._teardownConvolverNode();
+    this._initConvolverNode();
+    this.convolverNode.buffer = audioBuffer;
+  };
   /**
    *  Connect a source to the reverb, and assign reverb parameters.
    *
@@ -9571,14 +9908,11 @@ reverb = function () {
       impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
       impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
     }
-    this.convolverNode.buffer = impulse;
+    this._setBuffer(impulse);
   };
   p5.Reverb.prototype.dispose = function () {
     Effect.prototype.dispose.apply(this);
-    if (this.convolverNode) {
-      this.convolverNode.buffer = null;
-      this.convolverNode = null;
-    }
+    this._teardownConvolverNode();
   };
   // =======================================================================
   //                          *** p5.Convolver ***
@@ -9637,19 +9971,17 @@ reverb = function () {
    *  </code></div>
    */
   p5.Convolver = function (path, callback, errorCallback) {
-    Effect.call(this);
+    p5.Reverb.call(this);
     /**
      *  Internally, the p5.Convolver uses the a
      *  <a href="http://www.w3.org/TR/webaudio/#ConvolverNode">
      *  Web Audio Convolver Node</a>.
      *
-     *  @property {ConvolverNode} convolverNod
+     *  @property {ConvolverNode} convolverNode
      */
-    this.convolverNode = this.ac.createConvolver();
+    this._initConvolverNode();
     // otherwise, Safari distorts
     this.input.gain.value = 0.5;
-    this.input.connect(this.convolverNode);
-    this.convolverNode.connect(this.wet);
     if (path) {
       this.impulses = [];
       this._loadBuffer(path, callback, errorCallback);
@@ -9747,7 +10079,7 @@ reverb = function () {
           buffer.name = chunks[chunks.length - 1];
           buffer.audioBuffer = buff;
           self.impulses.push(buffer);
-          self.convolverNode.buffer = buffer.audioBuffer;
+          self._setBuffer(buffer.audioBuffer);
           if (callback) {
             callback(buffer);
           }
@@ -9884,28 +10216,24 @@ reverb = function () {
    */
   p5.Convolver.prototype.toggleImpulse = function (id) {
     if (typeof id === 'number' && id < this.impulses.length) {
-      this.convolverNode.buffer = this.impulses[id].audioBuffer;
+      this._setBuffer(this.impulses[id].audioBuffer);
     }
     if (typeof id === 'string') {
       for (var i = 0; i < this.impulses.length; i++) {
         if (this.impulses[i].name === id) {
-          this.convolverNode.buffer = this.impulses[i].audioBuffer;
+          this._setBuffer(this.impulses[i].audioBuffer);
           break;
         }
       }
     }
   };
   p5.Convolver.prototype.dispose = function () {
-    Effect.prototype.dispose.apply(this);
+    p5.Reverb.prototype.dispose.apply(this);
     // remove all the Impulse Response buffers
     for (var i in this.impulses) {
       if (this.impulses[i]) {
         this.impulses[i] = null;
       }
-    }
-    if (this.convolverNode) {
-      this.convolverNode.disconnect();
-      this.concolverNode = null;
     }
   };
 }(errorHandler, effect);
@@ -10232,14 +10560,14 @@ looper = function () {
   };
   /**
    *  <p>A p5.Part plays back one or more p5.Phrases. Instantiate a part
-   *  with steps and tatums. By default, each step represents 1/16th note.</p>
+   *  with steps and tatums. By default, each step represents a 1/16th note.</p>
    *
    *  <p>See p5.Phrase for more about musical timing.</p>
    *
    *  @class p5.Part
    *  @constructor
    *  @param {Number} [steps]   Steps in the part
-   *  @param {Number} [tatums] Divisions of a beat (default is 1/16, a quarter note)
+   *  @param {Number} [tatums] Divisions of a beat, e.g. use 1/4, or 0.25 for a quater note (default is 1/16, a sixteenth note)
    *  @example
    *  <div><code>
    *  var box, drum, myPart;
@@ -10318,7 +10646,7 @@ looper = function () {
     this.metro.setBPM(tempo, rampTime);
   };
   /**
-   *  Returns the Beats Per Minute of this currently part.
+   *  Returns the tempo, in Beats Per Minute, of this part.
    *
    *  @method getBPM
    *  @return {Number}
@@ -10372,7 +10700,7 @@ looper = function () {
     };
   };
   /**
-   *  Stop the part and cue it to step 0.
+   *  Stop the part and cue it to step 0. Playback will resume from the begining of the Part when it is played again.
    *
    *  @method  stop
    *  @param  {Number} [time] seconds from now
@@ -10443,8 +10771,7 @@ looper = function () {
     }
   };
   /**
-   *  Get a phrase from this part, based on the name it was
-   *  given when it was created. Now you can modify its array.
+   *  Find all sequences with the specified name, and replace their patterns with the specified array.
    *
    *  @method  replaceSequence
    *  @param  {String} phraseName
@@ -10471,7 +10798,7 @@ looper = function () {
     }
   };
   /**
-   *  Fire a callback function at every step.
+   *  Set the function that will be called at every step. This will clear the previous function.
    *
    *  @method onStep
    *  @param  {Function} callback The name of the callback
@@ -11085,6 +11412,7 @@ var soundRecorder;
 soundRecorder = function () {
   // inspiration: recorder.js, Tone.js & typedarray.org
   var p5sound = master;
+  var convertToWav = helpers.convertToWav;
   var ac = p5sound.audiocontext;
   /**
    *  <p>Record sounds for playback and/or to save as a .wav file.
@@ -11305,73 +11633,22 @@ soundRecorder = function () {
     this._jsNode = null;
   };
   /**
-   *  Save a p5.SoundFile as a .wav audio file.
+   * Save a p5.SoundFile as a .wav file. The browser will prompt the user
+   * to download the file to their device.
+   * For uploading audio to a server, use
+   * <a href="/docs/reference/#/p5.SoundFile/saveBlob">`p5.SoundFile.saveBlob`</a>.
    *
+   *  @for p5
    *  @method saveSound
    *  @param  {p5.SoundFile} soundFile p5.SoundFile that you wish to save
-   *  @param  {String} name      name of the resulting .wav file.
+   *  @param  {String} fileName      name of the resulting .wav file.
    */
-  p5.prototype.saveSound = function (soundFile, name) {
-    var leftChannel, rightChannel;
-    leftChannel = soundFile.buffer.getChannelData(0);
-    // handle mono files
-    if (soundFile.buffer.numberOfChannels > 1) {
-      rightChannel = soundFile.buffer.getChannelData(1);
-    } else {
-      rightChannel = leftChannel;
-    }
-    var interleaved = interleave(leftChannel, rightChannel);
-    // create the buffer and view to create the .WAV file
-    var buffer = new window.ArrayBuffer(44 + interleaved.length * 2);
-    var view = new window.DataView(buffer);
-    // write the WAV container,
-    // check spec at: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
-    // RIFF chunk descriptor
-    writeUTFBytes(view, 0, 'RIFF');
-    view.setUint32(4, 36 + interleaved.length * 2, true);
-    writeUTFBytes(view, 8, 'WAVE');
-    // FMT sub-chunk
-    writeUTFBytes(view, 12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    // stereo (2 channels)
-    view.setUint16(22, 2, true);
-    view.setUint32(24, 44100, true);
-    view.setUint32(28, 44100 * 4, true);
-    view.setUint16(32, 4, true);
-    view.setUint16(34, 16, true);
-    // data sub-chunk
-    writeUTFBytes(view, 36, 'data');
-    view.setUint32(40, interleaved.length * 2, true);
-    // write the PCM samples
-    var lng = interleaved.length;
-    var index = 44;
-    var volume = 1;
-    for (var i = 0; i < lng; i++) {
-      view.setInt16(index, interleaved[i] * (32767 * volume), true);
-      index += 2;
-    }
-    p5.prototype.writeFile([view], name, 'wav');
+  // add to p5.prototype as this is used by the p5 `save()` method.
+  p5.prototype.saveSound = function (soundFile, fileName) {
+    const dataView = convertToWav(soundFile.buffer);
+    p5.prototype.writeFile([dataView], fileName, 'wav');
   };
-  // helper methods to save waves
-  function interleave(leftChannel, rightChannel) {
-    var length = leftChannel.length + rightChannel.length;
-    var result = new Float32Array(length);
-    var inputIndex = 0;
-    for (var index = 0; index < length;) {
-      result[index++] = leftChannel[inputIndex];
-      result[index++] = rightChannel[inputIndex];
-      inputIndex++;
-    }
-    return result;
-  }
-  function writeUTFBytes(view, offset, string) {
-    var lng = string.length;
-    for (var i = 0; i < lng; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i));
-    }
-  }
-}(master);
+}(master, helpers);
 var peakdetect;
 'use strict';
 peakdetect = function () {
@@ -11834,26 +12111,20 @@ monosynth = function () {
   p5.MonoSynth = function () {
     AudioVoice.call(this);
     this.oscillator = new p5.Oscillator();
-    // this.oscillator.disconnect();
     this.env = new p5.Envelope();
     this.env.setRange(1, 0);
     this.env.setExp(true);
     //set params
     this.setADSR(0.02, 0.25, 0.05, 0.35);
-    // filter
-    this.filter = new p5.Filter('highpass');
-    this.filter.set(5, 1);
-    // oscillator --> env --> filter --> this.output (gain) --> p5.soundOut
+    // oscillator --> env --> this.output (gain) --> p5.soundOut
     this.oscillator.disconnect();
-    this.oscillator.connect(this.filter);
+    this.oscillator.connect(this.output);
     this.env.disconnect();
-    this.env.setInput(this.oscillator);
-    // this.env.connect(this.filter);
-    this.filter.connect(this.output);
+    this.env.setInput(this.output.gain);
+    // reset oscillator gain to 1.0
+    this.oscillator.output.gain.value = 1;
     this.oscillator.start();
     this.connect();
-    //Audiovoices are connected to soundout by default
-    this._isOn = false;
     p5sound.soundArray.push(this);
   };
   p5.MonoSynth.prototype = Object.create(p5.AudioVoice.prototype);
@@ -11935,9 +12206,8 @@ monosynth = function () {
     var secondsFromNow = ~~secondsFromNow;
     var freq = noteToFreq(note);
     var vel = velocity || 0.1;
-    this._isOn = true;
     this.oscillator.freq(freq, 0, secondsFromNow);
-    this.env.ramp(this.output, secondsFromNow, vel);
+    this.env.ramp(this.output.gain, secondsFromNow, vel);
   };
   /**
    *  Trigger the release of the Envelope. This is similar to releasing
@@ -11961,8 +12231,7 @@ monosynth = function () {
    */
   p5.MonoSynth.prototype.triggerRelease = function (secondsFromNow) {
     var secondsFromNow = secondsFromNow || 0;
-    this.env.ramp(this.output, secondsFromNow, 0);
-    this._isOn = false;
+    this.env.ramp(this.output.gain, secondsFromNow, 0);
   };
   /**
    *  Set values like a traditional
@@ -12076,9 +12345,6 @@ monosynth = function () {
    */
   p5.MonoSynth.prototype.dispose = function () {
     AudioVoice.prototype.dispose.apply(this);
-    if (this.filter) {
-      this.filter.dispose();
-    }
     if (this.env) {
       this.env.dispose();
     }
