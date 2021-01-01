@@ -1,4 +1,6 @@
-var $ = require("jquery");
+const $ = require("jquery");
+
+
 
 const fs = require('fs');
 
